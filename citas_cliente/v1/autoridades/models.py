@@ -21,15 +21,6 @@ class Autoridad(Base, UniversalMixin):
             ("TRIBUNAL DE CONCILIACION Y ARBITRAJE", "Tribunal de Conciliación y Arbitraje"),
         ]
     )
-    AUDIENCIAS_CATEGORIAS = OrderedDict(
-        [
-            ("NO DEFINIDO", "No Definido"),
-            ("CIVIL FAMILIAR MERCANTIL LETRADO TCYA", "Civil Familiar Mercantil Letrado TCyA"),
-            ("MATERIA ACUSATORIO PENAL ORAL", "Materia Acusatorio Penal Oral"),
-            ("DISTRITALES", "Distritales"),
-            ("SALAS", "Salas"),
-        ]
-    )
 
     # Nombre de la tabla
     __tablename__ = "autoridades"
@@ -54,16 +45,6 @@ class Autoridad(Base, UniversalMixin):
         index=True,
         nullable=False,
     )
-    audiencia_categoria = Column(
-        Enum(*AUDIENCIAS_CATEGORIAS, name="tipos_audiencias_categorias", native_enum=False),
-        index=True,
-        nullable=False,
-    )
-
-    # Hijos
-    listas_de_acuerdos = relationship("ListaDeAcuerdo", back_populates="autoridad", lazy="noload")
-    sentencias = relationship("Sentencia", back_populates="autoridad", lazy="noload")
-    usuarios = relationship("Usuario", back_populates="autoridad")
 
     @property
     def distrito_nombre(self):

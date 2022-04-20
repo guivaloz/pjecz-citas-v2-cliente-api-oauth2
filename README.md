@@ -59,7 +59,7 @@ Para Bash Shell cree un archivo `.bashrc` con este contenido
     echo "   PGUSER:     ${PGUSER}"
     echo
 
-    alias arrancar="uvicorn --port 8005 --reload plataforma_web.app:app"
+    alias arrancar="uvicorn --port 8005 --reload citas_cliente.app:app"
     echo "-- FastAPI"
     echo "   arrancar"
     echo
@@ -85,7 +85,7 @@ Cree el archivo `instance/settings.py` que cargue las variables de entorno
     SQLALCHEMY_DATABASE_URI = f"postgresql+psycopg2://{DB_USER}:{DB_PASS}@{DB_HOST}/{DB_NAME}"
 
     # SQLite
-    # SQLALCHEMY_DATABASE_URI = 'sqlite:///pjecz_plataforma_web.sqlite3'
+    # SQLALCHEMY_DATABASE_URI = 'sqlite:///pjecz_citas_v2.sqlite3'
 
 ## Crear Entorno Virtual
 

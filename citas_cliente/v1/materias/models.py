@@ -22,7 +22,6 @@ class Materia(Base, UniversalMixin):
 
     # Hijos
     autoridades = relationship("Autoridad", back_populates="materia")
-    materias_tipos_juicios = relationship("MateriaTipoJuicio", back_populates="materia")
 
     def __repr__(self):
         """Representación"""
