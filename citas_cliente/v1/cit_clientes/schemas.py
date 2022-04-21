@@ -26,6 +26,7 @@ class CitClienteInDB(CitClienteOut):
     """Cliente en base de datos"""
 
     username: str
+    permissions: dict
     hashed_password: str
     disabled: bool
 
