@@ -2,11 +2,11 @@
 Citas V2 API OAuth2
 """
 from datetime import timedelta
+
 from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
-from sqlalchemy.orm import Session
-
 from fastapi_pagination import add_pagination
+from sqlalchemy.orm import Session
 
 from config.settings import ACCESS_TOKEN_EXPIRE_MINUTES
 from lib.database import get_db
