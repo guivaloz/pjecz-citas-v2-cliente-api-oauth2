@@ -125,11 +125,11 @@ Verifique con
 
 Arrancar con uvicorn
 
-    uvicorn --host=0.0.0.0 --port 8005 --reload rrhh_personal.app:app
+    uvicorn --host=0.0.0.0 --port 8005 --reload citas_cliente.app:app
 
 O arrancar con gunicorn
 
-    gunicorn -w 4 -k uvicorn.workers.UvicornWorker rrhh_personal.app:app
+    gunicorn -w 4 -k uvicorn.workers.UvicornWorker citas_cliente.app:app
 
 ## Jupyter notebooks
 
