@@ -42,6 +42,7 @@ def get_cit_cliente(username: str, db: Session = Depends(get_db)):
             "telefono": cit_cliente.telefono,
             "email": cit_cliente.email,
             "username": cit_cliente.email,
+            "permissions": cit_cliente.permissions,
             "hashed_password": cit_cliente.contrasena,
             "disabled": cit_cliente.estatus != "A",
         }

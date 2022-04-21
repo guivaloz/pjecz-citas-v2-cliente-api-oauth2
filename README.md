@@ -136,7 +136,7 @@ O arrancar con gunicorn
 Agregue sus variables de entorno
 
     # Jupyter notebooks
-    PYTHONPATH=/ruta/al/directorio/GitHub/PJECZ/pjecz-rrhh-personal-api-oauth2
+    PYTHONPATH=/ruta/al/directorio/GitHub/PJECZ/pjecz-citas-v2-api-oauth2
     USERNAME=nombres.apellido_paterno@correo.com.mx
     PASSWORD=****************
 
