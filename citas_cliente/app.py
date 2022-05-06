@@ -39,7 +39,7 @@ async def root():
 
 
 @app.post("/token", response_model=Token)
-async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+async def ingresar_para_solicitar_token(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     """Entregar el token como un JSON"""
     cit_cliente = authenticate_user(form_data.username, form_data.password, db)
     if not cit_cliente:
@@ -53,7 +53,19 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
     return {"access_token": access_token, "token_type": "bearer"}
 
 
-@app.get("/usuarios/yo/", response_model=CitClienteInDB)
-async def read_users_me(current_user: CitClienteInDB = Depends(get_current_active_user)):
-    """Mostrar el perfil del usuario"""
+@app.get("/profile", response_model=CitClienteInDB)
+async def mi_perfil(current_user: CitClienteInDB = Depends(get_current_active_user)):
+    """Mostrar el perfil del cliente"""
     return current_user
+
+
+@app.post("/recover_account", response_model=Token)
+async def recuperar_cuenta():
+    """Recuperar cuenta"""
+    raise HTTPException(status_code=status.HTTP_501_NOT_IMPLEMENTED, detail="Not implemented")
+
+
+@app.post("/new_account", response_model=Token)
+async def nueva_cuenta():
+    """Nueva cuenta"""
+    raise HTTPException(status_code=status.HTTP_501_NOT_IMPLEMENTED, detail="Not implemented")
