@@ -96,5 +96,5 @@ async def get_current_user(token: str = Depends(oauth2_scheme), db: Session = De
 async def get_current_active_user(current_user: CitClienteInDB = Depends(get_current_user)):
     """Obtener el usuario a partir del token y provocar error si está inactivo"""
     if current_user.disabled:
-        raise HTTPException(status_code=401, detail="Unauthorized (usuario inactivo)")
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Unauthorized (usuario inactivo)")
     return current_user
