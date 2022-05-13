@@ -36,8 +36,8 @@ def get_cit_cliente(username: str, db: Session = Depends(get_db)):
         datos = {
             "id": cit_cliente.id,
             "nombres": cit_cliente.nombres,
-            "apellido_paterno": cit_cliente.apellido_paterno,
-            "apellido_materno": cit_cliente.apellido_materno,
+            "apellido_primero": cit_cliente.apellido_primero,
+            "apellido_segundo": cit_cliente.apellido_segundo,
             "curp": cit_cliente.curp,
             "telefono": cit_cliente.telefono,
             "email": cit_cliente.email,

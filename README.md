@@ -137,7 +137,7 @@ Agregue sus variables de entorno
 
     # Jupyter notebooks
     PYTHONPATH=/ruta/al/directorio/GitHub/PJECZ/pjecz-citas-v2-api-oauth2
-    USERNAME=nombres.apellido_paterno@correo.com.mx
+    USERNAME=nombres.apellido@correo.com.mx
     PASSWORD=****************
 
 Instale el kernel para ejecutar notebooks de Jupyter en VSCode

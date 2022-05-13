@@ -20,24 +20,26 @@ class CitCliente(Base, UniversalMixin):
 
     # Columnas
     nombres = Column(String(256), nullable=False)
-    apellido_paterno = Column(String(256), nullable=False)
-    apellido_materno = Column(String(256))
+    apellido_primero = Column(String(256), nullable=False)
+    apellido_segundo = Column(String(256))
     curp = Column(String(18), unique=True, nullable=False)
     telefono = Column(String(64))
     email = Column(String(256), unique=True, nullable=False)
     contrasena = Column(String(256), nullable=False)
-    hash = Column(String(256))
-    renovacion_fecha = Column(Date(), nullable=False)
+    renovacion = Column(Date(), nullable=False)
+
+    # Hijos
+    cit_clientes_recuperaciones = relationship("CitClienteRecuperacion", back_populates="cit_cliente")
 
     @property
     def nombre(self):
-        """Junta nombres, apellido_paterno y apellido materno"""
-        return self.nombres + " " + self.apellido_paterno + " " + self.apellido_materno
+        """Junta nombres, apellido primero y apellido segundo"""
+        return self.nombres + " " + self.apellido_primero + " " + self.apellido_segundo
 
     @property
     def permissions(self):
         """Entrega un diccionario con todos los permisos si no ha llegado la fecha de renovación"""
-        if self.renovacion_fecha < datetime.now().date():
+        if self.renovacion < datetime.now().date():
             return {}
         # Los permisos son fijos para todos los clientes
         return {

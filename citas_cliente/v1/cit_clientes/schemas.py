@@ -10,8 +10,8 @@ class CitClienteOut(BaseModel):
 
     id: int
     nombres: str
-    apellido_paterno: str
-    apellido_materno: Optional[str]
+    apellido_primero: str
+    apellido_segundo: Optional[str]
     curp: str
     telefono: Optional[str]
     email: str

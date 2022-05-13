@@ -13,6 +13,7 @@ from lib.database import get_db
 
 from citas_cliente.v1.autoridades.paths import autoridades
 from citas_cliente.v1.cit_clientes.paths import cit_clientes
+from citas_cliente.v1.cit_clientes_recuperaciones.paths import cit_clientes_recuperaciones
 from citas_cliente.v1.distritos.paths import distritos
 from citas_cliente.v1.materias.paths import materias
 
@@ -26,6 +27,7 @@ app = FastAPI(
 
 app.include_router(autoridades)
 app.include_router(cit_clientes)
+app.include_router(cit_clientes_recuperaciones)
 app.include_router(distritos)
 app.include_router(materias)
 
@@ -57,15 +59,3 @@ async def ingresar_para_solicitar_token(form_data: OAuth2PasswordRequestForm = D
 async def mi_perfil(current_user: CitClienteInDB = Depends(get_current_active_user)):
     """Mostrar el perfil del cliente"""
     return current_user
-
-
-@app.post("/recover_account", response_model=Token)
-async def recuperar_cuenta():
-    """Recuperar cuenta"""
-    raise HTTPException(status_code=status.HTTP_501_NOT_IMPLEMENTED, detail="Not implemented")
-
-
-@app.post("/new_account", response_model=Token)
-async def nueva_cuenta():
-    """Nueva cuenta"""
-    raise HTTPException(status_code=status.HTTP_501_NOT_IMPLEMENTED, detail="Not implemented")
