@@ -59,7 +59,7 @@ Para Bash Shell cree un archivo `.bashrc` con este contenido
     echo "   PGUSER:     ${PGUSER}"
     echo
 
-    alias arrancar="uvicorn --port 8005 --reload citas_cliente.app:app"
+    alias arrancar="uvicorn --host 0.0.0.0 --port 8005 --reload citas_cliente.app:app"
     echo "-- FastAPI"
     echo "   arrancar"
     echo
