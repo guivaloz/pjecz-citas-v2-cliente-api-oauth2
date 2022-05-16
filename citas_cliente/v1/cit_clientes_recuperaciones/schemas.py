@@ -11,8 +11,7 @@ class CitClienteRecuperacionIn(BaseModel):
     email: str
 
 
-class CitClienteRecuperacionOut(BaseModel):
+class CitClienteRecuperacionOut(CitClienteRecuperacionIn):
     """Esquema para entregar recuperacion de contraseña"""
 
-    email: str
     expiracion: datetime
