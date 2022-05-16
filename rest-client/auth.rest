@@ -29,7 +29,7 @@ content-type: application/json
 
 ### Autorizacion
 # @name auth
-POST {{root}}/token
+POST {{baseUrl}}/token
 Content-Type: application/x-www-form-urlencoded
 
 username={{username}}&password={{password}}

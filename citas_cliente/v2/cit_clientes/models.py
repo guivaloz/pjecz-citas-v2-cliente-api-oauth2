@@ -41,11 +41,13 @@ class CitCliente(Base, UniversalMixin):
         """Entrega un diccionario con todos los permisos si no ha llegado la fecha de renovación"""
         if self.renovacion < datetime.now().date():
             return {}
-        # Los permisos son fijos para todos los clientes
+        # Los permisos son fijos para todos los clientes, donde 1 es solo lectura
         return {
             "AUTORIDADES": 1,
             "DISTRITOS": 1,
+            "DOMICILIOS": 1,
             "MATERIAS": 1,
+            "OFICINAS": 1,
         }
 
     def __repr__(self):
