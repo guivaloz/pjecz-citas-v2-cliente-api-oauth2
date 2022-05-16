@@ -1,5 +1,5 @@
 @root = http://{{$dotenv HOST}}:{{$dotenv PORT}}
-@baseUrl = {{root}}/v1
+@baseUrl = {{root}}/v2
 @username = {{$dotenv USERNAME}}
 @password = {{$dotenv PASSWORD}}
 

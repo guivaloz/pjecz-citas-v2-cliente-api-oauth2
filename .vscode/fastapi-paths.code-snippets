@@ -4,7 +4,7 @@
         "prefix": "fpaths",
         "body": [
             "\"\"\"",
-            "${1:Modulos} v1, rutas (paths)",
+            "${1:Modulos} V2, rutas (paths)",
             "\"\"\"",
             "from fastapi import APIRouter, Depends, HTTPException, status",
             "from fastapi_pagination.ext.sqlalchemy import paginate",
@@ -19,7 +19,7 @@
             "from .crud import get_${2:blueprint}, get_${3:singular}",
             "from .schemas import ${4:EsquemaOut}",
             "",
-            "${2:blueprint} = APIRouter(prefix=\"/v1/${2:blueprint}\", tags=[\"${5:categoria}\"])",
+            "${2:blueprint} = APIRouter(prefix=\"/v2/${2:blueprint}\", tags=[\"${5:categoria}\"])",
             "",
             "",
             "@${2:blueprint}.get(\"\", response_model=LimitOffsetPage[${4:EsquemaOut}])",

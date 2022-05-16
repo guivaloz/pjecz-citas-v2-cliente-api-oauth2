@@ -12,15 +12,15 @@ from sqlalchemy.orm import Session
 from config.settings import ACCESS_TOKEN_EXPIRE_MINUTES
 from lib.database import get_db
 
-from citas_cliente.v1.autoridades.paths import autoridades
-from citas_cliente.v1.cit_clientes.paths import cit_clientes
-from citas_cliente.v1.cit_clientes_recuperaciones.paths import cit_clientes_recuperaciones
-from citas_cliente.v1.cit_clientes_registros.paths import cit_clientes_registros
-from citas_cliente.v1.distritos.paths import distritos
-from citas_cliente.v1.materias.paths import materias
+from citas_cliente.v2.autoridades.paths import autoridades
+from citas_cliente.v2.cit_clientes.paths import cit_clientes
+from citas_cliente.v2.cit_clientes_recuperaciones.paths import cit_clientes_recuperaciones
+from citas_cliente.v2.cit_clientes_registros.paths import cit_clientes_registros
+from citas_cliente.v2.distritos.paths import distritos
+from citas_cliente.v2.materias.paths import materias
 
-from citas_cliente.v1.cit_clientes.authentications import authenticate_user, create_access_token, get_current_active_user
-from citas_cliente.v1.cit_clientes.schemas import Token, CitClienteInDB
+from citas_cliente.v2.cit_clientes.authentications import authenticate_user, create_access_token, get_current_active_user
+from citas_cliente.v2.cit_clientes.schemas import Token, CitClienteInDB
 
 try:
     from instance.settings import ORIGINS
@@ -60,7 +60,7 @@ async def root():
     return {"message": "Bienvenido a Citas V2 API OAuth2 del Poder Judicial del Estado de Coahuila de Zaragoza."}
 
 
-@app.post("/token", response_model=Token)
+@app.post("/v2/token", response_model=Token)
 async def ingresar_para_solicitar_token(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     """Entregar el token como un JSON"""
     cit_cliente = authenticate_user(form_data.username, form_data.password, db)
@@ -75,7 +75,7 @@ async def ingresar_para_solicitar_token(form_data: OAuth2PasswordRequestForm = D
     return {"access_token": access_token, "token_type": "bearer"}
 
 
-@app.get("/profile", response_model=CitClienteInDB)
+@app.get("/v2/profile", response_model=CitClienteInDB)
 async def mi_perfil(current_user: CitClienteInDB = Depends(get_current_active_user)):
     """Mostrar el perfil del cliente"""
     return current_user
