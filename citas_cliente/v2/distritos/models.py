@@ -24,6 +24,7 @@ class Distrito(Base, UniversalMixin):
 
     # Hijos
     autoridades = relationship("Autoridad", back_populates="distrito")
+    oficinas = relationship("Oficina", back_populates="distrito")
 
     def __repr__(self):
         """Representación"""
