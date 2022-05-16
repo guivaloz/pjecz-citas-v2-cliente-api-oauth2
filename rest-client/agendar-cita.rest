@@ -23,3 +23,10 @@ GET {{baseUrl}}/oficinas
 Authorization: Bearer {{auth.response.body.access_token}}
 
 ### GET Servicios de la Oficina
+GET {{baseUrl}}/cit_oficinas_servicios
+    ?oficinas_id=1
+Authorization: Bearer {{auth.response.body.access_token}}
+
+### GET Dias para elegir
+
+### GET Horas para elegir
