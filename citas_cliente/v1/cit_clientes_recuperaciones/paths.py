@@ -13,11 +13,11 @@ cit_clientes_recuperaciones = APIRouter(prefix="/v1/cit_clientes_recuperaciones"
 
 
 @cit_clientes_recuperaciones.post("", response_model=CitClienteRecuperacionOut)
-async def recuperar_contrasena(
+async def recuperar_cuenta(
     recuperacion: CitClienteRecuperacionIn,
     db: Session = Depends(get_db),
 ):
-    """Recuperar contrasena"""
+    """Recuperar cuenta"""
     try:
         cit_cliente_recuperacion = post_cit_cliente_recuperacion(db, recuperacion)
     except IndexError as error:

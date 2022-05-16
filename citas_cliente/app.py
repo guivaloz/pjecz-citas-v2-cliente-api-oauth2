@@ -14,6 +14,7 @@ from lib.database import get_db
 from citas_cliente.v1.autoridades.paths import autoridades
 from citas_cliente.v1.cit_clientes.paths import cit_clientes
 from citas_cliente.v1.cit_clientes_recuperaciones.paths import cit_clientes_recuperaciones
+from citas_cliente.v1.cit_clientes_registros.paths import cit_clientes_registros
 from citas_cliente.v1.distritos.paths import distritos
 from citas_cliente.v1.materias.paths import materias
 
@@ -28,6 +29,7 @@ app = FastAPI(
 app.include_router(autoridades)
 app.include_router(cit_clientes)
 app.include_router(cit_clientes_recuperaciones)
+app.include_router(cit_clientes_registros)
 app.include_router(distritos)
 app.include_router(materias)
 
