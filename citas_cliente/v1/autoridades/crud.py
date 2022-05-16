@@ -41,7 +41,7 @@ def get_autoridad(db: Session, autoridad_id: int) -> Autoridad:
     if autoridad is None:
         raise IndexError("No existe esa autoridad")
     if autoridad.estatus != "A":
-        raise ValueError("No es activa la autoridad, está eliminada")
+        raise IndexError("No es activa la autoridad, está eliminada")
     return autoridad
 
 
@@ -52,5 +52,5 @@ def get_autoridad_from_clave(db: Session, clave: str) -> Autoridad:
     if autoridad is None:
         raise IndexError("No existe esa autoridad")
     if autoridad.estatus != "A":
-        raise ValueError("No es activa la autoridad, está eliminada")
+        raise IndexError("No es activa la autoridad, está eliminada")
     return autoridad

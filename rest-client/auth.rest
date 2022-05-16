@@ -6,7 +6,20 @@
 ### Bienvenida
 GET {{root}}
 
-### Recuperar contrasena
+### Quiero crear una nueva cuenta
+POST {{baseUrl}}/cit_clientes_registros
+content-type: application/json
+
+{
+    "nombres": "Pedro",
+    "apellido_primero": "Infante",
+    "apellido_segundo": "CRUZ",
+    "curp": "VADJ770826HGRRLS34",
+    "telefono": "8443331122",
+    "email": "pedro.infante@gmail.com"
+}
+
+### Olvide mi contrasena
 POST {{baseUrl}}/cit_clientes_recuperaciones
 content-type: application/json
 
@@ -20,4 +33,3 @@ POST {{root}}/token
 Content-Type: application/x-www-form-urlencoded
 
 username={{username}}&password={{password}}
-

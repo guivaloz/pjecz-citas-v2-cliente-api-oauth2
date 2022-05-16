@@ -16,29 +16,32 @@ EXPIRACION_HORAS = 48
 def post_cit_cliente_registro(db: Session, registro: CitClienteRegistroIn) -> CitClienteRegistro:
     """Recibir los datos para el registro de un nuevo cliente"""
 
-    # Verificar que no exista un cliente con ese correo electronico
-    posible_cit_cliente = get_cit_cliente_from_email(db, registro.email)
-    if posible_cit_cliente is not None:
-        raise ValueError("Ya existe un cliente con ese correo electronico.")
-
-    # Verificar que no exista un cliente con ese CURP
-    posible_cit_cliente = get_cit_cliente_from_curp(db, registro.curp)
-    if posible_cit_cliente is not None:
-        raise ValueError("Ya existe una cuenta con ese CURP.")
+    # Verificar que no exista un cliente con ese correo electronico o CURP
+    try:
+        posible_cit_cliente_con_email = get_cit_cliente_from_email(db, registro.email)
+        if posible_cit_cliente_con_email is not None:
+            raise IndexError("Ya existe un cliente con ese correo electronico.")
+        posible_cit_cliente_con_curp = get_cit_cliente_from_curp(db, registro.curp)
+        if posible_cit_cliente_con_curp is not None:
+            raise IndexError("Ya existe una cuenta con ese CURP.")
+    except IndexError:
+        pass
+    except ValueError as error:
+        raise error
 
     # Verificar que no haya un registro pendiente con ese correo electronico
     posible_cit_cliente_registro = (
         db.query(CitClienteRegistro).filter_by(email=registro.email).filter_by(ya_registrado=False).first()
     )
     if posible_cit_cliente_registro is not None:
-        raise ValueError("Ya hay una solicitud de registro para ese correo electronico.")
+        raise IndexError("Ya hay una solicitud de registro para ese correo electronico.")
 
     # Verificar que no haya un registro pendiente con ese CURP
     posible_cit_cliente_registro = (
         db.query(CitClienteRegistro).filter_by(curp=registro.curp).filter_by(ya_registrado=False).first()
     )
     if posible_cit_cliente_registro is not None:
-        raise ValueError("Ya hay una solicitud de registro para ese CURP.")
+        raise IndexError("Ya hay una solicitud de registro para ese CURP.")
 
     # Insertar registro
     cit_cliente_registro = CitClienteRegistro(

@@ -37,7 +37,7 @@
             "\tif ${5:singular} is None:",
             "\t\traise IndexError(\"No existe ese ${6:comentario}\")",
             "\tif ${5:singular}.estatus != \"A\":",
-            "\t\traise ValueError(\"No es activo ese ${6:comentario}, está eliminado\")",
+            "\t\traise IndexError(\"No es activo ese ${6:comentario}, está eliminado\")",
             "\treturn ${5:singular}",
             ""
         ],

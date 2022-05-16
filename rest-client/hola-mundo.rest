@@ -6,14 +6,6 @@
 ### Bienvenida
 GET {{root}}
 
-### Recuperar contrasena
-POST {{baseUrl}}/cit_clientes_recuperaciones
-content-type: application/json
-
-{
-    "email": "guivaloz@gmail.com"
-}
-
 ### Autorizacion
 # @name auth
 POST {{root}}/token
