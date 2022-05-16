@@ -87,6 +87,17 @@ Cree el archivo `instance/settings.py` que cargue las variables de entorno
     # SQLite
     # SQLALCHEMY_DATABASE_URI = 'sqlite:///pjecz_citas_v2.sqlite3'
 
+    # CORS or "Cross-Origin Resource Sharing" refers to the situations when a frontend
+    # running in a browser has JavaScript code that communicates with a backend,
+    # and the backend is in a different "origin" than the frontend.
+    # https://fastapi.tiangolo.com/tutorial/cors/
+    ORIGINS = [
+        "http://localhost:8005",
+        "http://localhost:3000",
+        "http://127.0.0.1:8005",
+        "http://127.0.0.1:3000",
+    ]
+
 ## Crear Entorno Virtual
 
 Crear el enorno virtual dentro de la copia local del repositorio, con
@@ -130,16 +141,3 @@ Arrancar con uvicorn
 O arrancar con gunicorn
 
     gunicorn -w 4 -k uvicorn.workers.UvicornWorker citas_cliente.app:app
-
-## Jupyter notebooks
-
-Agregue sus variables de entorno
-
-    # Jupyter notebooks
-    PYTHONPATH=/ruta/al/directorio/GitHub/PJECZ/pjecz-citas-v2-api-oauth2
-    USERNAME=nombres.apellido@correo.com.mx
-    PASSWORD=****************
-
-Instale el kernel para ejecutar notebooks de Jupyter en VSCode
-
-    pip install ipykernel pandas

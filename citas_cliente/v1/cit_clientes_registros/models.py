@@ -19,13 +19,13 @@ class CitClienteRegistro(Base, UniversalMixin):
     # Columnas
     nombres = Column(String(256), nullable=False)
     apellido_primero = Column(String(256), nullable=False)
-    apellido_segundo = Column(String(256))
-    curp = Column(String(18), unique=True, nullable=False)
-    telefono = Column(String(64))
-    email = Column(String(256), unique=True, nullable=False)
+    apellido_segundo = Column(String(256), nullable=False)
+    curp = Column(String(18), nullable=False, index=True)
+    telefono = Column(String(64), nullable=False)
+    email = Column(String(256), nullable=False, index=True)
     expiracion = Column(DateTime(), nullable=False)
     cadena_validar = Column(String(256), nullable=False)
-    ya_registrado = Column(Boolean(), default=False)
+    ya_registrado = Column(Boolean(), nullable=False, default=False)
 
     def __repr__(self):
         """Representación"""

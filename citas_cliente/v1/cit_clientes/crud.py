@@ -34,7 +34,7 @@ def get_cit_cliente_from_curp(db: Session, curp: str) -> CitCliente:
     if cit_cliente is None:
         raise IndexError("No existe ese cliente")
     if cit_cliente.estatus != "A":
-        raise ValueError("No es activo ese cliente, está eliminado")
+        raise IndexError("No es activo ese cliente, está eliminado")
     return cit_cliente
 
 
@@ -46,5 +46,5 @@ def get_cit_cliente_from_email(db: Session, email: str) -> CitCliente:
     if cit_cliente is None:
         raise IndexError("No existe ese cliente")
     if cit_cliente.estatus != "A":
-        raise ValueError("No es activo ese cliente, está eliminado")
+        raise IndexError("No es activo ese cliente, está eliminado")
     return cit_cliente
