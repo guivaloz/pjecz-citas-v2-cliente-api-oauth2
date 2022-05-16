@@ -4,6 +4,7 @@ Citas V2 API OAuth2
 from datetime import timedelta
 
 from fastapi import Depends, FastAPI, HTTPException, status
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi_pagination import add_pagination
 from sqlalchemy.orm import Session
@@ -21,11 +22,27 @@ from citas_cliente.v1.materias.paths import materias
 from citas_cliente.v1.cit_clientes.authentications import authenticate_user, create_access_token, get_current_active_user
 from citas_cliente.v1.cit_clientes.schemas import Token, CitClienteInDB
 
+try:
+    from instance.settings import ORIGINS
+except ImportError:
+    from config.settings import ORIGINS
+
+# FastAPI
 app = FastAPI(
     title="Citas V2 API OAuth2",
     description="API del Sistema de Citas V2 del Poder Judicial del Estado de Coahuila de Zaragoza",
 )
 
+# CORSMiddleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=ORIGINS,
+    allow_credentials=False,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Paths
 app.include_router(autoridades)
 app.include_router(cit_clientes)
 app.include_router(cit_clientes_recuperaciones)
@@ -33,6 +50,7 @@ app.include_router(cit_clientes_registros)
 app.include_router(distritos)
 app.include_router(materias)
 
+# Pagination
 add_pagination(app)
 
 
