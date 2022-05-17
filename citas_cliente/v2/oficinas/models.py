@@ -33,6 +33,9 @@ class Oficina(Base, UniversalMixin):
     cierre = Column(Time(), nullable=False)
     limite_personas = Column(Integer(), nullable=False)
 
+    # Hijos
+    cit_oficinas_servicios = relationship("CitOficinaServicio", back_populates="oficina")
+
     @property
     def distrito_nombre(self):
         """Nombre del distrito"""
