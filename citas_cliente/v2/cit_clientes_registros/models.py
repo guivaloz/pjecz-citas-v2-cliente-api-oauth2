@@ -25,6 +25,7 @@ class CitClienteRegistro(Base, UniversalMixin):
     email = Column(String(256), nullable=False, index=True)
     expiracion = Column(DateTime(), nullable=False)
     cadena_validar = Column(String(256), nullable=False)
+    mensajes_cantidad = Column(Integer(), nullable=False, default=0)
     ya_registrado = Column(Boolean(), nullable=False, default=False)
 
     def __repr__(self):

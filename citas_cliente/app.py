@@ -16,6 +16,7 @@ from citas_cliente.v2.autoridades.paths import autoridades
 from citas_cliente.v2.cit_clientes.paths import cit_clientes
 from citas_cliente.v2.cit_clientes_recuperaciones.paths import cit_clientes_recuperaciones
 from citas_cliente.v2.cit_clientes_registros.paths import cit_clientes_registros
+from citas_cliente.v2.cit_servicios.paths import cit_servicios
 from citas_cliente.v2.distritos.paths import distritos
 from citas_cliente.v2.domicilios.paths import domicilios
 from citas_cliente.v2.materias.paths import materias
@@ -49,6 +50,7 @@ app.include_router(autoridades)
 app.include_router(cit_clientes)
 app.include_router(cit_clientes_recuperaciones)
 app.include_router(cit_clientes_registros)
+app.include_router(cit_servicios)
 app.include_router(distritos)
 app.include_router(domicilios)
 app.include_router(materias)
@@ -64,6 +66,7 @@ async def root():
     return {"message": "Bienvenido a Citas V2 API OAuth2 del Poder Judicial del Estado de Coahuila de Zaragoza."}
 
 
+@app.post("/token", response_model=Token)
 @app.post("/v2/token", response_model=Token)
 async def ingresar_para_solicitar_token(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     """Entregar el token como un JSON"""
@@ -79,6 +82,7 @@ async def ingresar_para_solicitar_token(form_data: OAuth2PasswordRequestForm = D
     return {"access_token": access_token, "token_type": "bearer"}
 
 
+@app.get("/profile", response_model=CitClienteInDB)
 @app.get("/v2/profile", response_model=CitClienteInDB)
 async def mi_perfil(current_user: CitClienteInDB = Depends(get_current_active_user)):
     """Mostrar el perfil del cliente"""
