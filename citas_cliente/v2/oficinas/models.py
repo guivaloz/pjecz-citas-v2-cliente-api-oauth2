@@ -34,7 +34,7 @@ class Oficina(Base, UniversalMixin):
     limite_personas = Column(Integer(), nullable=False)
 
     # Hijos
-    #cit_oficinas_servicios = relationship("CitOficinaServicio", back_populates="oficina")
+    cit_oficinas_servicios = relationship("CitOficinaServicio", back_populates="oficina")
 
     @property
     def distrito_nombre(self):

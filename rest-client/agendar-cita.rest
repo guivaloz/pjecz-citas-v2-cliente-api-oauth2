@@ -19,17 +19,17 @@ Authorization: Bearer {{auth.response.body.access_token}}
 
 ### GET Oficinas del Distrito
 GET {{baseUrl}}/oficinas
-    ?distrito_id=3
+    ?distrito_id=6
 Authorization: Bearer {{auth.response.body.access_token}}
 
 ### GET Servicios de la Oficina
 GET {{baseUrl}}/cit_oficinas_servicios
-    ?oficinas_id=77
+    ?oficina_id=71
 Authorization: Bearer {{auth.response.body.access_token}}
 
 ### GET Dias para elegir
 GET {{baseUrl}}/cit_citas_dias_disponibles
-    ?oficinas_id=7
+    ?oficina_id=7
 Authorization: Bearer {{auth.response.body.access_token}}
 
 ### GET Horas para elegir

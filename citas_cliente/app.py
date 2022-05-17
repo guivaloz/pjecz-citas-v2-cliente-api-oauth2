@@ -16,6 +16,7 @@ from citas_cliente.v2.autoridades.paths import autoridades
 from citas_cliente.v2.cit_clientes.paths import cit_clientes
 from citas_cliente.v2.cit_clientes_recuperaciones.paths import cit_clientes_recuperaciones
 from citas_cliente.v2.cit_clientes_registros.paths import cit_clientes_registros
+from citas_cliente.v2.cit_oficinas_servicios.paths import cit_oficinas_servicios
 from citas_cliente.v2.cit_servicios.paths import cit_servicios
 from citas_cliente.v2.distritos.paths import distritos
 from citas_cliente.v2.domicilios.paths import domicilios
@@ -50,6 +51,7 @@ app.include_router(autoridades)
 app.include_router(cit_clientes)
 app.include_router(cit_clientes_recuperaciones)
 app.include_router(cit_clientes_registros)
+app.include_router(cit_oficinas_servicios)
 app.include_router(cit_servicios)
 app.include_router(distritos)
 app.include_router(domicilios)

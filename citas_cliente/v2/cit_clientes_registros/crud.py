@@ -52,16 +52,12 @@ def post_cit_cliente_registro(db: Session, registro: CitClienteRegistroIn) -> Ci
         raise error
 
     # Verificar que no haya un registro pendiente con ese correo electronico
-    posible_cit_cliente_registro = (
-        db.query(CitClienteRegistro).filter_by(email=email).filter_by(ya_registrado=False).first()
-    )
+    posible_cit_cliente_registro = db.query(CitClienteRegistro).filter_by(email=email).filter_by(ya_registrado=False).first()
     if posible_cit_cliente_registro is not None:
         raise IndexError("Ya hay una solicitud de registro para ese correo electronico.")
 
     # Verificar que no haya un registro pendiente con ese CURP
-    posible_cit_cliente_registro = (
-        db.query(CitClienteRegistro).filter_by(curp=curp).filter_by(ya_registrado=False).first()
-    )
+    posible_cit_cliente_registro = db.query(CitClienteRegistro).filter_by(curp=curp).filter_by(ya_registrado=False).first()
     if posible_cit_cliente_registro is not None:
         raise IndexError("Ya hay una solicitud de registro para ese CURP.")
 

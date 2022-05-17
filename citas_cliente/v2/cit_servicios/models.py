@@ -28,7 +28,7 @@ class CitServicio(Base, UniversalMixin):
     documentos_limite = Column(Integer, nullable=False)
 
     # Hijos
-    # cit_oficinas_servicios = relationship("CitOficinaServicio", back_populates="cit_servicio")
+    cit_oficinas_servicios = relationship("CitOficinaServicio", back_populates="cit_servicio")
 
     @property
     def cit_categoria_nombre(self):
