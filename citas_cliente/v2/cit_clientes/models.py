@@ -44,7 +44,7 @@ class CitCliente(Base, UniversalMixin):
         # Los permisos son fijos para todos los clientes, donde 1 es solo lectura
         return {
             "AUTORIDADES": 1,
-            "CIT CATEGORIAS": 1,
+            "CIT DIAS DISPONIBLES": 1,
             "CIT OFICINAS SERVICIOS": 1,
             "CIT SERVICIOS": 1,
             "DISTRITOS": 1,

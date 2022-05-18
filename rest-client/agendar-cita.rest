@@ -28,14 +28,14 @@ GET {{baseUrl}}/cit_oficinas_servicios
 Authorization: Bearer {{auth.response.body.access_token}}
 
 ### GET Dias para elegir
-GET {{baseUrl}}/cit_citas_dias_disponibles
-    ?oficina_id=7
+GET {{baseUrl}}/cit_dias_disponibles
+    ?oficina_id=71
 Authorization: Bearer {{auth.response.body.access_token}}
 
-### GET Horas para elegir
+### GET Horas para elegir POR PROGRAMAR
 GET {{baseUrl}}/cit_citas_horas_disponibles
-    ?oficinas_id=23
+    ?oficina_id=23
     &fecha=2022-05-31
 Authorization: Bearer {{auth.response.body.access_token}}
 
-### POST crear cita
+### POST crear cita POR PROGRAMAR
