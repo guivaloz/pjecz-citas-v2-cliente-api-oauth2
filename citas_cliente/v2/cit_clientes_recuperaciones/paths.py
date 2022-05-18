@@ -17,7 +17,7 @@ async def recuperar_cuenta(
     recuperacion: CitClienteRecuperacionIn,
     db: Session = Depends(get_db),
 ):
-    """Recuperar cuenta"""
+    """Recibe el formulario (con el correo electronico) para recuperar cuenta porque olvido su contrasena"""
     try:
         cit_cliente_recuperacion = post_cit_cliente_recuperacion(db, recuperacion)
     except IndexError as error:
@@ -35,7 +35,7 @@ async def recuperar_cuenta_cargar(
     cadena_validar: str,
     db: Session = Depends(get_db),
 ):
-    """Cargar recuperar cuenta"""
+    """Al dar clic en el URL se recibe la cadena_validar y se pide que defina su contrasena"""
 
 
 @cit_clientes_recuperaciones.post("/<cadena_validar:str>", response_model=CitClienteRecuperacionOut)
@@ -43,4 +43,4 @@ async def recuperar_cuenta_entregar(
     cadena_validar: str,
     db: Session = Depends(get_db),
 ):
-    """Entregar recuperar cuenta"""
+    """Recibe el formulario con la cadena_validar y la nueva contrasena"""
