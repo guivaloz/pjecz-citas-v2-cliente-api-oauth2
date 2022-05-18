@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 from lib.database import get_db
 
 from .crud import post_cit_cliente_recuperacion
-from .schemas import CitClienteRecuperacionIn, CitClienteRecuperacionOut, CitClienteRecuperacionConcluirIn, CitClienteRecuperacionConcluirOut
+from .schemas import CitClienteRecuperacionIn, CitClienteRecuperacionOut, CitClienteRecuperacionValidarOut, CitClienteRecuperacionConcluirIn, CitClienteRecuperacionConcluirOut
 
 cit_clientes_recuperaciones = APIRouter(prefix="/v2/recuperar_contrasena", tags=["recuperar contrasena"])
 
@@ -30,7 +30,7 @@ async def solicitar_recuperar_contrasena(
     )
 
 
-@cit_clientes_recuperaciones.get("/validar/<hashid:str>/<cadena_validar:str>", response_model=)
+@cit_clientes_recuperaciones.get("/validar/<hashid:str>/<cadena_validar:str>", response_model=CitClienteRecuperacionValidarOut)
 async def validar_recuperar_contrasena(
     hashid: str,
     cadena_validar: str,
@@ -39,9 +39,9 @@ async def validar_recuperar_contrasena(
     """Olvide mi contrasena, viene del URL proporcionado, entrego el formulario para cambiarla"""
 
 
-@cit_clientes_recuperaciones.post("/concluir", response_model=CitClienteRecuperacionOut)
+@cit_clientes_recuperaciones.post("/concluir", response_model=CitClienteRecuperacionConcluirOut)
 async def concluir_recuperar_contrasena(
-    registro: CitClienteRecuperacionIn,
+    recuperacion: CitClienteRecuperacionConcluirIn,
     db: Session = Depends(get_db),
 ):
     """Recibe el formulario con la cadena_validar y la nueva contrasena"""

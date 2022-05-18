@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 from lib.database import get_db
 
 from .crud import post_cit_cliente_registro
-from .schemas import CitClienteRegistroIn, CitClienteRegistroOut
+from .schemas import CitClienteRegistroIn, CitClienteRegistroOut, CitClienteRegistroValidarOut, CitClienteRegistroConcluirIn, CitClienteRegistroConcluirOut,
 
 cit_clientes_registros = APIRouter(prefix="/v2/nueva_cuenta", tags=["nueva cuenta"])
 
@@ -27,7 +27,7 @@ async def solicitar_nueva_cuenta(
     return CitClienteRegistroOut.from_orm(cit_cliente_registro)
 
 
-@cit_clientes_registros.get("/validar/<hashid:str>/<cadena_validar:str>", response_model=CitClienteRegistroOut)
+@cit_clientes_registros.get("/validar/<hashid:str>/<cadena_validar:str>", response_model=CitClienteRegistroValidarOut)
 async def validar_nueva_cuenta(
     hashid: str,
     cadena_validar: str,
@@ -36,9 +36,9 @@ async def validar_nueva_cuenta(
     """Quiero crear una nueva cuenta, viene del URL proporcionado, entrego el formulario para definir la contrasena"""
 
 
-@cit_clientes_registros.post("/concluir", response_model=CitClienteRegistroOut)
+@cit_clientes_registros.post("/concluir", response_model=CitClienteRegistroConcluirOut)
 async def concluir_nueva_cuenta(
-    registro: CitClienteRegistroIn,
+    registro: CitClienteRegistroConcluirIn,
     db: Session = Depends(get_db),
 ):
     """Quiero crear una nueva cuenta, recibo el formulario con la contrasena"""
