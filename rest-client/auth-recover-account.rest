@@ -1,31 +1,30 @@
 @root = http://{{$dotenv HOST}}:{{$dotenv PORT}}
-@baseUrl = {{root}}/v2
+@baseUrl = {{root}}/v2/recuperar_contrasena
+@hashid = XXXX
+@cadena_validar = XXXX
 
 ### Bienvenida
 GET {{root}}
 
 ### Olvide mi contrasena, recibo el formulario con mi correo electronico
-POST {{baseUrl}}/cit_clientes_recuperaciones
+POST {{baseUrl}}/solicitar
 content-type: application/json
 
 {
     "email": "guivaloz@gmail.com"
 }
 
-### Olvide mi contrasena, entrego el formulario para cambiarla
-@hashid = XXXX
-@cadena_validar = XXXX
-
-GET {{baseUrl}}/cit_clientes_recuperaciones
-    ?id={{hashid}}
+### Olvide mi contrasena, viene del URL proporcionado, entrego el formulario para cambiarla
+GET {{baseUrl}}/validar
+    ?hashid={{hashid}}
     &cadena_validar={{cadena_validar}}
 
 ### Olvide mi contrasena, recibo el formulario para cambiarla
-POST {{baseUrl}}/cit_clientes_recuperaciones
+POST {{baseUrl}}/concluir
 content-type: application/json
 
 {
-    "id": "{{hashid}}",
+    "hashid": "{{hashid}}",
     "cadena_validar": "{{cadena_validar}}",
     "password": "Zebra13Blanca"
 }

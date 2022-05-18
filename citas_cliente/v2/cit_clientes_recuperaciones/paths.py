@@ -7,17 +7,17 @@ from sqlalchemy.orm import Session
 from lib.database import get_db
 
 from .crud import post_cit_cliente_recuperacion
-from .schemas import CitClienteRecuperacionIn, CitClienteRecuperacionOut
+from .schemas import CitClienteRecuperacionIn, CitClienteRecuperacionOut, CitClienteRecuperacionConcluirIn, CitClienteRecuperacionConcluirOut
 
-cit_clientes_recuperaciones = APIRouter(prefix="/v2/cit_clientes_recuperaciones", tags=["clientes"])
+cit_clientes_recuperaciones = APIRouter(prefix="/v2/recuperar_contrasena", tags=["recuperar contrasena"])
 
 
-@cit_clientes_recuperaciones.post("", response_model=CitClienteRecuperacionOut)
-async def recuperar_cuenta(
+@cit_clientes_recuperaciones.post("/solicitar", response_model=CitClienteRecuperacionOut)
+async def solicitar_recuperar_contrasena(
     recuperacion: CitClienteRecuperacionIn,
     db: Session = Depends(get_db),
 ):
-    """Recibe el formulario (con el correo electronico) para recuperar cuenta porque olvido su contrasena"""
+    """Olvide mi contrasena, recibo el formulario con mi correo electronico"""
     try:
         cit_cliente_recuperacion = post_cit_cliente_recuperacion(db, recuperacion)
     except IndexError as error:
@@ -30,17 +30,18 @@ async def recuperar_cuenta(
     )
 
 
-@cit_clientes_recuperaciones.get("/<cadena_validar:str>", response_model=CitClienteRecuperacionOut)
-async def recuperar_cuenta_cargar(
+@cit_clientes_recuperaciones.get("/validar/<hashid:str>/<cadena_validar:str>", response_model=)
+async def validar_recuperar_contrasena(
+    hashid: str,
     cadena_validar: str,
     db: Session = Depends(get_db),
 ):
-    """Al dar clic en el URL se recibe la cadena_validar y se pide que defina su contrasena"""
+    """Olvide mi contrasena, viene del URL proporcionado, entrego el formulario para cambiarla"""
 
 
-@cit_clientes_recuperaciones.post("/<cadena_validar:str>", response_model=CitClienteRecuperacionOut)
-async def recuperar_cuenta_entregar(
-    cadena_validar: str,
+@cit_clientes_recuperaciones.post("/concluir", response_model=CitClienteRecuperacionOut)
+async def concluir_recuperar_contrasena(
+    registro: CitClienteRecuperacionIn,
     db: Session = Depends(get_db),
 ):
     """Recibe el formulario con la cadena_validar y la nueva contrasena"""
