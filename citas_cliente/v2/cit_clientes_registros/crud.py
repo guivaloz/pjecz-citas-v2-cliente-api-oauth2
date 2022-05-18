@@ -4,13 +4,14 @@ Cit Clientes Registros V2, CRUD (create, read, update, and delete)
 from datetime import datetime, timedelta
 import re
 from sqlalchemy.orm import Session
+from passlib.context import CryptContext
 
 from lib.pwgen import generar_aleatorio
 from lib.safe_string import safe_string, CURP_REGEXP, EMAIL_REGEXP, TELEFONO_REGEXP
 
 from .models import CitClienteRegistro
 from .schemas import CitClienteRegistroIn, CitClienteRegistroConcluirIn
-from ..cit_clientes.crud import get_cit_cliente_from_curp, get_cit_cliente_from_email
+from ..cit_clientes.crud import get_cit_cliente, get_cit_cliente_from_curp, get_cit_cliente_from_email
 
 EXPIRACION_HORAS = 48
 
@@ -18,7 +19,7 @@ EXPIRACION_HORAS = 48
 def solicitar_nueva_cuenta(db: Session, registro: CitClienteRegistroIn) -> CitClienteRegistro:
     """Solicitar la creacion de una nueva cuenta"""
 
-    # Asegurarse que los datos de entrada son correctos
+    # Procesar datos de entrada con las funciones 'safe'
     nombres = safe_string(registro.nombres)
     apellido_primero = safe_string(registro.apellido_primero)
     apellido_segundo = safe_string(registro.apellido_segundo)
@@ -76,6 +77,8 @@ def solicitar_nueva_cuenta(db: Session, registro: CitClienteRegistroIn) -> CitCl
     db.add(cit_cliente_registro)
     db.commit()
     db.refresh(cit_cliente_registro)
+
+    # Entregar
     return cit_cliente_registro
 
 
@@ -83,14 +86,26 @@ def validar_nueva_cuenta(db: Session, hashid: str, cadena_validar: str) -> CitCl
     """Validar la recuperacion de la contrasena"""
 
     # Validar hashid, si no es valido causa excepcion
+    cit_cliente_registro_id = CitClienteRegistro.decode_id(hashid)
+    if cit_cliente_registro_id is None:
+        raise IndexError("No se pudo descifrar el ID")
 
     # Consultar, si no se encuentra causa excepcion
-    cit_cliente_registro_id = None
     cit_cliente_registro = db.query(CitClienteRegistro).get(cit_cliente_registro_id)
+    if cit_cliente_registro is None:
+        raise IndexError("No existe la solicitud de nueva cuenta con el ID dado")
 
     # Si ya esta eliminado causa excepcion
+    if cit_cliente_registro.estatus != "A":
+        raise IndexError("No es activa esa solicitud de nueva cuenta, fue eliminada")
 
     # Si ya se recupero causa excepcion
+    if cit_cliente_registro.ya_registrada is True:
+        raise IndexError("No se puede registrar esta cuenta porque ya fue hecha")
+
+    # Comparar la cadena de validacion
+    if cit_cliente_registro.cadena_validar != cadena_validar:
+        raise IndexError("No es igual la cadena de validacion")
 
     # Entregar
     return cit_cliente_registro
@@ -103,8 +118,16 @@ def concluir_nueva_cuenta(db: Session, registro: CitClienteRegistroConcluirIn) -
     cit_cliente_registro = validar_nueva_cuenta(db, registro.hashid, registro.cadena_validar)
 
     # Actualizar el cliente con la nueva contrasena
+    cit_cliente = get_cit_cliente(db, cit_cliente_registro.cit_cliente_id)
+    pwd_context = CryptContext(schemes=["pbkdf2_sha256", "des_crypt"], deprecated="auto")
+    cit_cliente.contrasena_sha256 = pwd_context.hash(registro.password)
+    db.add(cit_cliente)
 
-    # Actualizar la recuperacion con ya_recuperado en verdadero
+    # Actualizar con ya_registrado en verdadero
+    cit_cliente_registro.ya_registrado = True
+    db.add(cit_cliente_registro)
+    db.commit()
+    db.refresh(cit_cliente_registro)
 
     # Entregar
     return cit_cliente_registro

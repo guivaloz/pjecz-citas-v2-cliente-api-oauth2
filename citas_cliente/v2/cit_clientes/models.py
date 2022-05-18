@@ -25,7 +25,8 @@ class CitCliente(Base, UniversalMixin):
     curp = Column(String(18), unique=True, nullable=False)
     telefono = Column(String(64))
     email = Column(String(256), unique=True, nullable=False)
-    contrasena = Column(String(256), nullable=False)
+    contrasena = Column(String(256), nullable=False, default="")
+    contrasena_sha256 = Column(String(256), nullable=False, default="")
     renovacion = Column(Date(), nullable=False)
 
     # Hijos
