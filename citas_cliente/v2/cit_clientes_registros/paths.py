@@ -6,20 +6,20 @@ from sqlalchemy.orm import Session
 
 from lib.database import get_db
 
-from .crud import post_cit_cliente_registro
+from .crud import solicitar_nueva_cuenta, validar_nueva_cuenta, concluir_nueva_cuenta
 from .schemas import CitClienteRegistroIn, CitClienteRegistroOut, CitClienteRegistroValidarOut, CitClienteRegistroConcluirIn, CitClienteRegistroConcluirOut,
 
 cit_clientes_registros = APIRouter(prefix="/v2/nueva_cuenta", tags=["nueva cuenta"])
 
 
 @cit_clientes_registros.post("/solicitar", response_model=CitClienteRegistroOut)
-async def solicitar_nueva_cuenta(
+async def nueva_cuenta_solicitar(
     registro: CitClienteRegistroIn,
     db: Session = Depends(get_db),
 ):
     """Quiero crear una nueva cuenta, recibo el formulario con los datos personales"""
     try:
-        cit_cliente_registro = post_cit_cliente_registro(db, registro)
+        cit_cliente_registro = solicitar_nueva_cuenta(db, registro)
     except IndexError as error:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Not found: {str(error)}") from error
     except ValueError as error:
@@ -28,7 +28,7 @@ async def solicitar_nueva_cuenta(
 
 
 @cit_clientes_registros.get("/validar/<hashid:str>/<cadena_validar:str>", response_model=CitClienteRegistroValidarOut)
-async def validar_nueva_cuenta(
+async def nueva_cuenta_validar(
     hashid: str,
     cadena_validar: str,
     db: Session = Depends(get_db),
@@ -37,7 +37,7 @@ async def validar_nueva_cuenta(
 
 
 @cit_clientes_registros.post("/concluir", response_model=CitClienteRegistroConcluirOut)
-async def concluir_nueva_cuenta(
+async def nueva_cuenta_concluir(
     registro: CitClienteRegistroConcluirIn,
     db: Session = Depends(get_db),
 ):
