@@ -28,3 +28,19 @@ async def recuperar_cuenta(
         email=cit_cliente_recuperacion.cit_cliente.email,
         expiracion=cit_cliente_recuperacion.expiracion,
     )
+
+
+@cit_clientes_recuperaciones.get("/<cadena_validar:str>", response_model=CitClienteRecuperacionOut)
+async def recuperar_cuenta_cargar(
+    cadena_validar: str,
+    db: Session = Depends(get_db),
+):
+    """Cargar recuperar cuenta"""
+
+
+@cit_clientes_recuperaciones.post("/<cadena_validar:str>", response_model=CitClienteRecuperacionOut)
+async def recuperar_cuenta_entregar(
+    cadena_validar: str,
+    db: Session = Depends(get_db),
+):
+    """Entregar recuperar cuenta"""
