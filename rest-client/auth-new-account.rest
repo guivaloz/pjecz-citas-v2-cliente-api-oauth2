@@ -20,10 +20,15 @@ content-type: application/json
     "email": "pedro.infante@gmail.com"
 }
 
-### Equivocada
+### URL Incompleta
 GET {{baseUrl}}/validar
-    ?hashid=EsIncorr
-    ?cadena_validar=EstaCadenaNoEsCorrecta123452
+    ?user=ContrasenaAdmin
+    &pass=UnaMalaContrasena
+
+### URL Erronea
+GET {{baseUrl}}/validar
+    ?hashid=1F2GK3AS
+    &cadena_validar=EstaCadenaDeValicacionNoEsCorrecta
 
 ### Quiero crear una nueva cuenta, viene del URL proporcionado, entrego el formulario para definir la contrasena
 GET {{baseUrl}}/validar

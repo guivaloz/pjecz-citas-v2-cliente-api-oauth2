@@ -75,10 +75,17 @@ def concluir_recuperar_contrasena(db: Session, recuperacion: CitClienteRecuperac
     # Validar la recuperacion
     cit_cliente_recuperacion = validar_recuperar_contrasena(db, recuperacion.hashid, recuperacion.cadena_validar)
 
+    # Definir la fecha de renovación dos meses después
+    renovacion_fecha = datetime.now() + timedelta(days=60)
+
+    # Cifrar la contrasena
+    pwd_context = CryptContext(schemes=["pbkdf2_sha256", "des_crypt"], deprecated="auto")
+
     # Actualizar el cliente con la nueva contrasena
     cit_cliente = get_cit_cliente(db, cit_cliente_recuperacion.cit_cliente_id)
-    pwd_context = CryptContext(schemes=["pbkdf2_sha256", "des_crypt"], deprecated="auto")
+    cit_cliente.contrasena_md5 = ""
     cit_cliente.contrasena_sha256 = pwd_context.hash(recuperacion.password)
+    cit_cliente.renovacion=renovacion_fecha.date()
     db.add(cit_cliente)
 
     # Actualizar con ya_recuperado en verdadero
