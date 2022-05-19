@@ -10,3 +10,6 @@ Cree un archivo `.env` en este directorio con las variables de entorno...
     PORT=8005
     USERNAME=nombre.apellido@pjecz.gob.mx
     PASSWORD=EscribaAquiSuContrasena
+
+    HASHID=******
+    CADENA_VALIDAR=************************

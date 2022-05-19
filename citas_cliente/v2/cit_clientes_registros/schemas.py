@@ -7,7 +7,7 @@ from pydantic import BaseModel
 
 
 class CitClienteRegistroIn(BaseModel):
-    """Esquema para entregar registros de clientes"""
+    """Esquema para recibir al solicitar una nueva cuenta"""
 
     nombres: str
     apellido_primero: str
@@ -23,6 +23,24 @@ class CitClienteRegistroIn(BaseModel):
 
 
 class CitClienteRegistroOut(CitClienteRegistroIn):
-    """Esquema para entregar registros de clientes"""
+    """Esquema para entregar al solicitar una nueva cuenta"""
 
     expiracion: datetime
+    mensajes_cantidad: int
+    ya_registrado: bool
+
+
+class CitClienteRegistroValidarOut(CitClienteRegistroOut):
+    """Esquema para entregar al validar que llegue por el URL"""
+
+
+class CitClienteRegistroConcluirIn(BaseModel):
+    """Esquema para recibir al concluir la nueva cuenta"""
+
+    hashid: str
+    cadena_validar: str
+    password: str
+
+
+class CitClienteRegistroConcluirOut(CitClienteRegistroOut):
+    """Esquema para entregar al concluir la nueva cuenta"""

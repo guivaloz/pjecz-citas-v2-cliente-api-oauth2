@@ -21,11 +21,12 @@ class CitCliente(Base, UniversalMixin):
     # Columnas
     nombres = Column(String(256), nullable=False)
     apellido_primero = Column(String(256), nullable=False)
-    apellido_segundo = Column(String(256))
+    apellido_segundo = Column(String(256), nullable=False, default="")
     curp = Column(String(18), unique=True, nullable=False)
-    telefono = Column(String(64))
+    telefono = Column(String(64), nullable=False, default="")
     email = Column(String(256), unique=True, nullable=False)
-    contrasena = Column(String(256), nullable=False)
+    contrasena_md5 = Column(String(256), nullable=False, default="")
+    contrasena_sha256 = Column(String(256), nullable=False, default="")
     renovacion = Column(Date(), nullable=False)
 
     # Hijos
