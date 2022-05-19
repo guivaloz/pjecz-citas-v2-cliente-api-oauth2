@@ -43,7 +43,7 @@ def get_cit_cliente(username: str, db: Session = Depends(get_db)):
             "email": cit_cliente.email,
             "username": cit_cliente.email,
             "permissions": cit_cliente.permissions,
-            "hashed_password": cit_cliente.contrasena,
+            "hashed_password": cit_cliente.contrasena_sha256,
             "disabled": cit_cliente.estatus != "A",
         }
         return CitClienteInDB(**datos)

@@ -11,7 +11,8 @@ from lib.safe_string import safe_string, CURP_REGEXP, EMAIL_REGEXP, TELEFONO_REG
 
 from .models import CitClienteRegistro
 from .schemas import CitClienteRegistroIn, CitClienteRegistroConcluirIn
-from ..cit_clientes.crud import get_cit_cliente, get_cit_cliente_from_curp, get_cit_cliente_from_email
+from ..cit_clientes.crud import get_cit_cliente_from_curp, get_cit_cliente_from_email
+from ..cit_clientes.models import CitCliente
 
 EXPIRACION_HORAS = 48
 
@@ -100,7 +101,7 @@ def validar_nueva_cuenta(db: Session, hashid: str, cadena_validar: str) -> CitCl
         raise IndexError("No es activa esa solicitud de nueva cuenta, fue eliminada")
 
     # Si ya se recupero causa excepcion
-    if cit_cliente_registro.ya_registrada is True:
+    if cit_cliente_registro.ya_registrado is True:
         raise IndexError("No se puede registrar esta cuenta porque ya fue hecha")
 
     # Comparar la cadena de validacion
@@ -117,10 +118,24 @@ def concluir_nueva_cuenta(db: Session, registro: CitClienteRegistroConcluirIn) -
     # Ejecutar la funcion que nos apoya con la validacion
     cit_cliente_registro = validar_nueva_cuenta(db, registro.hashid, registro.cadena_validar)
 
-    # Actualizar el cliente con la nueva contrasena
-    cit_cliente = get_cit_cliente(db, cit_cliente_registro.cit_cliente_id)
+    # Definir la fecha de renovación dos meses después
+    renovacion_fecha = datetime.now() + timedelta(days=60)
+
+    # Cifrar la contrasena
     pwd_context = CryptContext(schemes=["pbkdf2_sha256", "des_crypt"], deprecated="auto")
-    cit_cliente.contrasena_sha256 = pwd_context.hash(registro.password)
+
+    # Insertar el nuevo cliente
+    cit_cliente = CitCliente(
+        nombres=cit_cliente_registro.nombres,
+        apellido_primero=cit_cliente_registro.apellido_primero,
+        apellido_segundo=cit_cliente_registro.apellido_segundo,
+        curp=cit_cliente_registro.curp,
+        telefono=cit_cliente_registro.telefono,
+        email=cit_cliente_registro.email,
+        contrasena_md5="",
+        contrasena_sha256=pwd_context.hash(registro.password),
+        renovacion=renovacion_fecha.date(),
+    )
     db.add(cit_cliente)
 
     # Actualizar con ya_registrado en verdadero

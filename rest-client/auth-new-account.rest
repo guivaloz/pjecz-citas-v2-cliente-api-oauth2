@@ -1,7 +1,8 @@
 @root = http://{{$dotenv HOST}}:{{$dotenv PORT}}
 @baseUrl = {{root}}/v2/nueva_cuenta
-@hashid = XXXX
-@cadena_validar = XXXX
+@hashid = {{$dotenv HASHID}}
+@cadena_validar = {{$dotenv CADENA_VALIDAR}}
+@password = {{$dotenv PASSWORD}}
 
 ### Bienvenida
 GET {{root}}
@@ -19,6 +20,11 @@ content-type: application/json
     "email": "pedro.infante@gmail.com"
 }
 
+### Equivocada
+GET {{baseUrl}}/validar
+    ?hashid=EsIncorr
+    ?cadena_validar=EstaCadenaNoEsCorrecta123452
+
 ### Quiero crear una nueva cuenta, viene del URL proporcionado, entrego el formulario para definir la contrasena
 GET {{baseUrl}}/validar
     ?hashid={{hashid}}
@@ -31,5 +37,5 @@ content-type: application/json
 {
     "hashid": "{{hashid}}",
     "cadena_validar": "{{cadena_validar}}",
-    "password": "Zebra13Blanca"
+    "password": "{{password}}"
 }

@@ -27,13 +27,17 @@ async def nueva_cuenta_solicitar(
     return CitClienteRegistroOut.from_orm(cit_cliente_registro)
 
 
-@cit_clientes_registros.get("/validar/<hashid:str>/<cadena_validar:str>", response_model=CitClienteRegistroValidarOut)
+@cit_clientes_registros.get("/validar", response_model=CitClienteRegistroValidarOut)
 async def nueva_cuenta_validar(
-    hashid: str,
-    cadena_validar: str,
+    hashid: str = None,
+    cadena_validar: str = None,
     db: Session = Depends(get_db),
 ):
     """Quiero crear una nueva cuenta, viene del URL proporcionado, entrego el formulario para definir la contrasena"""
+    if not isinstance(hashid, str):
+        raise HTTPException(status_code=status.HTTP_406_NOT_ACCEPTABLE)
+    if not isinstance(cadena_validar, str):
+        raise HTTPException(status_code=status.HTTP_406_NOT_ACCEPTABLE)
     try:
         cit_cliente_registro = validar_nueva_cuenta(db, hashid, cadena_validar)
     except IndexError as error:

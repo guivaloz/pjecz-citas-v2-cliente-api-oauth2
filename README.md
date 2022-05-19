@@ -21,7 +21,7 @@ Cree un archivo para las variables de entorno `.env`
     ALGORITHM=HS256
     SECRET_KEY=****************************************************************
 
-    # Salt para convertir/reconverir el id en hash
+    # Salt sirve para cifrar el ID con HashID, debe ser igual en Admin
     SALT=********************************
 
 Para Bash Shell cree un archivo `.bashrc` con este contenido
