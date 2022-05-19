@@ -27,13 +27,17 @@ async def recuperar_contrasena_solicitar(
     return CitClienteRecuperacionOut.from_orm(cit_cliente_recuperacion)
 
 
-@cit_clientes_recuperaciones.get("/validar/<hashid:str>/<cadena_validar:str>", response_model=CitClienteRecuperacionValidarOut)
+@cit_clientes_recuperaciones.get("/validar", response_model=CitClienteRecuperacionValidarOut)
 async def recuperar_contrasena_validar(
-    hashid: str,
-    cadena_validar: str,
+    hashid: str = None,
+    cadena_validar: str = None,
     db: Session = Depends(get_db),
 ):
     """Olvide mi contrasena, viene del URL proporcionado, entrego el formulario para cambiarla"""
+    if not isinstance(hashid, str):
+        raise HTTPException(status_code=status.HTTP_406_NOT_ACCEPTABLE)
+    if not isinstance(cadena_validar, str):
+        raise HTTPException(status_code=status.HTTP_406_NOT_ACCEPTABLE)
     try:
         cit_cliente_recuperacion = validar_recuperar_contrasena(db, hashid, cadena_validar)
     except IndexError as error:

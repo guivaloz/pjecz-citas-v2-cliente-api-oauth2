@@ -32,6 +32,11 @@ class CitClienteRecuperacion(Base, UniversalMixin):
         """Retorna el email del cliente"""
         return self.cit_cliente.email
 
+    @property
+    def email(self):
+        """Retorna el email del cliente"""
+        return self.cit_cliente.email
+
     def __repr__(self):
         """Representación"""
         return f"<CitClienteRecuperacion {self.id}>"

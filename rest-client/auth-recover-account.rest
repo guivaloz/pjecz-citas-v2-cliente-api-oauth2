@@ -1,7 +1,9 @@
 @root = http://{{$dotenv HOST}}:{{$dotenv PORT}}
 @baseUrl = {{root}}/v2/recuperar_contrasena
-@hashid = XXXX
-@cadena_validar = XXXX
+@username = {{$dotenv USERNAME}}
+@password = {{$dotenv PASSWORD}}
+@hashid = {{$dotenv HASHID}}
+@cadena_validar = {{$dotenv CADENA_VALIDAR}}
 
 ### Bienvenida
 GET {{root}}
@@ -11,8 +13,18 @@ POST {{baseUrl}}/solicitar
 content-type: application/json
 
 {
-    "email": "guivaloz@gmail.com"
+    "email": "{{username}}"
 }
+
+### URL Incompleta
+GET {{baseUrl}}/validar
+    ?user=ContrasenaAdmin
+    &pass=UnaMalaContrasena
+
+### URL Erronea
+GET {{baseUrl}}/validar
+    ?hashid=1F2GK3AS
+    &cadena_validar=EstaCadenaDeValicacionNoEsCorrecta
 
 ### Olvide mi contrasena, viene del URL proporcionado, entrego el formulario para cambiarla
 GET {{baseUrl}}/validar
@@ -26,5 +38,5 @@ content-type: application/json
 {
     "hashid": "{{hashid}}",
     "cadena_validar": "{{cadena_validar}}",
-    "password": "Zebra13Blanca"
+    "password": "{{password}}"
 }

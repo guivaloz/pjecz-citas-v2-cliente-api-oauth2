@@ -10,6 +10,11 @@ class CitClienteRecuperacionIn(BaseModel):
 
     email: str
 
+    class Config:
+        """SQLAlchemy config"""
+
+        orm_mode = True
+
 
 class CitClienteRecuperacionOut(CitClienteRecuperacionIn):
     """Esquema para entregar al solicitar cambio de contrasena"""
