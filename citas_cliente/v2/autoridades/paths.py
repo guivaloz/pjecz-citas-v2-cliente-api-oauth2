@@ -11,7 +11,7 @@ from lib.fastapi_pagination import LimitOffsetPage
 from ..cit_clientes.authentications import get_current_active_user
 from ..cit_clientes.schemas import CitClienteInDB
 from ..permisos.models import Permiso
-from .crud import get_autoridad_from_clave, get_autoridades
+from .crud import get_autoridad, get_autoridades
 from .schemas import AutoridadOut
 
 autoridades = APIRouter(prefix="/v2/autoridades", tags=["autoridades"])
@@ -40,9 +40,9 @@ async def listado_autoridades(
     return paginate(listado)
 
 
-@autoridades.get("/{clave}", response_model=AutoridadOut)
+@autoridades.get("/{autoridad_id}", response_model=AutoridadOut)
 async def detalle_autoridad(
-    clave: str,
+    autoridad_id: int,
     current_user: CitClienteInDB = Depends(get_current_active_user),
     db: Session = Depends(get_db),
 ):
@@ -50,7 +50,7 @@ async def detalle_autoridad(
     if "AUTORIDADES" not in current_user.permissions or current_user.permissions["AUTORIDADES"] < Permiso.VER:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Forbidden")
     try:
-        autoridad = get_autoridad_from_clave(db, clave=clave)
+        autoridad = get_autoridad(db, autoridad_id=autoridad_id)
     except IndexError as error:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Not found: {str(error)}") from error
     except ValueError as error:
