@@ -26,11 +26,11 @@ def get_cit_cliente(db: Session, cit_cliente_id: int) -> CitCliente:
     return cit_cliente
 
 
-def get_cit_cliente_from_curp(db: Session, curp: str) -> CitCliente:
+def get_cit_cliente_from_curp(db: Session, cliente_curp: str) -> CitCliente:
     """Consultar un cliente por su curp"""
-    if re.match(CURP_REGEXP, curp) is None:
+    if re.match(CURP_REGEXP, cliente_curp) is None:
         raise ValueError("El CURP no es valido")
-    cit_cliente = db.query(CitCliente).filter_by(curp=curp).first()
+    cit_cliente = db.query(CitCliente).filter_by(curp=cliente_curp).first()
     if cit_cliente is None:
         raise IndexError("No existe ese cliente")
     if cit_cliente.estatus != "A":
@@ -38,11 +38,11 @@ def get_cit_cliente_from_curp(db: Session, curp: str) -> CitCliente:
     return cit_cliente
 
 
-def get_cit_cliente_from_email(db: Session, email: str) -> CitCliente:
+def get_cit_cliente_from_email(db: Session, cliente_email: str) -> CitCliente:
     """Consultar un cliente por su id"""
-    if re.match(EMAIL_REGEXP, email) is None:
+    if re.match(EMAIL_REGEXP, cliente_email) is None:
         raise ValueError("El correo electronico no es valido")
-    cit_cliente = db.query(CitCliente).filter_by(email=email).first()
+    cit_cliente = db.query(CitCliente).filter_by(email=cliente_email).first()
     if cit_cliente is None:
         raise IndexError("No existe ese cliente")
     if cit_cliente.estatus != "A":
