@@ -37,7 +37,7 @@ async def detalle_cit_cliente(
     if "CIT CLIENTES" not in current_user.permissions or current_user.permissions["CIT CLIENTES"] < Permiso.VER:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Forbidden")
     try:
-        cit_cliente = get_cit_cliente(db, cit_cliente_id)
+        cit_cliente = get_cit_cliente(db, cit_cliente_id=cit_cliente_id)
     except IndexError as error:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Not found: {str(error)}") from error
     except ValueError as error:
