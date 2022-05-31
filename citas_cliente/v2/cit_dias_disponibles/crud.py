@@ -10,7 +10,10 @@ from ..cit_dias_inhabiles.crud import get_cit_dias_inhabiles
 LIMITE_DIAS = 90
 
 
-def get_cit_dias_disponibles(db: Session, oficina_id: int = None) -> Any:
+def get_cit_dias_disponibles(
+    db: Session,
+    oficina_id: int,
+) -> Any:
     """Consultar los dias disponibles, entrega un listado de fechas"""
     dias_disponibles = []
 
