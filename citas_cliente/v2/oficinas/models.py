@@ -34,6 +34,8 @@ class Oficina(Base, UniversalMixin):
     limite_personas = Column(Integer(), nullable=False)
 
     # Hijos
+    cit_citas = relationship("CitCita", back_populates="oficina")
+    cit_horas_bloqueadas = relationship("CitHoraBloqueada", back_populates="oficina")
     cit_oficinas_servicios = relationship("CitOficinaServicio", back_populates="oficina")
 
     @property

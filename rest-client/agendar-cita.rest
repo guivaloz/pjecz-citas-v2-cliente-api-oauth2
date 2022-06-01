@@ -32,7 +32,7 @@ GET {{baseUrl}}/cit_dias_disponibles
     ?oficina_id=71
 Authorization: Bearer {{auth.response.body.access_token}}
 
-### GET Horas para elegir POR PROGRAMAR
+### GET Horas para elegir
 GET {{baseUrl}}/cit_horas_disponibles
     ?oficina_id=71
     &cit_servicio_id=2
