@@ -11,5 +11,9 @@ from .models import CitDiaInhabil
 def get_cit_dias_inhabiles(db: Session) -> Any:
     """Consultar los dias inhabiles activos"""
     consulta = db.query(CitDiaInhabil)
-    consulta.filter(CitDiaInhabil.fecha >= date.today())
+
+    # Filtrar por fechas en el futuro
+    consulta = consulta.filter(CitDiaInhabil.fecha >= date.today())
+
+    # Entregar
     return consulta.filter_by(estatus="A").order_by(CitDiaInhabil.id)

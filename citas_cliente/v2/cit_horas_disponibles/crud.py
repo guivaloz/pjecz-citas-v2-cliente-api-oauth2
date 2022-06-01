@@ -1,11 +1,13 @@
 """
 Cit Horas Disponibles V2, CRUD (create, read, update, and delete)
 """
-from datetime import date, timedelta, datetime, time
+from datetime import date, timedelta, datetime
 from typing import Any
 from sqlalchemy.orm import Session
 
+from ..cit_citas.crud import get_cit_citas
 from ..cit_dias_inhabiles.crud import get_cit_dias_inhabiles
+from ..cit_horas_bloqueadas.crud import get_horas_bloquedas
 from ..cit_servicios.crud import get_cit_servicio
 from ..oficinas.crud import get_oficina
 
@@ -19,7 +21,6 @@ def get_cit_horas_disponibles(
     fecha: date,
 ) -> Any:
     """Consultar las horas disponibles, entrega un listado de horas"""
-    horas_disponibles = []
 
     # Consultar oficina
     oficina = get_oficina(db, oficina_id)  # Causara index error si no existe, esta eliminada o no puede agendar citas
@@ -67,22 +68,43 @@ def get_cit_horas_disponibles(
         minutes=cit_servicio.duracion.minute,
     )
 
-    # Consultar las horas bloquedas
+    # Consultar las horas bloquedas y convertirlas a datetime para compararlas
+    tiempos_bloqueados = []
+    cit_horas_bloqueadas = get_horas_bloquedas(db, oficina_id=oficina_id, fecha=fecha).all()
+    for cit_hora_bloqueada in cit_horas_bloqueadas:
+        tiempos_bloqueados.append(
+            datetime(
+                year=fecha.year,
+                month=fecha.month,
+                day=fecha.day,
+                hour=cit_hora_bloqueada.inicio.hour,
+                minute=cit_hora_bloqueada.inicio.minute,
+                second=0,
+            )
+        )
 
     # Revisar citas agendadas para la fecha
+    cit_citas = get_cit_citas(db, oficina_id=oficina_id, fecha=fecha).all()
+    tiempos_ocupados = [item.inicio for item in cit_citas]
 
     # Bucle por los intervalos
+    horas_minutos_segundos_disponibles = []
     tiempo = tiempo_inicial
-    while tiempo <= tiempo_final:
+    while tiempo < tiempo_final:
         # Quitar las horas bloqueadas
+        if tiempo in tiempos_bloqueados:
+            continue
         # Quitar las horas ocupadas
+        if tiempo in tiempos_ocupados:
+            continue
         # Acumular
-        horas_disponibles.append(tiempo.time())
+        horas_minutos_segundos_disponibles.append(tiempo.time())
         # Siguiente intervalo
         tiempo = tiempo + duracion
 
-    # Quitar la ultima hora disponible
-    horas_disponibles.pop()
+    # Que hacer cuando no haya horas_minutos_segundos_disponibles
+    if len(horas_minutos_segundos_disponibles) == 0:
+        raise IndexError("No hay horas disponibles")
 
     # Entregar
-    return horas_disponibles
+    return horas_minutos_segundos_disponibles
