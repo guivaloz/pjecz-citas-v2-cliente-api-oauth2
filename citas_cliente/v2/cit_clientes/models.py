@@ -46,6 +46,7 @@ class CitCliente(Base, UniversalMixin):
         return {
             "AUTORIDADES": 1,
             "CIT DIAS DISPONIBLES": 1,
+            "CIT HORAS DISPONIBLES": 1,
             "CIT OFICINAS SERVICIOS": 1,
             "CIT SERVICIOS": 1,
             "DISTRITOS": 1,

@@ -85,7 +85,7 @@ def concluir_recuperar_contrasena(db: Session, recuperacion: CitClienteRecuperac
     cit_cliente = get_cit_cliente(db, cit_cliente_recuperacion.cit_cliente_id)
     cit_cliente.contrasena_md5 = ""
     cit_cliente.contrasena_sha256 = pwd_context.hash(recuperacion.password)
-    cit_cliente.renovacion=renovacion_fecha.date()
+    cit_cliente.renovacion = renovacion_fecha.date()
     db.add(cit_cliente)
 
     # Actualizar con ya_recuperado en verdadero
