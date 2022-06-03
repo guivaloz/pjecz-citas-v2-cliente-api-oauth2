@@ -42,6 +42,21 @@ class CitCita(Base, UniversalMixin):
     estado = Column(Enum(*ESTADOS, name="tipos_estados", native_enum=False))
     asistencia = Column(Boolean(), nullable=False, default=False, server_default="false")
 
+    @property
+    def cit_servicio_descripcion(self):
+        """Descripción del servicio"""
+        return self.cit_servicio.descripcion
+
+    @property
+    def cit_cliente_nombre(self):
+        """Nombre del cliente"""
+        return self.cit_cliente.nombre
+
+    @property
+    def oficina_descripcion_corta(self):
+        """Descripción corta de la oficina"""
+        return self.oficina.descripcion_corta
+
     def __repr__(self):
         """Representación"""
         return f"<CitCita {self.id}>"
