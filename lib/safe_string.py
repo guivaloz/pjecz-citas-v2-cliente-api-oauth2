@@ -21,6 +21,17 @@ def safe_clave(input_str):
     return new_string
 
 
+def safe_email(input_str):
+    """Safe email"""
+    if not isinstance(input_str, str) or input_str.strip() == "":
+        return ""
+    new_string = input_str.strip().lower()
+    regexp = re.compile(EMAIL_REGEXP)
+    if regexp.match(new_string) is None:
+        return ""
+    return new_string
+
+
 def safe_expediente(input_str):
     """Safe expediente"""
     if not isinstance(input_str, str) or input_str.strip() == "":
