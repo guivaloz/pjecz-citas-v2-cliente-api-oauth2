@@ -19,7 +19,7 @@ def get_cit_citas(
 
     # Consultar el cliente
     cit_cliente = get_cit_cliente(db, cit_cliente_id=cit_cliente_id)  # Causara index error si no existe o esta eliminada
-    consulta = consulta.filter_by(CitCita.cit_cliente == cit_cliente)
+    consulta = consulta.filter(CitCita.cit_cliente == cit_cliente)
 
     # Se consultan todas los citas desde hoy
     fecha = date.today()
