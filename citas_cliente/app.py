@@ -13,6 +13,7 @@ from config.settings import ACCESS_TOKEN_EXPIRE_MINUTES
 from lib.database import get_db
 
 from citas_cliente.v2.autoridades.paths import autoridades
+from citas_cliente.v2.cit_citas.paths import cit_citas
 from citas_cliente.v2.cit_clientes.paths import cit_clientes
 from citas_cliente.v2.cit_clientes_recuperaciones.paths import cit_clientes_recuperaciones
 from citas_cliente.v2.cit_clientes_registros.paths import cit_clientes_registros
@@ -50,6 +51,7 @@ app.add_middleware(
 
 # Paths
 app.include_router(autoridades)
+app.include_router(cit_citas)
 app.include_router(cit_clientes)
 app.include_router(cit_clientes_recuperaciones)
 app.include_router(cit_clientes_registros)

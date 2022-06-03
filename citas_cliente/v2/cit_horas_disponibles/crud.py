@@ -5,7 +5,7 @@ from datetime import date, timedelta, datetime
 from typing import Any
 from sqlalchemy.orm import Session
 
-from ..cit_citas.crud import get_cit_citas
+from ..cit_citas.crud import get_cit_citas_anonimas
 from ..cit_dias_inhabiles.crud import get_cit_dias_inhabiles
 from ..cit_horas_bloqueadas.crud import get_horas_bloquedas
 from ..cit_servicios.crud import get_cit_servicio
@@ -84,7 +84,7 @@ def get_cit_horas_disponibles(
         )
 
     # Revisar citas agendadas para la fecha
-    cit_citas = get_cit_citas(db, oficina_id=oficina_id, fecha=fecha).all()
+    cit_citas = get_cit_citas_anonimas(db, oficina_id=oficina_id, fecha=fecha).all()
     tiempos_ocupados = [item.inicio for item in cit_citas]
 
     # Bucle por los intervalos
@@ -95,6 +95,7 @@ def get_cit_horas_disponibles(
         if tiempo in tiempos_bloqueados:
             continue
         # Quitar las horas ocupadas
+        # TODO: Y los limites de personas ???
         if tiempo in tiempos_ocupados:
             continue
         # Acumular
