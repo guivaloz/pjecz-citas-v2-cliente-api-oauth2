@@ -1,13 +1,14 @@
 """
 Cit Citas V2, CRUD (create, read, update, and delete)
 """
-from datetime import date, datetime
+from datetime import date, datetime, time
 from typing import Any
 from sqlalchemy.orm import Session
 
 from ..cit_clientes.crud import get_cit_cliente
 from ..oficinas.crud import get_oficina
 from .models import CitCita
+from .schemas import CitCitaOut
 
 
 def get_cit_citas(
@@ -75,3 +76,15 @@ def get_cit_citas_anonimas(
 
     # Entregar
     return consulta.filter_by(estatus="A").order_by(CitCita.id)
+
+
+def create_cit_cita(
+    db: Session,
+    cit_cliente_id: int,
+    oficina_id: int,
+    cit_servicio_id: int,
+    fecha: date,
+    hora_minuto: time,
+    nota: str,
+) -> CitCitaOut:
+    """Crear una cita"""
