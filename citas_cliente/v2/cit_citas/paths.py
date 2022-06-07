@@ -12,7 +12,7 @@ from lib.fastapi_pagination import LimitOffsetPage
 from ..cit_clientes.authentications import get_current_active_user
 from ..cit_clientes.schemas import CitClienteInDB
 from ..permisos.models import Permiso
-from .crud import get_cit_cita, get_cit_citas, create_cit_cita
+from .crud import cancel_cit_cita, create_cit_cita, get_cit_cita, get_cit_citas
 from .schemas import CitCitaOut
 
 cit_citas = APIRouter(prefix="/v2/cit_citas", tags=["citas"])
@@ -90,4 +90,16 @@ async def cancelar_cit_citas(
     db: Session = Depends(get_db),
 ):
     """Cancelar una cita"""
-    return None
+    if "CIT CITAS" not in current_user.permissions or current_user.permissions["CIT CITAS"] < Permiso.MODIFICAR:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Forbidden")
+    try:
+        cit_cita = cancel_cit_cita(
+            db,
+            cit_cliente_id=current_user.id,
+            cit_cita_id=cit_cita_id,
+        )
+    except IndexError as error:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Not found: {str(error)}") from error
+    except ValueError as error:
+        raise HTTPException(status_code=status.HTTP_406_NOT_ACCEPTABLE, detail=f"Not acceptable: {str(error)}") from error
+    return CitCitaOut.from_orm(cit_cita)

@@ -108,6 +108,15 @@ def cancel_cit_cita(db: Session, cit_cliente_id: int, cit_cita_id: int) -> CitCi
     # Consultar
     cit_cita = get_cit_cita(db, cit_cliente_id, cit_cita_id)
 
+    # Validar que el estado sea PENDIENTE
+    if cit_cita.estado != "PENDIENTE":
+        raise ValueError("No se puede cancelar esta cita porque no esta pendiente")
+
+    # Validar la fecha, no debe ser de hoy o del pasado
+    manana = date.today() + timedelta(days=1)
+    if cit_cita.inicio < datetime(year=manana.year, month=manana.month, day=manana.day):
+        raise ValueError("No se puede cancelar esta cita porque es de hoy o del pasado")
+
     # Actualizar registro
     cit_cita.estado = "CANCELO"
     db.add(cit_cita)
