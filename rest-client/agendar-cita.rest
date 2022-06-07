@@ -43,7 +43,19 @@ Authorization: Bearer {{auth.response.body.access_token}}
 POST {{baseUrl}}/cit_citas/nueva
     ?oficina_id=71
     &cit_servicio_id=2
-    &fecha=2022-06-08
-    &hora_minuto=16:30
+    &fecha=2022-06-13
+    &hora_minuto=10:15
     &nota=BlaBlaBla
+Authorization: Bearer {{auth.response.body.access_token}}
+
+### GET mis citas
+GET {{baseUrl}}/cit_citas
+Authorization: Bearer {{auth.response.body.access_token}}
+
+### GET consultar una cita
+GET {{baseUrl}}/cit_citas/3
+Authorization: Bearer {{auth.response.body.access_token}}
+
+### GET cancelar una cita
+GET {{baseUrl}}/cit_citas/cancelar/3
 Authorization: Bearer {{auth.response.body.access_token}}

@@ -50,7 +50,7 @@ async def detalle_cit_cita(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Not found: {str(error)}") from error
     except ValueError as error:
         raise HTTPException(status_code=status.HTTP_406_NOT_ACCEPTABLE, detail=f"Not acceptable: {str(error)}") from error
-    return cit_cita.from_orm(cit_cita)
+    return CitCitaOut.from_orm(cit_cita)
 
 
 @cit_citas.post("/nueva", response_model=CitCitaOut)

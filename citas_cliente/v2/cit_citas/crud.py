@@ -42,6 +42,9 @@ def get_cit_citas(
     )
     consulta = consulta.filter(CitCita.inicio >= desde_tiempo)
 
+    # Filtro por estado, solo PENDIENTE
+    consulta = consulta.filter_by(estado="PENDIENTE")
+
     # Entregar
     return consulta.filter_by(estatus="A").order_by(CitCita.id)
 
