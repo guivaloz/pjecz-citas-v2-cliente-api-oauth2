@@ -1,19 +1,18 @@
 """
 Cit Citas V2, CRUD (create, read, update, and delete)
 """
-from datetime import date, datetime, time
+from datetime import date, datetime, time, timedelta
 from typing import Any
 from sqlalchemy.orm import Session
 
 from lib.safe_string import safe_string
 
 from ..cit_clientes.crud import get_cit_cliente
+from ..cit_dias_inhabiles.crud import get_cit_dias_inhabiles
+from ..cit_servicios.crud import get_cit_servicio
 from ..oficinas.crud import get_oficina
 from .models import CitCita
 from .schemas import CitCitaOut
-
-from ..cit_servicios.crud import get_cit_servicio
-from ..oficinas.crud import get_oficina
 
 LIMITE_DIAS = 90
 
@@ -138,17 +137,35 @@ def create_cit_cita(
 
     # Validar que ese servicio lo ofrezca esta oficina
 
-    # Validar la fecha, debe desde manana
+    # Validar la fecha, no debe ser de hoy o del pasado
+    if fecha <= date.today() + timedelta(days=1):
+        raise ValueError("No es valida la fecha porque es de hoy o del pasado")
 
     # Validar la fecha, no debe de pasar de LIMITE_DIAS
+    if fecha > date.today() + timedelta(days=LIMITE_DIAS):
+        raise ValueError("No es valida la fecha porque pasa el limite de dias en el futuro")
 
-    # Validar la hora_minuto, debe de estar dentro del horario de la oficina
+    # Validar la fecha, no debe ser sabado o domingo
+    if fecha.weekday() in (5, 6):
+        raise ValueError("No es valida la fecha porque cae en sabado o domingo")
 
-    # Definir el inicio
-    inicio_dt = None
+    # Validar la fecha, no debe ser inhabil
+    if fecha in [item.fecha for item in get_cit_dias_inhabiles(db)]:
+        raise ValueError("No es valida la fecha porque es un dia inhabil")
 
-    # Definir el termino
-    termino_dt = None
+    # Definir los tiempos de la cita
+    inicio_dt = datetime(year=fecha.year, month=fecha.month, day=fecha.day, hour=hora_minuto.hour, minute=hora_minuto.minute)
+    termino_dt = datetime(year=fecha.year, month=fecha.month, day=fecha.day, hour=hora_minuto.hour, minute=hora_minuto.minute) + timedelta(hours=cit_servicio.duracion.hour, minutes=cit_servicio.duracion.minute)
+
+    # Definir los tiempos de la oficina
+    oficina_apertura_dt = datetime(year=fecha.year, month=fecha.month, day=fecha.day, hour=oficina.apertura.hour, minute=oficina.apertura.minute)
+    oficina_cierre_dt = datetime(year=fecha.year, month=fecha.month, day=fecha.day, hour=oficina.cierre.hour, minute=oficina.cierre.minute)
+
+    # Validar la hora_minuto, respecto a la apertura de la oficina
+    if inicio_dt < oficina_apertura_dt:
+        raise ValueError("No es valida la hora-minuto porque es anterior a la apertura")
+    if termino_dt > oficina_cierre_dt:
+        raise ValueError("No es valida la hora-minuto porque el termino es posterior al cierre")
 
     # Insertar registro
     cit_cita = CitCita(
