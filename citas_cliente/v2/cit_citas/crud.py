@@ -147,7 +147,7 @@ def create_cit_cita(
     # Validar que ese servicio lo ofrezca esta oficina
 
     # Validar la fecha, no debe ser de hoy o del pasado
-    if fecha <= date.today() + timedelta(days=1):
+    if fecha <= date.today():
         raise ValueError("No es valida la fecha porque es de hoy o del pasado")
 
     # Validar la fecha, no debe de pasar de LIMITE_DIAS

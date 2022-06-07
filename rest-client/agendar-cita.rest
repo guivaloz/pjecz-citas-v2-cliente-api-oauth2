@@ -36,14 +36,14 @@ Authorization: Bearer {{auth.response.body.access_token}}
 GET {{baseUrl}}/cit_horas_disponibles
     ?oficina_id=71
     &cit_servicio_id=2
-    &fecha=2022-06-02
+    &fecha=2022-06-09
 Authorization: Bearer {{auth.response.body.access_token}}
 
-### POST crear cita POR PROGRAMAR
-POST {{baseUrl}}/cit_citas
+### POST crear cita
+POST {{baseUrl}}/cit_citas/nueva
     ?oficina_id=71
     &cit_servicio_id=2
     &fecha=2022-06-08
-    &hora_minuto=10:30
-    &notas=blablabla
+    &hora_minuto=16:30
+    &nota=BlaBlaBla
 Authorization: Bearer {{auth.response.body.access_token}}
