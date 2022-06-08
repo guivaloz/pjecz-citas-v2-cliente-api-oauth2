@@ -30,21 +30,21 @@ def get_cit_horas_disponibles(
 
     # Validar que la fecha no sea del pasado
     if fecha <= date.today():
-        raise IndexError("No puede agendar citas para hoy o en el pasado")
+        raise ValueError("No puede agendar citas para hoy o en el pasado")
 
     # Validar que la fecha no sea posterior al LIMITE_DIAS
     if fecha > date.today() + timedelta(LIMITE_DIAS):
-        raise IndexError(f"No puede agendar citas en mas de {LIMITE_DIAS} dias")
+        raise ValueError(f"No puede agendar citas en mas de {LIMITE_DIAS} dias")
 
     # Validar que la fecha no sea sabado o domingo
     if fecha.weekday() in (5, 6):
-        raise IndexError("No puede agendar citas en fines de semana")
+        raise ValueError("No puede agendar citas en fines de semana")
 
     # Validar que la fecha no sea un dia inhabil
     cit_dias_inhabiles = get_cit_dias_inhabiles(db).all()
     dias_inhabiles = [item.fecha for item in cit_dias_inhabiles]
     if fecha in dias_inhabiles:
-        raise IndexError("No puede agendar citas en dias inhabiles")
+        raise ValueError("No puede agendar citas en dias inhabiles")
 
     # Definir los tiempos de inicio, de termino y el timedelta de la duracion
     tiempo_inicial = datetime(
@@ -110,7 +110,7 @@ def get_cit_horas_disponibles(
 
     # Que hacer cuando no haya horas_minutos_segundos_disponibles
     if len(horas_minutos_segundos_disponibles) == 0:
-        raise IndexError("No hay horas disponibles")
+        raise ValueError("No hay horas disponibles")
 
     # Entregar
     return horas_minutos_segundos_disponibles
