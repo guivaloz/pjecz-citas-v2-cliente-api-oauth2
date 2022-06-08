@@ -96,15 +96,18 @@ def get_cit_horas_disponibles(
     horas_minutos_segundos_disponibles = []
     tiempo = tiempo_inicial
     while tiempo < tiempo_final:
+        # Bandera
+        es_hora_disponible = True
         # Quitar las horas bloqueadas
         if tiempo in tiempos_bloqueados:
-            continue
+            es_hora_disponible = False
         # Quitar las horas ocupadas
         if tiempo in citas_ya_agendadas:
             if citas_ya_agendadas[tiempo] >= oficina.limite_personas:
-                continue
-        # Acumular
-        horas_minutos_segundos_disponibles.append(tiempo.time())
+                es_hora_disponible = False
+        # Acumular si es hora disponible
+        if es_hora_disponible:
+            horas_minutos_segundos_disponibles.append(tiempo.time())
         # Siguiente intervalo
         tiempo = tiempo + duracion
 
