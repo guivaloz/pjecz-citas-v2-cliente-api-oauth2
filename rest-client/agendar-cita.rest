@@ -22,6 +22,10 @@ GET {{baseUrl}}/oficinas
     ?distrito_id=6
 Authorization: Bearer {{auth.response.body.access_token}}
 
+### Oficina 71 J TERCERO FAMILIAR SALTILLO
+GET {{baseUrl}}/oficinas/71
+Authorization: Bearer {{auth.response.body.access_token}}
+
 ### GET Servicios de la Oficina
 GET {{baseUrl}}/cit_oficinas_servicios
     ?oficina_id=71
@@ -43,9 +47,9 @@ Authorization: Bearer {{auth.response.body.access_token}}
 POST {{baseUrl}}/cit_citas/nueva
     ?oficina_id=71
     &cit_servicio_id=2
-    &fecha=2022-06-13
-    &hora_minuto=10:15
-    &nota=BlaBlaBla
+    &fecha=2022-06-14
+    &hora_minuto=09:00
+    &nota=UnaCitaMas
 Authorization: Bearer {{auth.response.body.access_token}}
 
 ### GET mis citas

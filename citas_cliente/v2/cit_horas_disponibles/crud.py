@@ -83,9 +83,14 @@ def get_cit_horas_disponibles(
             )
         )
 
-    # Revisar citas agendadas para la fecha
-    cit_citas = get_cit_citas_anonimas(db, oficina_id=oficina_id, fecha=fecha).all()
-    tiempos_ocupados = [item.inicio for item in cit_citas]
+    # Acumular las citas agendadas en un diccionario de tiempos y cantidad de citas, para la oficina en la fecha
+    # { 08:30: 2, 08:45: 1, 10:00: 2,... }
+    citas_ya_agendadas = {}
+    for cit_cita in get_cit_citas_anonimas(db, oficina_id=oficina_id, fecha=fecha).all():
+        if cit_cita.inicio not in citas_ya_agendadas:
+            citas_ya_agendadas[cit_cita.inicio] = 1
+        else:
+            citas_ya_agendadas[cit_cita.inicio] += 1
 
     # Bucle por los intervalos
     horas_minutos_segundos_disponibles = []
@@ -95,9 +100,9 @@ def get_cit_horas_disponibles(
         if tiempo in tiempos_bloqueados:
             continue
         # Quitar las horas ocupadas
-        # TODO: Y los limites de personas ???
-        if tiempo in tiempos_ocupados:
-            continue
+        if tiempo in citas_ya_agendadas:
+            if citas_ya_agendadas[tiempo] >= oficina.limite_personas:
+                continue
         # Acumular
         horas_minutos_segundos_disponibles.append(tiempo.time())
         # Siguiente intervalo
