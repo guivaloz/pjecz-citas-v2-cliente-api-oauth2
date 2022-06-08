@@ -9,6 +9,7 @@ from lib.safe_string import safe_string
 
 from ..cit_clientes.crud import get_cit_cliente
 from ..cit_dias_inhabiles.crud import get_cit_dias_inhabiles
+from ..cit_oficinas_servicios.crud import get_cit_oficinas_servicios
 from ..cit_servicios.crud import get_cit_servicio
 from ..oficinas.crud import get_oficina
 from .models import CitCita
@@ -144,6 +145,9 @@ def create_cit_cita(
     cit_servicio = get_cit_servicio(db, cit_servicio_id=cit_servicio_id)
 
     # Validar que ese servicio lo ofrezca esta oficina
+    cit_oficinas_servicios = get_cit_oficinas_servicios(db, oficina_id=oficina_id).all()
+    if cit_servicio_id not in [cit_oficina_servicio.cit_servicio_id for cit_oficina_servicio in cit_oficinas_servicios]:
+        raise ValueError("No es posible agendar este servicio en esta oficina")
 
     # Validar la fecha, no debe ser de hoy o del pasado
     if fecha <= date.today():
