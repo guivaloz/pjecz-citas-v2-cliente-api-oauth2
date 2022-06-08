@@ -47,8 +47,8 @@ Authorization: Bearer {{auth.response.body.access_token}}
 POST {{baseUrl}}/cit_citas/nueva
     ?oficina_id=71
     &cit_servicio_id=2
-    &fecha=2022-06-14
-    &hora_minuto=09:00
+    &fecha=2022-06-13
+    &hora_minuto=13:30
     &nota=UnaCitaMas
 Authorization: Bearer {{auth.response.body.access_token}}
 
