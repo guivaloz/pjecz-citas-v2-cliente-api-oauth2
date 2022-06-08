@@ -9,6 +9,7 @@ from lib.safe_string import safe_string
 
 from ..cit_clientes.crud import get_cit_cliente
 from ..cit_dias_inhabiles.crud import get_cit_dias_inhabiles
+from ..cit_oficinas_servicios.crud import get_cit_oficinas_servicios
 from ..cit_servicios.crud import get_cit_servicio
 from ..oficinas.crud import get_oficina
 from .models import CitCita
@@ -49,28 +50,24 @@ def get_cit_citas(
     return consulta.filter_by(estatus="A").order_by(CitCita.id)
 
 
-def get_cit_citas_anonimas(
-    db: Session,
-    oficina_id: int,
-    fecha: date,
-) -> Any:
-    """Consultar los citas activos"""
+def get_cit_citas_anonimas(db: Session, oficina_id: int, fecha: date = None, hora_minuto: time = None) -> Any:
+    """Consultar las citas"""
     consulta = db.query(CitCita)
 
     # Filtrar por la oficina
     oficina = get_oficina(db, oficina_id)  # Causara index error si no existe, esta eliminada o no puede agendar citas
     consulta = consulta.filter(CitCita.oficina == oficina)
 
-    # Filtro por tiempo de inicio
-    desde_tiempo = datetime(
-        year=fecha.year,
-        month=fecha.month,
-        day=fecha.day,
-        hour=0,
-        minute=0,
-        second=0,
-    )
-    consulta = consulta.filter(CitCita.inicio >= desde_tiempo)
+    # Si se filtra por fecha
+    if fecha is not None:
+        inicio_dt = datetime(year=fecha.year, month=fecha.month, day=fecha.day, hour=0, minute=0, second=0)
+        termino_dt = datetime(year=fecha.year, month=fecha.month, day=fecha.day, hour=23, minute=23, second=59)
+        consulta = consulta.filter(CitCita.inicio >= inicio_dt).filter(CitCita.inicio <= termino_dt)
+
+    # Si se filtra por hora_minuto
+    if fecha is not None and hora_minuto is not None:
+        inicio_dt = datetime(year=fecha.year, month=fecha.month, day=fecha.day, hour=hora_minuto.hour, minute=hora_minuto.minute, second=0)
+        consulta = consulta.filter(CitCita.inicio == inicio_dt)
 
     # Filtro por tiempo de termino
     hasta_tiempo = datetime(
@@ -148,6 +145,9 @@ def create_cit_cita(
     cit_servicio = get_cit_servicio(db, cit_servicio_id=cit_servicio_id)
 
     # Validar que ese servicio lo ofrezca esta oficina
+    cit_oficinas_servicios = get_cit_oficinas_servicios(db, oficina_id=oficina_id).all()
+    if cit_servicio_id not in [cit_oficina_servicio.cit_servicio_id for cit_oficina_servicio in cit_oficinas_servicios]:
+        raise ValueError("No es posible agendar este servicio en esta oficina")
 
     # Validar la fecha, no debe ser de hoy o del pasado
     if fecha <= date.today():
@@ -178,6 +178,11 @@ def create_cit_cita(
         raise ValueError("No es valida la hora-minuto porque es anterior a la apertura")
     if termino_dt > oficina_cierre_dt:
         raise ValueError("No es valida la hora-minuto porque el termino es posterior al cierre")
+
+    # Validar que las citas en ese tiempo para esa oficina NO hayan llegado al limite de personas
+    cit_citas = get_cit_citas_anonimas(db, oficina_id=oficina_id, fecha=fecha, hora_minuto=hora_minuto)
+    if cit_citas.count() >= oficina.limite_personas:
+        raise ValueError("No se puede crear la cita porque ya se alcanzo el limite de personas")
 
     # Insertar registro
     cit_cita = CitCita(
