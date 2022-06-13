@@ -61,7 +61,7 @@ def get_cit_citas_anonimas(db: Session, oficina_id: int, fecha: date = None, hor
     # Si se filtra por fecha
     if fecha is not None:
         inicio_dt = datetime(year=fecha.year, month=fecha.month, day=fecha.day, hour=0, minute=0, second=0)
-        termino_dt = datetime(year=fecha.year, month=fecha.month, day=fecha.day, hour=23, minute=23, second=59)
+        termino_dt = datetime(year=fecha.year, month=fecha.month, day=fecha.day, hour=23, minute=59, second=59)
         consulta = consulta.filter(CitCita.inicio >= inicio_dt).filter(CitCita.inicio <= termino_dt)
 
     # Si se filtra por hora_minuto
