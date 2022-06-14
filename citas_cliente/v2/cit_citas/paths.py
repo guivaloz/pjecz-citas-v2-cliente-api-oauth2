@@ -59,7 +59,7 @@ async def crear_cit_cita(
     cit_servicio_id: int,
     fecha: date,
     hora_minuto: time,
-    nota: str,
+    nota: str = None,
     current_user: CitClienteInDB = Depends(get_current_active_user),
     db: Session = Depends(get_db),
 ):

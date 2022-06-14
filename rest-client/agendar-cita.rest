@@ -40,16 +40,15 @@ Authorization: Bearer {{auth.response.body.access_token}}
 GET {{baseUrl}}/cit_horas_disponibles
     ?oficina_id=71
     &cit_servicio_id=2
-    &fecha=2022-06-09
+    &fecha=2022-06-15
 Authorization: Bearer {{auth.response.body.access_token}}
 
 ### POST crear cita
 POST {{baseUrl}}/cit_citas/nueva
     ?oficina_id=71
     &cit_servicio_id=2
-    &fecha=2022-06-13
-    &hora_minuto=13:30
-    &nota=UnaCitaMas
+    &fecha=2022-06-15
+    &hora_minuto=13:45
 Authorization: Bearer {{auth.response.body.access_token}}
 
 ### GET mis citas
@@ -57,9 +56,9 @@ GET {{baseUrl}}/cit_citas
 Authorization: Bearer {{auth.response.body.access_token}}
 
 ### GET consultar una cita
-GET {{baseUrl}}/cit_citas/3
+GET {{baseUrl}}/cit_citas/2
 Authorization: Bearer {{auth.response.body.access_token}}
 
 ### GET cancelar una cita
-GET {{baseUrl}}/cit_citas/cancelar/3
+GET {{baseUrl}}/cit_citas/cancelar/2
 Authorization: Bearer {{auth.response.body.access_token}}
