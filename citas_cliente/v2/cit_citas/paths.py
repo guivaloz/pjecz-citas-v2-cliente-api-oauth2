@@ -13,7 +13,7 @@ from ..cit_clientes.authentications import get_current_active_user
 from ..cit_clientes.schemas import CitClienteInDB
 from ..permisos.models import Permiso
 from .crud import cancel_cit_cita, create_cit_cita, get_cit_cita, get_cit_citas
-from .schemas import CitCitaOut
+from .schemas import CitCitaIn, CitCitaOut
 
 cit_citas = APIRouter(prefix="/v2/cit_citas", tags=["citas"])
 
@@ -55,11 +55,7 @@ async def detalle_cit_cita(
 
 @cit_citas.post("/nueva", response_model=CitCitaOut)
 async def crear_cit_cita(
-    oficina_id: int,
-    cit_servicio_id: int,
-    fecha: date,
-    hora_minuto: time,
-    nota: str = None,
+    datos: CitCitaIn,
     current_user: CitClienteInDB = Depends(get_current_active_user),
     db: Session = Depends(get_db),
 ):
@@ -70,11 +66,11 @@ async def crear_cit_cita(
         cit_cita = create_cit_cita(
             db,
             cit_cliente_id=current_user.id,
-            oficina_id=oficina_id,
-            cit_servicio_id=cit_servicio_id,
-            fecha=fecha,
-            hora_minuto=hora_minuto,
-            nota=nota,
+            oficina_id=datos.oficina_id,
+            cit_servicio_id=datos.cit_servicio_id,
+            fecha=datos.fecha,
+            hora_minuto=datos.hora_minuto,
+            nota=datos.notas,
         )
     except IndexError as error:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Not found: {str(error)}") from error
