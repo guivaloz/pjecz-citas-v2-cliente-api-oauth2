@@ -16,7 +16,6 @@ class CitCita(Base, UniversalMixin):
         [
             ("ASISTIO", "Asistió"),
             ("CANCELO", "Canceló"),
-            ("CONFIRMO", "Confirmó"),
             ("PENDIENTE", "Pendiente"),
         ]
     )

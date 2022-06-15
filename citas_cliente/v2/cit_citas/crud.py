@@ -16,13 +16,14 @@ from .models import CitCita
 from .schemas import CitCitaOut
 
 LIMITE_DIAS = 90
+LIMITE_CITAS_PENDIENTES = 10
 
 
 def get_cit_citas(
     db: Session,
     cit_cliente_id: int,
 ) -> Any:
-    """Consultar los citas activos"""
+    """Consultar las citas del cliente, desde hoy y con estado PENDIENTE"""
     consulta = db.query(CitCita)
 
     # Consultar el cliente
@@ -183,6 +184,11 @@ def create_cit_cita(
     cit_citas = get_cit_citas_anonimas(db, oficina_id=oficina_id, fecha=fecha, hora_minuto=hora_minuto)
     if cit_citas.count() >= oficina.limite_personas:
         raise ValueError("No se puede crear la cita porque ya se alcanzo el limite de personas")
+
+    # Validar que la cantidad de citas pendientes no haya llegado al limite de este cliente
+    cit_citas = get_cit_citas(db, cit_cliente_id=cit_cliente_id)
+    if cit_citas.count() >= LIMITE_CITAS_PENDIENTES:
+        raise ValueError("No se puede crear la cita porque ya se alcanzo su limite de citas pendientes")
 
     # Insertar registro
     cit_cita = CitCita(
