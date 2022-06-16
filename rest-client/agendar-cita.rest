@@ -40,7 +40,7 @@ Authorization: Bearer {{auth.response.body.access_token}}
 GET {{baseUrl}}/cit_horas_disponibles
     ?oficina_id=71
     &cit_servicio_id=2
-    &fecha=2022-06-15
+    &fecha=2022-06-20
 Authorization: Bearer {{auth.response.body.access_token}}
 
 ### POST crear cita

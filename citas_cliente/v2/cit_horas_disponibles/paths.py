@@ -19,9 +19,9 @@ cit_horas_disponibles = APIRouter(prefix="/v2/cit_horas_disponibles", tags=["hor
 
 @cit_horas_disponibles.get("", response_model=Page[CitHoraDisponibleOut])
 async def listado_cit_horas_disponibles(
-    oficina_id: int,
     cit_servicio_id: int,
     fecha: date,
+    oficina_id: int,
     current_user: CitClienteInDB = Depends(get_current_active_user),
     db: Session = Depends(get_db),
 ):
@@ -29,7 +29,12 @@ async def listado_cit_horas_disponibles(
     if "CIT HORAS DISPONIBLES" not in current_user.permissions or current_user.permissions["CIT HORAS DISPONIBLES"] < Permiso.VER:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Forbidden")
     try:
-        listado = get_cit_horas_disponibles(db, oficina_id=oficina_id, cit_servicio_id=cit_servicio_id, fecha=fecha)
+        listado = get_cit_horas_disponibles(
+            db,
+            cit_servicio_id=cit_servicio_id,
+            fecha=fecha,
+            oficina_id=oficina_id,
+        )
     except IndexError as error:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Not found: {str(error)}") from error
     except ValueError as error:
