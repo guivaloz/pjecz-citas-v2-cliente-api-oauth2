@@ -46,7 +46,7 @@ def get_cit_horas_disponibles(
     if fecha in dias_inhabiles:
         raise ValueError("No puede agendar citas en dias inhabiles")
 
-    # Definir los tiempos de inicio, de termino y el timedelta de la duracion
+    # Definir los tiempos de inicio, de final y el timedelta de la duracion
     tiempo_inicial = datetime(
         year=fecha.year,
         month=fecha.month,
@@ -72,16 +72,23 @@ def get_cit_horas_disponibles(
     tiempos_bloqueados = []
     cit_horas_bloqueadas = get_horas_bloquedas(db, oficina_id=oficina_id, fecha=fecha).all()
     for cit_hora_bloqueada in cit_horas_bloqueadas:
-        tiempos_bloqueados.append(
-            datetime(
-                year=fecha.year,
-                month=fecha.month,
-                day=fecha.day,
-                hour=cit_hora_bloqueada.inicio.hour,
-                minute=cit_hora_bloqueada.inicio.minute,
-                second=0,
-            )
+        tiempo_bloquedo_inicia = datetime(
+            year=fecha.year,
+            month=fecha.month,
+            day=fecha.day,
+            hour=cit_hora_bloqueada.inicio.hour,
+            minute=cit_hora_bloqueada.inicio.minute,
+            second=0,
         )
+        tiempo_bloquedo_termina = datetime(
+            year=fecha.year,
+            month=fecha.month,
+            day=fecha.day,
+            hour=cit_hora_bloqueada.termino.hour,
+            minute=cit_hora_bloqueada.termino.minute,
+            second=0,
+        ) - timedelta(minutes=1)
+        tiempos_bloqueados.append((tiempo_bloquedo_inicia, tiempo_bloquedo_termina))
 
     # Acumular las citas agendadas en un diccionario de tiempos y cantidad de citas, para la oficina en la fecha
     # { 08:30: 2, 08:45: 1, 10:00: 2,... }
@@ -99,8 +106,10 @@ def get_cit_horas_disponibles(
         # Bandera
         es_hora_disponible = True
         # Quitar las horas bloqueadas
-        if tiempo in tiempos_bloqueados:
-            es_hora_disponible = False
+        for tiempo_bloqueado in tiempos_bloqueados:
+            if tiempo_bloqueado[0] <= tiempo <= tiempo_bloqueado[1]:
+                es_hora_disponible = False
+                break
         # Quitar las horas ocupadas
         if tiempo in citas_ya_agendadas:
             if citas_ya_agendadas[tiempo] >= oficina.limite_personas:
