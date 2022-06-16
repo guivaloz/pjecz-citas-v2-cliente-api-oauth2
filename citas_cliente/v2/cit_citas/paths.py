@@ -35,7 +35,7 @@ async def listado_cit_citas(
     return paginate(listado)
 
 
-@cit_citas.get("/{cit_cita_id}", response_model=CitCitaOut)
+@cit_citas.get("/consultar", response_model=CitCitaOut)
 async def detalle_cit_cita(
     cit_cita_id: int,
     current_user: CitClienteInDB = Depends(get_current_active_user),
@@ -79,7 +79,7 @@ async def crear_cit_cita(
     return CitCitaOut.from_orm(cit_cita)
 
 
-@cit_citas.get("/cancelar/{cit_cita_id}", response_model=CitCitaOut)
+@cit_citas.get("/cancelar", response_model=CitCitaOut)
 async def cancelar_cit_citas(
     cit_cita_id: int,
     current_user: CitClienteInDB = Depends(get_current_active_user),
