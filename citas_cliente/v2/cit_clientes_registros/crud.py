@@ -27,6 +27,18 @@ def solicitar_nueva_cuenta(db: Session, registro: CitClienteRegistroIn) -> CitCl
     email = registro.email.strip().lower()
     telefono = registro.telefono.strip()
 
+    # Validar nombres
+    if nombres == "":
+        raise ValueError("El nombre no es valido")
+
+    # Validar apellido primero
+    if apellido_primero == "":
+        raise ValueError("El apellido primero no es valido")
+
+    # Validar apellido segundo
+    if apellido_segundo == "":
+        raise ValueError("El apellido segundo no es valido")
+
     # Validar CURP
     if re.match(CURP_REGEXP, curp) is None:
         raise ValueError("El CURP no es valido")

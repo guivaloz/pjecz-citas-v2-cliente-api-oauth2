@@ -6,6 +6,25 @@ from typing import Optional
 from pydantic import BaseModel
 
 
+class CitPagoNuevoIn(BaseModel):
+
+    nombres: Optional[str] = None
+    apellido_primero: Optional[str] = None
+    apellido_segundo: Optional[str] = None
+    curp: Optional[str] = None
+    telefono: Optional[str] = None
+    email: str
+    cit_tramite_servicio_id: int
+    cantidad: int
+
+
+class CitPagoRealizadoIn(BaseModel):
+
+    id: int
+    folio: int
+    estado: str
+
+
 class CitPagoOut(BaseModel):
     """Esquema para entregar pagos"""
 
