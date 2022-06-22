@@ -52,6 +52,7 @@ class CitCliente(Base, UniversalMixin):
             "CIT HORAS DISPONIBLES": 1,
             "CIT OFICINAS SERVICIOS": 1,
             "CIT SERVICIOS": 1,
+            "CIT TRAMITES SERVICIOS": 1,
             "DISTRITOS": 1,
             "DOMICILIOS": 1,
             "MATERIAS": 1,

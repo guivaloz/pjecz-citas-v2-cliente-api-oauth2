@@ -1,0 +1,22 @@
+@root = http://{{$dotenv HOST}}:{{$dotenv PORT}}
+@baseUrl = {{root}}
+@username = {{$dotenv USERNAME}}
+@password = {{$dotenv PASSWORD}}
+
+### Bienvenida
+GET {{root}}
+
+### Autorizacion
+# @name auth
+POST {{baseUrl}}/token
+Content-Type: application/x-www-form-urlencoded
+
+username={{username}}&password={{password}}
+
+### GET Tramites y Servicios
+GET {{baseUrl}}/v2/cit_tramites_servicios
+Authorization: Bearer {{auth.response.body.access_token}}
+
+### GET Tramites y Servicios - Curso de Preparacion en Materia de Mediacion
+GET {{baseUrl}}/v2/cit_tramites_servicios/2
+Authorization: Bearer {{auth.response.body.access_token}}
