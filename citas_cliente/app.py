@@ -21,6 +21,7 @@ from citas_cliente.v2.cit_dias_disponibles.paths import cit_dias_disponibles
 from citas_cliente.v2.cit_horas_disponibles.paths import cit_horas_disponibles
 from citas_cliente.v2.cit_oficinas_servicios.paths import cit_oficinas_servicios
 from citas_cliente.v2.cit_servicios.paths import cit_servicios
+from citas_cliente.v2.cit_tramites_servicios.paths import cit_tramites_servicios
 from citas_cliente.v2.distritos.paths import distritos
 from citas_cliente.v2.domicilios.paths import domicilios
 from citas_cliente.v2.materias.paths import materias
@@ -59,6 +60,7 @@ app.include_router(cit_dias_disponibles)
 app.include_router(cit_horas_disponibles)
 app.include_router(cit_oficinas_servicios)
 app.include_router(cit_servicios)
+app.include_router(cit_tramites_servicios)
 app.include_router(distritos)
 app.include_router(domicilios)
 app.include_router(materias)
