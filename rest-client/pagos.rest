@@ -20,3 +20,30 @@ Authorization: Bearer {{auth.response.body.access_token}}
 ### GET Tramites y Servicios - Curso de Preparacion en Materia de Mediacion
 GET {{baseUrl}}/v2/cit_tramites_servicios/2
 Authorization: Bearer {{auth.response.body.access_token}}
+
+### POST Pago antes del banco, recibe los datos del asistente en React.js, entrega el id del pago
+POST {{baseUrl}}/v2/cit_pagos/nuevo
+Authorization: Bearer {{auth.response.body.access_token}}
+content-type: application/json
+
+{
+    "nombres": "Paola",
+    "apellido_primero": "Gonzalez",
+    "apellido_segundo": "Mendoza",
+    "curp": "LOVE770826MZSPGD55",
+    "telefono": "8443331166",
+    "email": "paola.gonzalez@gmail.com",
+    "descripcion": "2 CD/DVD CON LA GRABACION DE AUDIENCIA EN MATERIA PENAL O FAMILIAR",
+    "total": 220.50
+}
+
+### POST Pago despues del banco
+POST {{baseUrl}}/v2/cit_pagos/realizado
+Authorization: Bearer {{auth.response.body.access_token}}
+content-type: application/json
+
+{
+    "id": 102,
+    "folio": 3097984883,
+    "estado": "REALIZADO",
+}
