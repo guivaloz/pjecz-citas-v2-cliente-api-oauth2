@@ -34,7 +34,7 @@ content-type: application/json
     "telefono": "8443331166",
     "email": "paola.gonzalez@gmail.com",
     "cit_tramite_servicio_id": 2,
-    "cantidad": 2,
+    "cantidad": 2
 }
 
 ### POST Pago antes del banco, ya ha hecho un pago antes, entrega el id del pago
@@ -45,7 +45,18 @@ content-type: application/json
 {
     "email": "paola.gonzalez@gmail.com",
     "cit_tramite_servicio_id": 3,
-    "cantidad": 1,
+    "cantidad": 1
+}
+
+### POST Pago antes del banco, ya ha hecho un pago antes, entrega el id del pago
+POST {{baseUrl}}/v2/cit_pagos/nuevo
+Authorization: Bearer {{auth.response.body.access_token}}
+content-type: application/json
+
+{
+    "email": "paola.gonzalez@gmail.com",
+    "cit_tramite_servicio_id": 9,
+    "cantidad": 4
 }
 
 ### POST Pago despues del banco

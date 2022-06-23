@@ -135,12 +135,21 @@ def create_cit_pago(
             email=email,
         )  # Si falla provoca una excepcion
 
+    # Definir descripcion
+    if cantidad == 1:
+        descripcion = f"PAGO DE UN(A) {cit_tramite_servicio.nombre}"
+    else:
+        descripcion = f"PAGO DE {cantidad} {cit_tramite_servicio.nombre}"
+
+    # Defir el total
+    total = cantidad * cit_tramite_servicio.costo
+
     # Insertar el pago
     cit_pago = CitPago(
         cit_cliente=cit_cliente,
         cit_tramite_servicio=cit_tramite_servicio,
-        descripcion="Bla, bla, bla",
-        total=0,
+        descripcion=descripcion,
+        total=total,
         estado="PENDIENTE",
     )
     db.add(cit_pago)
@@ -157,5 +166,24 @@ def process_cit_pago(
     folio: int,
     estado: str,
 ) -> CitPago:
-    """Crear un pago"""
-    return None
+    """Procesar un pago"""
+
+    # Validar que exista el pago
+    cit_pago = get_cit_pago(db, cit_pago_id=id)  # Causara index error si no existe o si esta eliminado
+
+    # Validar que el estado proporcionado no sea PENDIENTE
+    if estado == "PENDIENTE":
+        raise ValueError("El estado no puede ser PENDIENTE")
+
+    # Validar que el pago tenga el estado PENDIENTE
+    if cit_pago.estado != "PENDIENTE":
+        raise ValueError("El pago no esta en estado PENDIENTE")
+
+    # Actualizar el registro del pago con el folio y el estado
+    cit_pago.folio = folio
+    cit_pago.estado = estado
+    db.add(cit_pago)
+    db.commit()
+
+    # Entregar
+    return cit_pago
