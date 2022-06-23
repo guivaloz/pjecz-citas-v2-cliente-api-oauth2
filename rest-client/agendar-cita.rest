@@ -40,7 +40,7 @@ Authorization: Bearer {{auth.response.body.access_token}}
 GET {{baseUrl}}/cit_horas_disponibles
     ?oficina_id=71
     &cit_servicio_id=2
-    &fecha=2022-06-20
+    &fecha=2022-06-24
 Authorization: Bearer {{auth.response.body.access_token}}
 
 ### POST crear cita
@@ -51,8 +51,8 @@ content-type: application/json
 {
     "oficina_id": 71,
     "cit_servicio_id": 2,
-    "fecha": "2022-06-16",
-    "hora_minuto": "08:45"
+    "fecha": "2022-06-24",
+    "hora_minuto": "11:00"
 }
 
 ### GET mis citas
@@ -60,9 +60,11 @@ GET {{baseUrl}}/cit_citas
 Authorization: Bearer {{auth.response.body.access_token}}
 
 ### GET consultar una cita
-GET {{baseUrl}}/cit_citas/2
+GET {{baseUrl}}/cit_citas
+    ?cit_cita_id=1
 Authorization: Bearer {{auth.response.body.access_token}}
 
 ### GET cancelar una cita
-GET {{baseUrl}}/cit_citas/cancelar/3
+GET {{baseUrl}}/cit_citas/cancelar
+    ?cit_cita_id=2
 Authorization: Bearer {{auth.response.body.access_token}}
