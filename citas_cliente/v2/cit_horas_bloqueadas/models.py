@@ -1,7 +1,7 @@
 """
 Cit Horas Bloquedas V2, modelos
 """
-from sqlalchemy import Column, Date, ForeignKey, Integer, Time
+from sqlalchemy import Column, Date, ForeignKey, Integer, String, Time
 from sqlalchemy.orm import relationship
 
 from lib.database import Base
@@ -25,6 +25,7 @@ class CitHoraBloqueada(Base, UniversalMixin):
     fecha = Column(Date(), nullable=False, index=True)
     inicio = Column(Time(), nullable=False)
     termino = Column(Time(), nullable=False)
+    descripcion = Column(String())
 
     def __repr__(self):
         """Representación"""
