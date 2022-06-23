@@ -20,10 +20,10 @@ class CitCitaOut(BaseModel):
     """Esquema para entregar citas"""
 
     id: int
-    cit_servicio_id: int
-    cit_servicio_descripcion: str
     cit_cliente_id: int
     cit_cliente_nombre: str
+    cit_servicio_id: int
+    cit_servicio_descripcion: str
     oficina_id: int
     oficina_descripcion_corta: str
     inicio: datetime
