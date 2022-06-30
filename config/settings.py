@@ -30,3 +30,7 @@ ACCESS_TOKEN_EXPIRE_MINUTES = int(os.environ.get("ACCESS_TOKEN_EXPIRE_MINUTES", 
 ORIGINS = [
     "https://citas.justiciadigital.gob.mx",
 ]
+
+# Redis
+REDIS_URL = os.environ.get("REDIS_URL", "redis://127.0.0.1")
+TASK_QUEUE = os.environ.get("TASK_QUEUE", "pjecz_citas_v2")

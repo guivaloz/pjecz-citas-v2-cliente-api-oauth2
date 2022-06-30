@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 from passlib.context import CryptContext
 
 from lib.pwgen import generar_aleatorio
+from lib.redis import task_queue
 
 from .models import CitClienteRecuperacion
 from .schemas import CitClienteRecuperacionIn, CitClienteRecuperacionConcluirIn
@@ -21,7 +22,7 @@ def solicitar_recuperar_contrasena(db: Session, recuperacion: CitClienteRecupera
     cit_cliente = get_cit_cliente_from_email(db, recuperacion.email)
 
     # Consultar si existe una recuperacion para ese cliente
-    posible_cit_cliente_recuperacion = db.query(CitClienteRecuperacion).filter_by(cit_cliente_id=cit_cliente.id).first()
+    posible_cit_cliente_recuperacion = db.query(CitClienteRecuperacion).filter_by(cit_cliente_id=cit_cliente.id).filter_by(estatus="A").first()
     if posible_cit_cliente_recuperacion is not None:
         raise ValueError("Ya existe una recuperacion para ese email.")
 
@@ -35,6 +36,12 @@ def solicitar_recuperar_contrasena(db: Session, recuperacion: CitClienteRecupera
     db.add(cit_cliente_recuperacion)
     db.commit()
     db.refresh(cit_cliente_recuperacion)
+
+    # Agregar tarea en el fondo por medio de Redis
+    task_queue.enqueue(
+        "citas_admin.blueprints.cit_clientes_recuperaciones.tasks.enviar",
+        cit_cliente_recuperacion_id=cit_cliente_recuperacion.id,
+    )
 
     # Entregar
     return cit_cliente_recuperacion
