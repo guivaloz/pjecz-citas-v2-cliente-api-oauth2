@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 from passlib.context import CryptContext
 
 from lib.pwgen import generar_aleatorio
+from lib.redis import task_queue
 from lib.safe_string import safe_string, CURP_REGEXP, EMAIL_REGEXP, TELEFONO_REGEXP
 
 from .models import CitClienteRegistro
@@ -92,6 +93,12 @@ def solicitar_nueva_cuenta(db: Session, registro: CitClienteRegistroIn) -> CitCl
     db.add(cit_cliente_registro)
     db.commit()
     db.refresh(cit_cliente_registro)
+
+    # Agregar tarea en el fondo para que se envie un mensaje via correo electronico
+    task_queue.enqueue(
+        "citas_admin.blueprints.cit_clientes_registros.tasks.enviar",
+        cit_cliente_recuperacion_id=cit_cliente_registro.id,
+    )
 
     # Entregar
     return cit_cliente_registro

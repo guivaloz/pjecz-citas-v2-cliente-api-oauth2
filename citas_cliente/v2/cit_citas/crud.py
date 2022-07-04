@@ -6,6 +6,7 @@ from typing import Any
 from sqlalchemy.orm import Session
 
 from lib.safe_string import safe_string
+from lib.redis import task_queue
 
 from ..cit_clientes.crud import get_cit_cliente
 from ..cit_dias_inhabiles.crud import get_cit_dias_inhabiles
@@ -204,6 +205,12 @@ def create_cit_cita(
     db.add(cit_cita)
     db.commit()
     db.refresh(cit_cita)
+
+    # Agregar tarea en el fondo para que se envie un mensaje via correo electronico
+    task_queue.enqueue(
+        "citas_admin.blueprints.cit_citas.tasks.enviar",
+        cit_cita_id=cit_cita.id,
+    )
 
     # Entregar
     return cit_cita

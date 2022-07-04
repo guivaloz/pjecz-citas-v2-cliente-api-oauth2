@@ -14,6 +14,7 @@ python-jose[cryptography]
 python-multipart
 SQLAlchemy
 SQLAlchemy-Utils
+rq
 Unidecode
 uvicorn
 uvloop
