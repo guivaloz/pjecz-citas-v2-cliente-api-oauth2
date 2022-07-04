@@ -94,7 +94,7 @@ def solicitar_nueva_cuenta(db: Session, registro: CitClienteRegistroIn) -> CitCl
     db.commit()
     db.refresh(cit_cliente_registro)
 
-    # Agregar tarea en el fondo por medio de Redis
+    # Agregar tarea en el fondo para que se envie un mensaje via correo electronico
     task_queue.enqueue(
         "citas_admin.blueprints.cit_clientes_registros.tasks.enviar",
         cit_cliente_recuperacion_id=cit_cliente_registro.id,

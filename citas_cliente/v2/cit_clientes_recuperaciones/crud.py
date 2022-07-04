@@ -37,7 +37,7 @@ def solicitar_recuperar_contrasena(db: Session, recuperacion: CitClienteRecupera
     db.commit()
     db.refresh(cit_cliente_recuperacion)
 
-    # Agregar tarea en el fondo por medio de Redis
+    # Agregar tarea en el fondo para que se envie un mensaje via correo electronico
     task_queue.enqueue(
         "citas_admin.blueprints.cit_clientes_recuperaciones.tasks.enviar",
         cit_cliente_recuperacion_id=cit_cliente_recuperacion.id,
