@@ -97,7 +97,7 @@ def solicitar_nueva_cuenta(db: Session, registro: CitClienteRegistroIn) -> CitCl
     # Agregar tarea en el fondo para que se envie un mensaje via correo electronico
     task_queue.enqueue(
         "citas_admin.blueprints.cit_clientes_registros.tasks.enviar",
-        cit_cliente_recuperacion_id=cit_cliente_registro.id,
+        cit_cliente_registro_id=cit_cliente_registro.id,
     )
 
     # Entregar
