@@ -43,3 +43,17 @@ class TokenData(BaseModel):
     """Token data"""
 
     username: Optional[str] = None
+
+
+class CitClienteActualizarContrasenaIn(BaseModel):
+    """Esquema para recibir la actualizacion de la contrasena"""
+
+    email: str
+    contrasena_anterior: str
+    contrasena_nueva: str
+
+
+class CitClienteActualizarContrasenaOut(CitClienteOut):
+    """Esquema para entregar los datos del cliente y el mensaje de la actualizacion de la contrasena"""
+
+    mensaje: str

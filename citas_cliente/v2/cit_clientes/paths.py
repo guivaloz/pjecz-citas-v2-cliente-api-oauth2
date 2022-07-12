@@ -10,8 +10,8 @@ from lib.fastapi_pagination import LimitOffsetPage
 
 from ..permisos.models import Permiso
 from .authentications import get_current_active_user
-from .crud import get_cit_clientes, get_cit_cliente
-from .schemas import CitClienteInDB, CitClienteOut
+from .crud import get_cit_clientes, get_cit_cliente, set_cit_cliente_password
+from .schemas import CitClienteInDB, CitClienteOut, CitClienteActualizarContrasenaIn, CitClienteActualizarContrasenaOut
 
 cit_clientes = APIRouter(prefix="/v2/cit_clientes", tags=["clientes"])
 
@@ -43,3 +43,18 @@ async def detalle_cit_cliente(
     except ValueError as error:
         raise HTTPException(status_code=status.HTTP_406_NOT_ACCEPTABLE, detail=f"Not acceptable: {str(error)}") from error
     return CitClienteOut.from_orm(cit_cliente)
+
+
+@cit_clientes.post("/actualizar_contrasena", response_model=CitClienteActualizarContrasenaOut)
+async def actualizar_contrasena(
+    actualizacion: CitClienteActualizarContrasenaIn,
+    db: Session = Depends(get_db),
+):
+    """Actualizar la contrasena de la version uno a la version dos"""
+    try:
+        cit_cliente_actualizado = set_cit_cliente_password(db, actualizacion)
+    except IndexError as error:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Not found: {str(error)}") from error
+    except ValueError as error:
+        raise HTTPException(status_code=status.HTTP_406_NOT_ACCEPTABLE, detail=f"Not acceptable: {str(error)}") from error
+    return CitClienteActualizarContrasenaOut.from_orm(cit_cliente_actualizado)

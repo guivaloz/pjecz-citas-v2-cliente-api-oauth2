@@ -2,17 +2,19 @@
 .directory
 .env
 .gcloudignore
-.git
 .github
 .gitignore
-.vscode
 .DS_Store
+.~lock.*
 
 *.py[cod]
 *.sqlite3
+*.sqlite3-journal
 *.xlsx
 
 __pycache__/
+/.git
+/.vscode
 /instance/settings.py
 /pyproject.toml
 /tests
