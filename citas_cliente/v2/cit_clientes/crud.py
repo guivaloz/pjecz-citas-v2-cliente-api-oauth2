@@ -1,6 +1,7 @@
 """
 Cit Clientes V2, CRUD (create, read, update, and delete)
 """
+import hashlib
 import re
 from typing import Any
 from passlib.context import CryptContext
@@ -52,7 +53,7 @@ def get_cit_cliente_from_email(db: Session, cliente_email: str) -> CitCliente:
     return cit_cliente
 
 
-def set_cit_cliente_password(db: Session, actualizacion: CitClienteActualizarContrasenaIn) -> CitCliente:
+def update_cit_cliente_password(db: Session, actualizacion: CitClienteActualizarContrasenaIn) -> CitCliente:
     """Actualizar la contrasena de la version 1 a la version 2"""
     # Validar el correo electronico
     if re.match(EMAIL_REGEXP, actualizacion.email) is None:
@@ -65,6 +66,9 @@ def set_cit_cliente_password(db: Session, actualizacion: CitClienteActualizarCon
     if cit_cliente is None:
         raise IndexError("No existe ese cliente")
     # Validar la contrasena anterior
+    contrasena_anterior_md5 = hashlib.md5(actualizacion.contrasena_anterior.encode("utf-8")).hexdigest()
+    if contrasena_anterior_md5 != cit_cliente.contrasena_md5:
+        raise ValueError("La contrasena anterior no es correcta")
     # Poner en blanco la contrasena anterior
     cit_cliente.contrasena_md5 = ""
     # Cifrar la contrasena nueva

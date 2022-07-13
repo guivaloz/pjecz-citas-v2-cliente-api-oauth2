@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 
 from lib.database import get_db
 
-from .crud import solicitar_recuperar_contrasena, validar_recuperar_contrasena, concluir_recuperar_contrasena
+from .crud import request_recover_password, validate_recover_password, terminate_recover_password
 from .schemas import CitClienteRecuperacionIn, CitClienteRecuperacionOut, CitClienteRecuperacionValidarOut, CitClienteRecuperacionConcluirIn, CitClienteRecuperacionConcluirOut
 
 cit_clientes_recuperaciones = APIRouter(prefix="/v2/recuperar_contrasena", tags=["recuperar contrasena"])
@@ -19,7 +19,7 @@ async def recuperar_contrasena_solicitar(
 ):
     """Olvide mi contrasena, recibo el formulario con mi correo electronico"""
     try:
-        cit_cliente_recuperacion = solicitar_recuperar_contrasena(db, recuperacion)
+        cit_cliente_recuperacion = request_recover_password(db, recuperacion)
     except IndexError as error:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Not found: {str(error)}") from error
     except ValueError as error:
@@ -39,7 +39,7 @@ async def recuperar_contrasena_validar(
     if not isinstance(cadena_validar, str):
         raise HTTPException(status_code=status.HTTP_406_NOT_ACCEPTABLE)
     try:
-        cit_cliente_recuperacion = validar_recuperar_contrasena(db, hashid, cadena_validar)
+        cit_cliente_recuperacion = validate_recover_password(db, hashid, cadena_validar)
     except IndexError as error:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Not found: {str(error)}") from error
     except ValueError as error:
@@ -54,7 +54,7 @@ async def recuperar_contrasena_concluir(
 ):
     """Olvide mi contrasena, recibo el formulario para cambiarla"""
     try:
-        cit_cliente_recuperacion = concluir_recuperar_contrasena(db, recuperacion)
+        cit_cliente_recuperacion = terminate_recover_password(db, recuperacion)
     except IndexError as error:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Not found: {str(error)}") from error
     except ValueError as error:

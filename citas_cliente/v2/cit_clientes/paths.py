@@ -10,7 +10,7 @@ from lib.fastapi_pagination import LimitOffsetPage
 
 from ..permisos.models import Permiso
 from .authentications import get_current_active_user
-from .crud import get_cit_clientes, get_cit_cliente, set_cit_cliente_password
+from .crud import get_cit_clientes, get_cit_cliente, update_cit_cliente_password
 from .schemas import CitClienteInDB, CitClienteOut, CitClienteActualizarContrasenaIn, CitClienteActualizarContrasenaOut
 
 cit_clientes = APIRouter(prefix="/v2/cit_clientes", tags=["clientes"])
@@ -52,7 +52,7 @@ async def actualizar_contrasena(
 ):
     """Actualizar la contrasena de la version uno a la version dos"""
     try:
-        cit_cliente_actualizado = set_cit_cliente_password(db, actualizacion)
+        cit_cliente_actualizado = update_cit_cliente_password(db, actualizacion)
     except IndexError as error:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Not found: {str(error)}") from error
     except ValueError as error:

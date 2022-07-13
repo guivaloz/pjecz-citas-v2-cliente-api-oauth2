@@ -17,7 +17,7 @@ from ..cit_clientes.models import CitCliente
 EXPIRACION_HORAS = 48
 
 
-def solicitar_nueva_cuenta(db: Session, registro: CitClienteRegistroIn) -> CitClienteRegistro:
+def request_new_account(db: Session, registro: CitClienteRegistroIn) -> CitClienteRegistro:
     """Solicitar la creacion de una nueva cuenta"""
 
     # Procesar datos de entrada con las funciones 'safe'
@@ -104,7 +104,7 @@ def solicitar_nueva_cuenta(db: Session, registro: CitClienteRegistroIn) -> CitCl
     return cit_cliente_registro
 
 
-def validar_nueva_cuenta(db: Session, hashid: str, cadena_validar: str) -> CitClienteRegistro:
+def validate_new_account(db: Session, hashid: str, cadena_validar: str) -> CitClienteRegistro:
     """Validar la recuperacion de la contrasena"""
 
     # Validar hashid, si no es valido causa excepcion
@@ -133,11 +133,11 @@ def validar_nueva_cuenta(db: Session, hashid: str, cadena_validar: str) -> CitCl
     return cit_cliente_registro
 
 
-def concluir_nueva_cuenta(db: Session, registro: CitClienteRegistroConcluirIn) -> CitClienteRegistro:
+def terminate_new_account(db: Session, registro: CitClienteRegistroConcluirIn) -> CitClienteRegistro:
     """Concluir la recuperacion de la contrasena"""
 
     # Ejecutar la funcion que nos apoya con la validacion
-    cit_cliente_registro = validar_nueva_cuenta(db, registro.hashid, registro.cadena_validar)
+    cit_cliente_registro = validate_new_account(db, registro.hashid, registro.cadena_validar)
 
     # Definir la fecha de renovación dos meses después
     renovacion_fecha = datetime.now() + timedelta(days=60)

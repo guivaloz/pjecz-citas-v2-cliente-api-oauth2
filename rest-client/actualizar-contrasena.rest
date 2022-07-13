@@ -12,6 +12,6 @@ content-type: application/json
 
 {
     "email": "guivaloz@gmail.com",
-    "contrasena_anterior": "Gato62Negro",
-    "contrasena_nueva": "Perro56&Verde"
+    "contrasena_anterior": "XXXXXXXXXXX",
+    "contrasena_nueva": "Perr$23Verde"
 }
