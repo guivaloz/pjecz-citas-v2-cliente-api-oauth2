@@ -15,7 +15,7 @@ from ..cit_clientes.crud import get_cit_cliente, get_cit_cliente_from_email
 EXPIRACION_HORAS = 48
 
 
-def solicitar_recuperar_contrasena(db: Session, recuperacion: CitClienteRecuperacionIn) -> CitClienteRecuperacion:
+def request_recover_password(db: Session, recuperacion: CitClienteRecuperacionIn) -> CitClienteRecuperacion:
     """Solicitar la recuperacion de la contrasena"""
 
     # Consultar Cliente (tambien valida el correo electronico)
@@ -47,7 +47,7 @@ def solicitar_recuperar_contrasena(db: Session, recuperacion: CitClienteRecupera
     return cit_cliente_recuperacion
 
 
-def validar_recuperar_contrasena(db: Session, hashid: str, cadena_validar: str) -> CitClienteRecuperacion:
+def validate_recover_password(db: Session, hashid: str, cadena_validar: str) -> CitClienteRecuperacion:
     """Validar la recuperacion de la contrasena"""
 
     # Validar hashid, si no es valido causa excepcion
@@ -76,11 +76,11 @@ def validar_recuperar_contrasena(db: Session, hashid: str, cadena_validar: str) 
     return cit_cliente_recuperacion
 
 
-def concluir_recuperar_contrasena(db: Session, recuperacion: CitClienteRecuperacionConcluirIn) -> CitClienteRecuperacion:
+def terminate_recover_password(db: Session, recuperacion: CitClienteRecuperacionConcluirIn) -> CitClienteRecuperacion:
     """Concluir la recuperacion de la contrasena"""
 
     # Validar la recuperacion
-    cit_cliente_recuperacion = validar_recuperar_contrasena(db, recuperacion.hashid, recuperacion.cadena_validar)
+    cit_cliente_recuperacion = validate_recover_password(db, recuperacion.hashid, recuperacion.cadena_validar)
 
     # Definir la fecha de renovación dos meses después
     renovacion_fecha = datetime.now() + timedelta(days=60)

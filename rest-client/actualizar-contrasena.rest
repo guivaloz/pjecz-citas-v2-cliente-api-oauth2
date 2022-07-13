@@ -1,0 +1,17 @@
+@root = http://{{$dotenv HOST}}:{{$dotenv PORT}}
+@baseUrl = {{root}}/v2
+@username = {{$dotenv USERNAME}}
+@password = {{$dotenv PASSWORD}}
+
+### Bienvenida
+GET {{root}}
+
+### Actualizar la contraseña 
+POST {{baseUrl}}/cit_clientes/actualizar_contrasena
+content-type: application/json
+
+{
+    "email": "guivaloz@gmail.com",
+    "contrasena_anterior": "XXXXXXXXXXX",
+    "contrasena_nueva": "Perr$23Verde"
+}

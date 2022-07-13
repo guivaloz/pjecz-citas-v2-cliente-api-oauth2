@@ -9,11 +9,7 @@ from ..oficinas.crud import get_oficina
 from .models import CitHoraBloqueada
 
 
-def get_horas_bloquedas(
-    db: Session,
-    oficina_id: int,
-    fecha: date,
-) -> Any:
+def get_horas_bloquedas(db: Session, oficina_id: int, fecha: date) -> Any:
     """Consultar las horas bloqueadas de una oficina en una fecha dada"""
     consulta = db.query(CitHoraBloqueada)
 

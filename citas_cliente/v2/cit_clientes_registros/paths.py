@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 
 from lib.database import get_db
 
-from .crud import solicitar_nueva_cuenta, validar_nueva_cuenta, concluir_nueva_cuenta
+from .crud import request_new_account, validate_new_account, terminate_new_account
 from .schemas import CitClienteRegistroIn, CitClienteRegistroOut, CitClienteRegistroValidarOut, CitClienteRegistroConcluirIn, CitClienteRegistroConcluirOut
 
 cit_clientes_registros = APIRouter(prefix="/v2/nueva_cuenta", tags=["nueva cuenta"])
@@ -19,7 +19,7 @@ async def nueva_cuenta_solicitar(
 ):
     """Quiero crear una nueva cuenta, recibo el formulario con los datos personales"""
     try:
-        cit_cliente_registro = solicitar_nueva_cuenta(db, registro)
+        cit_cliente_registro = request_new_account(db, registro)
     except IndexError as error:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Not found: {str(error)}") from error
     except ValueError as error:
@@ -39,7 +39,7 @@ async def nueva_cuenta_validar(
     if not isinstance(cadena_validar, str):
         raise HTTPException(status_code=status.HTTP_406_NOT_ACCEPTABLE)
     try:
-        cit_cliente_registro = validar_nueva_cuenta(db, hashid, cadena_validar)
+        cit_cliente_registro = validate_new_account(db, hashid, cadena_validar)
     except IndexError as error:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Not found: {str(error)}") from error
     except ValueError as error:
@@ -54,7 +54,7 @@ async def nueva_cuenta_concluir(
 ):
     """Quiero crear una nueva cuenta, recibo el formulario con la contrasena"""
     try:
-        cit_cliente_registro = concluir_nueva_cuenta(db, registro)
+        cit_cliente_registro = terminate_new_account(db, registro)
     except IndexError as error:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Not found: {str(error)}") from error
     except ValueError as error:
