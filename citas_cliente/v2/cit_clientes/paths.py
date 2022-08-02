@@ -27,6 +27,21 @@ async def listado_cit_clientes(
     return paginate(get_cit_clientes(db))
 
 
+@cit_clientes.post("/actualizar_contrasena", response_model=CitClienteActualizarContrasenaOut)
+async def actualizar_contrasena(
+    actualizacion: CitClienteActualizarContrasenaIn,
+    db: Session = Depends(get_db),
+):
+    """Actualizar la contrasena de la version uno a la version dos"""
+    try:
+        cit_cliente_actualizado = update_cit_cliente_password(db, actualizacion)
+    except IndexError as error:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Not found: {str(error)}") from error
+    except ValueError as error:
+        raise HTTPException(status_code=status.HTTP_406_NOT_ACCEPTABLE, detail=f"Not acceptable: {str(error)}") from error
+    return CitClienteActualizarContrasenaOut.from_orm(cit_cliente_actualizado)
+
+
 @cit_clientes.get("/{cit_cliente_id}", response_model=CitClienteOut)
 async def detalle_cit_cliente(
     cit_cliente_id: int,
@@ -43,18 +58,3 @@ async def detalle_cit_cliente(
     except ValueError as error:
         raise HTTPException(status_code=status.HTTP_406_NOT_ACCEPTABLE, detail=f"Not acceptable: {str(error)}") from error
     return CitClienteOut.from_orm(cit_cliente)
-
-
-@cit_clientes.post("/actualizar_contrasena", response_model=CitClienteActualizarContrasenaOut)
-async def actualizar_contrasena(
-    actualizacion: CitClienteActualizarContrasenaIn,
-    db: Session = Depends(get_db),
-):
-    """Actualizar la contrasena de la version uno a la version dos"""
-    try:
-        cit_cliente_actualizado = update_cit_cliente_password(db, actualizacion)
-    except IndexError as error:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Not found: {str(error)}") from error
-    except ValueError as error:
-        raise HTTPException(status_code=status.HTTP_406_NOT_ACCEPTABLE, detail=f"Not acceptable: {str(error)}") from error
-    return CitClienteActualizarContrasenaOut.from_orm(cit_cliente_actualizado)
