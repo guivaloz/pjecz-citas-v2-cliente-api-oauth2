@@ -1,5 +1,5 @@
-@root = http://{{$dotenv HOST}}:{{$dotenv PORT}}
-@baseUrl = {{root}}
+@root = {{$dotenv HOST}}
+@baseUrl = {{root}}/v2
 @username = {{$dotenv USERNAME}}
 @password = {{$dotenv PASSWORD}}
 
@@ -8,21 +8,21 @@ GET {{root}}
 
 ### Autorizacion
 # @name auth
-POST {{baseUrl}}/token
+POST {{root}}/token
 Content-Type: application/x-www-form-urlencoded
 
 username={{username}}&password={{password}}
 
 ### GET Tramites y Servicios
-GET {{baseUrl}}/v2/cit_tramites_servicios
+GET {{baseUrl}}/cit_tramites_servicios
 Authorization: Bearer {{auth.response.body.access_token}}
 
 ### GET Tramites y Servicios - Curso de Preparacion en Materia de Mediacion
-GET {{baseUrl}}/v2/cit_tramites_servicios/2
+GET {{baseUrl}}/cit_tramites_servicios/2
 Authorization: Bearer {{auth.response.body.access_token}}
 
 ### POST Pago antes del banco, recibe los datos del asistente en React.js, entrega el id del pago
-POST {{baseUrl}}/v2/cit_pagos/nuevo
+POST {{baseUrl}}/cit_pagos/nuevo
 Authorization: Bearer {{auth.response.body.access_token}}
 content-type: application/json
 
@@ -38,7 +38,7 @@ content-type: application/json
 }
 
 ### POST Pago antes del banco, ya ha hecho un pago antes, entrega el id del pago
-POST {{baseUrl}}/v2/cit_pagos/nuevo
+POST {{baseUrl}}/cit_pagos/nuevo
 Authorization: Bearer {{auth.response.body.access_token}}
 content-type: application/json
 
@@ -49,7 +49,7 @@ content-type: application/json
 }
 
 ### POST Pago antes del banco, ya ha hecho un pago antes, entrega el id del pago
-POST {{baseUrl}}/v2/cit_pagos/nuevo
+POST {{baseUrl}}/cit_pagos/nuevo
 Authorization: Bearer {{auth.response.body.access_token}}
 content-type: application/json
 
@@ -60,7 +60,7 @@ content-type: application/json
 }
 
 ### POST Pago despues del banco
-POST {{baseUrl}}/v2/cit_pagos/realizado
+POST {{baseUrl}}/cit_pagos/realizado
 Authorization: Bearer {{auth.response.body.access_token}}
 content-type: application/json
 

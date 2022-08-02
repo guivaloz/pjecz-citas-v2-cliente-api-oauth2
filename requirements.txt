@@ -9,12 +9,14 @@ psycopg2-binary
 pydantic
 pylint
 pylint-sqlalchemy
-PyMySQL
+python-dotenv
 python-jose[cryptography]
 python-multipart
+requests
 SQLAlchemy
 SQLAlchemy-Utils
 rq
+tabulate
 Unidecode
 uvicorn
 uvloop

@@ -1,4 +1,4 @@
-@root = http://{{$dotenv HOST}}:{{$dotenv PORT}}
+@root = {{$dotenv HOST}}
 @baseUrl = {{root}}/v2
 @username = {{$dotenv USERNAME}}
 @password = {{$dotenv PASSWORD}}
@@ -6,7 +6,7 @@
 ### Bienvenida
 GET {{root}}
 
-### Actualizar la contraseña 
+### Actualizar la contraseña
 POST {{baseUrl}}/cit_clientes/actualizar_contrasena
 content-type: application/json
 
