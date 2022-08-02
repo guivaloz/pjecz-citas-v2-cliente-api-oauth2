@@ -66,9 +66,9 @@ def update_cit_cliente_password(db: Session, actualizacion: CitClienteActualizar
     if cit_cliente is None:
         raise IndexError("No existe ese cliente")
     # Validar la contrasena anterior
-    # contrasena_anterior_md5 = hashlib.md5(actualizacion.contrasena_anterior.encode("utf-8")).hexdigest()
-    # if contrasena_anterior_md5 != cit_cliente.contrasena_md5:
-    #    raise ValueError("La contrasena anterior no es correcta")
+    contrasena_anterior_md5 = hashlib.md5(actualizacion.contrasena_anterior.encode("utf-8")).hexdigest()
+    if contrasena_anterior_md5 != cit_cliente.contrasena_md5.lower():
+        raise ValueError("La contrasena anterior no es correcta ")
     # Poner en blanco la contrasena anterior
     cit_cliente.contrasena_md5 = ""
     # Cifrar la contrasena nueva
