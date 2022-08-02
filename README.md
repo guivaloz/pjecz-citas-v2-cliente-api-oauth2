@@ -1,4 +1,4 @@
-# pjecz-citas-v2-api-oauth2
+# pjecz-citas-v2-cliente-api-oauth2
 
 API del Sistema de Citas versión 2 del Poder Judicial del Estado de Coahuila de Zaragoza
 

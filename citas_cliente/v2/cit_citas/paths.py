@@ -1,7 +1,6 @@
 """
-Ci Citas V2, rutas (paths)
+Cit Citas V2, rutas (paths)
 """
-from datetime import date, time
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi_pagination.ext.sqlalchemy import paginate
 from sqlalchemy.orm import Session

@@ -55,18 +55,12 @@ def request_new_account(db: Session, registro: CitClienteRegistroIn) -> CitClien
     # Verificar que no exista un cliente con ese CURP
     posible_cit_cliente_con_curp = db.query(CitCliente).filter_by(curp=curp).first()
     if posible_cit_cliente_con_curp is not None:
-        if posible_cit_cliente_con_curp.estatus == "A":
-            raise ValueError("No puede registrarse porque ya una cuenta con ese CURP.")
-        else:
-            raise ValueError("No puede registrarse porque hay una cuenta suspendida con ese CURP.")
+        raise ValueError("No puede registrarse porque ya una cuenta con ese CURP.")
 
     # Verificar que no exista un cliente con ese correo electronico
     posible_cit_cliente_con_email = db.query(CitCliente).filter_by(email=email).first()
     if posible_cit_cliente_con_email is not None:
-        if posible_cit_cliente_con_curp.estatus == "A":
-            raise ValueError("No puede registrarse porque ya una cuenta con ese correo electrónico.")
-        else:
-            raise ValueError("No puede registrarse porque hay una cuenta suspendida con ese correo electrónico.")
+        raise ValueError("No puede registrarse porque ya una cuenta con ese correo electrónico.")
 
     # Verificar que no haya un registro pendiente con ese correo electronico
     posible_cit_cliente_registro = db.query(CitClienteRegistro).filter_by(email=email).filter_by(ya_registrado=False).filter_by(estatus="A").first()

@@ -1,5 +1,5 @@
-@root = http://{{$dotenv HOST}}:{{$dotenv PORT}}
-@baseUrl = {{root}}/v2/nueva_cuenta
+@root = {{$dotenv HOST}}
+@baseUrl = {{root}}/v2
 @hashid = {{$dotenv HASHID}}
 @cadena_validar = {{$dotenv CADENA_VALIDAR}}
 @password = {{$dotenv PASSWORD}}
@@ -8,35 +8,35 @@
 GET {{root}}
 
 ### Quiero crear una nueva cuenta, recibo el formulario con los datos personales
-POST {{baseUrl}}/solicitar
+POST {{baseUrl}}/nueva_cuenta/solicitar
 content-type: application/json
 
 {
-    "nombres": "Pedro",
-    "apellido_primero": "Infante",
-    "apellido_segundo": "CRUZ",
-    "curp": "VADJ770826HGRRLS34",
-    "telefono": "8443331122",
-    "email": "pedro.infante@gmail.com"
+    "nombres": "MARIO",
+    "apellido_primero": "MORENO",
+    "apellido_segundo": "CANTINFLAS",
+    "curp": "VADJ770826HGRRLS11",
+    "telefono": "8443331111",
+    "email": "mario.moreno@gmail.com"
 }
 
 ### URL Incompleta
-GET {{baseUrl}}/validar
+GET {{baseUrl}}/nueva_cuenta/validar
     ?user=ContrasenaAdmin
     &pass=UnaMalaContrasena
 
 ### URL Erronea
-GET {{baseUrl}}/validar
+GET {{baseUrl}}/nueva_cuenta/validar
     ?hashid=1F2GK3AS
     &cadena_validar=EstaCadenaDeValicacionNoEsCorrecta
 
 ### Quiero crear una nueva cuenta, viene del URL proporcionado, entrego el formulario para definir la contrasena
-GET {{baseUrl}}/validar
+GET {{baseUrl}}/nueva_cuenta/validar
     ?hashid={{hashid}}
     &cadena_validar={{cadena_validar}}
 
 ### Quiero crear una nueva cuenta, recibo el formulario con la contrasena
-POST {{baseUrl}}/concluir
+POST {{baseUrl}}/nueva_cuenta/concluir
 content-type: application/json
 
 {
