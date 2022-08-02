@@ -10,7 +10,7 @@ EMAIL_REGEXP = r"^[\w.-]+@[\w.-]+\.\w+$"
 PASSWORD_REGEXP = r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,24}$"
 TELEFONO_REGEXP = r"^[1-9]\d{9}$"
 
-PASSWORD_REGEXP_MESSAGE = "La contrasena debe tener de 8 a 24 caracteres, una mayuscula, una minuscula y un numero"
+PASSWORD_REGEXP_MESSAGE = "La contrasena debe tener de 8 a 24 caracteres, comenzando con una letra y contener por lo menos una mayuscula y un numero"
 
 
 def safe_clave(input_str):
