@@ -21,6 +21,9 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 def verify_password(plain_password, hashed_password):
     """Validar contraseña"""
+    # Maybe the hashed_password is not a string or is an empty string
+    if not isinstance(hashed_password, str) or hashed_password == "":
+        return False
     return pwd_context.verify(plain_password, hashed_password)
 
 
