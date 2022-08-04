@@ -17,7 +17,7 @@ from .models import CitCita
 from .schemas import CitCitaOut
 
 LIMITE_DIAS = 90
-LIMITE_CITAS_PENDIENTES = 10
+LIMITE_CITAS_PENDIENTES = 30
 
 
 def get_cit_citas(
