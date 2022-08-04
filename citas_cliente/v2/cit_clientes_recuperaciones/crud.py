@@ -22,7 +22,7 @@ def request_recover_password(db: Session, recuperacion: CitClienteRecuperacionIn
     cit_cliente = get_cit_cliente_from_email(db, recuperacion.email)
 
     # Consultar si existe una recuperacion para ese cliente
-    posible_cit_cliente_recuperacion = db.query(CitClienteRecuperacion).filter_by(cit_cliente_id=cit_cliente.id).filter_by(estatus="A").first()
+    posible_cit_cliente_recuperacion = db.query(CitClienteRecuperacion).filter_by(cit_cliente_id=cit_cliente.id).filter_by(ya_recuperado=False).filter_by(estatus="A").first()
     if posible_cit_cliente_recuperacion is not None:
         raise ValueError("Ya existe una recuperacion para ese email.")
 
