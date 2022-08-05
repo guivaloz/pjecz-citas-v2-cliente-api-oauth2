@@ -9,14 +9,13 @@ from lib.safe_string import safe_string
 from lib.redis import task_queue
 
 from ..cit_clientes.crud import get_cit_cliente
-from ..cit_dias_inhabiles.crud import get_cit_dias_inhabiles
+from ..cit_dias_disponibles.crud import get_cit_dias_disponibles
 from ..cit_oficinas_servicios.crud import get_cit_oficinas_servicios
 from ..cit_servicios.crud import get_cit_servicio
 from ..oficinas.crud import get_oficina
 from .models import CitCita
 from .schemas import CitCitaOut
 
-LIMITE_DIAS = 90
 LIMITE_CITAS_PENDIENTES = 30
 
 
@@ -151,21 +150,9 @@ def create_cit_cita(
     if cit_servicio_id not in [cit_oficina_servicio.cit_servicio_id for cit_oficina_servicio in cit_oficinas_servicios]:
         raise ValueError("No es posible agendar este servicio en esta oficina")
 
-    # Validar la fecha, no debe ser de hoy o del pasado
-    if fecha <= date.today():
-        raise ValueError("No es valida la fecha porque es de hoy o del pasado")
-
-    # Validar la fecha, no debe de pasar de LIMITE_DIAS
-    if fecha > date.today() + timedelta(days=LIMITE_DIAS):
-        raise ValueError("No es valida la fecha porque pasa el limite de dias en el futuro")
-
-    # Validar la fecha, no debe ser sabado o domingo
-    if fecha.weekday() in (5, 6):
-        raise ValueError("No es valida la fecha porque cae en sabado o domingo")
-
-    # Validar la fecha, no debe ser inhabil
-    if fecha in [item.fecha for item in get_cit_dias_inhabiles(db)]:
-        raise ValueError("No es valida la fecha porque es un dia inhabil")
+    # Validar la fecha, debe ser un dia disponible
+    if fecha not in get_cit_dias_disponibles(db, oficina_id=oficina_id):
+        raise ValueError("No es valida la fecha")
 
     # Definir los tiempos de la cita
     inicio_dt = datetime(year=fecha.year, month=fecha.month, day=fecha.day, hour=hora_minuto.hour, minute=hora_minuto.minute)
