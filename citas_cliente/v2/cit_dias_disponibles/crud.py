@@ -1,13 +1,17 @@
 """
 Cit Dias Disponibles V2, CRUD (create, read, update, and delete)
 """
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
+
 from typing import Any
 from sqlalchemy.orm import Session
+from pytz import timezone
 
 from ..cit_dias_inhabiles.crud import get_cit_dias_inhabiles
 
 LIMITE_DIAS = 90
+QUITAR_PRIMER_DIA_DESPUES_HORAS = 14
+HUSO_HORARIO = timezone("America/Mexico_City")
 
 
 def get_cit_dias_disponibles(db: Session, oficina_id: int) -> Any:
@@ -33,6 +37,13 @@ def get_cit_dias_disponibles(db: Session, oficina_id: int) -> Any:
 
         # Acumular
         dias_disponibles.append(fecha)
+
+    # Definir tiempo local
+    tiempo_local = datetime.now(HUSO_HORARIO)
+
+    # Si pasan de las 14 horas, quitar el primer dia disponible
+    if tiempo_local.hour >= QUITAR_PRIMER_DIA_DESPUES_HORAS:
+        dias_disponibles.pop(0)
 
     # Entregar
     return dias_disponibles

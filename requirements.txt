@@ -12,6 +12,7 @@ pylint-sqlalchemy
 python-dotenv
 python-jose[cryptography]
 python-multipart
+pytz
 requests
 SQLAlchemy
 SQLAlchemy-Utils
