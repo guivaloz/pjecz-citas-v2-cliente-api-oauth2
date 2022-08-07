@@ -41,8 +41,18 @@ def get_cit_dias_disponibles(db: Session, oficina_id: int) -> Any:
     # Definir tiempo local
     tiempo_local = datetime.now(HUSO_HORARIO)
 
-    # Si pasan de las 14 horas, quitar el primer dia disponible
-    if tiempo_local.hour >= QUITAR_PRIMER_DIA_DESPUES_HORAS:
+    # Definir que dia es hoy
+    hoy = tiempo_local.date()
+
+    # Definir si hoy es sabado, domingo o dia inhabil
+    hoy_es_dia_inhabil = hoy.weekday() in (5, 6) or hoy in dias_inhabiles
+
+    # Si hoy es dia inhabil, quitar el primer dia disponible
+    if hoy_es_dia_inhabil:
+        dias_disponibles.pop(0)
+
+    # Si es dia habil y pasan de las QUITAR_PRIMER_DIA_DESPUES_HORAS horas, quitar el primer dia disponible
+    elif tiempo_local.hour >= QUITAR_PRIMER_DIA_DESPUES_HORAS:
         dias_disponibles.pop(0)
 
     # Entregar
