@@ -14,7 +14,7 @@ def get_oficinas(db: Session, distrito_id: int = None) -> Any:
     if distrito_id:
         distrito = get_distrito(db, distrito_id)  # Validar que exista el distrito
         consulta = consulta.filter(Oficina.distrito == distrito)
-    return consulta.filter_by(estatus="A").filter_by(puede_agendar_citas=True).order_by(Oficina.id)
+    return consulta.filter_by(estatus="A").filter_by(puede_agendar_citas=True).order_by(Oficina.clave)
 
 
 def get_oficina(db: Session, oficina_id: int) -> Oficina:
