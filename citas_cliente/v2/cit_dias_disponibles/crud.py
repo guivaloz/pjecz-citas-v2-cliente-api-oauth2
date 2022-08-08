@@ -5,13 +5,14 @@ from datetime import date, datetime, timedelta
 
 from typing import Any
 from sqlalchemy.orm import Session
-from pytz import timezone
+import pytz
 
 from ..cit_dias_inhabiles.crud import get_cit_dias_inhabiles
 
 LIMITE_DIAS = 90
 QUITAR_PRIMER_DIA_DESPUES_HORAS = 14
-HUSO_HORARIO = timezone("America/Mexico_City")
+SERVIDOR_HUSO_HORARIO = pytz.utc
+LOCAL_HUSO_HORARIO = pytz.timezone("America/Mexico_City")
 
 
 def get_cit_dias_disponibles(db: Session, oficina_id: int) -> Any:
@@ -39,7 +40,8 @@ def get_cit_dias_disponibles(db: Session, oficina_id: int) -> Any:
         dias_disponibles.append(fecha)
 
     # Definir tiempo local
-    tiempo_local = datetime.now(HUSO_HORARIO)
+    servidor_tiempo = datetime.now(SERVIDOR_HUSO_HORARIO)
+    tiempo_local = servidor_tiempo.astimezone(LOCAL_HUSO_HORARIO)
 
     # Definir que dia es hoy
     hoy = tiempo_local.date()
