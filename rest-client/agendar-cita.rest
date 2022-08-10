@@ -39,8 +39,8 @@ Authorization: Bearer {{auth.response.body.access_token}}
 ### GET Horas para elegir
 GET {{baseUrl}}/cit_horas_disponibles
     ?oficina_id=71
-    &cit_servicio_id=2
-    &fecha=2022-08-09
+    &cit_servicio_id=8
+    &fecha=2022-08-17
 Authorization: Bearer {{auth.response.body.access_token}}
 
 ### POST crear cita
@@ -50,9 +50,9 @@ content-type: application/json
 
 {
     "oficina_id": 71,
-    "cit_servicio_id": 2,
-    "fecha": "2022-08-09",
-    "hora_minuto": "09:15"
+    "cit_servicio_id": 8,
+    "fecha": "2022-08-15",
+    "hora_minuto": "11:00"
 }
 
 ### GET mis citas

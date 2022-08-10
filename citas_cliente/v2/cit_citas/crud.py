@@ -8,8 +8,10 @@ from sqlalchemy.orm import Session
 from lib.safe_string import safe_string
 from lib.redis import task_queue
 
+from ..cit_citas_anonimas.crud import get_cit_citas_anonimas
 from ..cit_clientes.crud import get_cit_cliente
 from ..cit_dias_disponibles.crud import get_cit_dias_disponibles
+from ..cit_horas_disponibles.crud import get_cit_horas_disponibles
 from ..cit_oficinas_servicios.crud import get_cit_oficinas_servicios
 from ..cit_servicios.crud import get_cit_servicio
 from ..oficinas.crud import get_oficina
@@ -46,40 +48,6 @@ def get_cit_citas(
 
     # Filtro por estado, solo PENDIENTE
     consulta = consulta.filter_by(estado="PENDIENTE")
-
-    # Entregar
-    return consulta.filter_by(estatus="A").order_by(CitCita.id)
-
-
-def get_cit_citas_anonimas(db: Session, oficina_id: int, fecha: date = None, hora_minuto: time = None) -> Any:
-    """Consultar las citas"""
-    consulta = db.query(CitCita)
-
-    # Filtrar por la oficina
-    oficina = get_oficina(db, oficina_id)  # Causara index error si no existe, esta eliminada o no puede agendar citas
-    consulta = consulta.filter(CitCita.oficina == oficina)
-
-    # Si se filtra por fecha
-    if fecha is not None:
-        inicio_dt = datetime(year=fecha.year, month=fecha.month, day=fecha.day, hour=0, minute=0, second=0)
-        termino_dt = datetime(year=fecha.year, month=fecha.month, day=fecha.day, hour=23, minute=59, second=59)
-        consulta = consulta.filter(CitCita.inicio >= inicio_dt).filter(CitCita.inicio <= termino_dt)
-
-    # Si se filtra por hora_minuto
-    if fecha is not None and hora_minuto is not None:
-        inicio_dt = datetime(year=fecha.year, month=fecha.month, day=fecha.day, hour=hora_minuto.hour, minute=hora_minuto.minute, second=0)
-        consulta = consulta.filter(CitCita.inicio == inicio_dt)
-
-    # Filtro por tiempo de termino
-    hasta_tiempo = datetime(
-        year=fecha.year,
-        month=fecha.month,
-        day=fecha.day,
-        hour=23,
-        minute=59,
-        second=59,
-    )
-    consulta = consulta.filter(CitCita.termino <= hasta_tiempo)
 
     # Entregar
     return consulta.filter_by(estatus="A").order_by(CitCita.id)
@@ -154,19 +122,19 @@ def create_cit_cita(
     if fecha not in get_cit_dias_disponibles(db, oficina_id=oficina_id):
         raise ValueError("No es valida la fecha")
 
-    # Definir los tiempos de la cita
-    inicio_dt = datetime(year=fecha.year, month=fecha.month, day=fecha.day, hour=hora_minuto.hour, minute=hora_minuto.minute)
-    termino_dt = datetime(year=fecha.year, month=fecha.month, day=fecha.day, hour=hora_minuto.hour, minute=hora_minuto.minute) + timedelta(hours=cit_servicio.duracion.hour, minutes=cit_servicio.duracion.minute)
-
     # Definir los tiempos de la oficina
-    oficina_apertura_dt = datetime(year=fecha.year, month=fecha.month, day=fecha.day, hour=oficina.apertura.hour, minute=oficina.apertura.minute)
-    oficina_cierre_dt = datetime(year=fecha.year, month=fecha.month, day=fecha.day, hour=oficina.cierre.hour, minute=oficina.cierre.minute)
+    # oficina_apertura_dt = datetime(year=fecha.year, month=fecha.month, day=fecha.day, hour=oficina.apertura.hour, minute=oficina.apertura.minute)
+    # oficina_cierre_dt = datetime(year=fecha.year, month=fecha.month, day=fecha.day, hour=oficina.cierre.hour, minute=oficina.cierre.minute)
 
     # Validar la hora_minuto, respecto a la apertura de la oficina
-    if inicio_dt < oficina_apertura_dt:
-        raise ValueError("No es valida la hora-minuto porque es anterior a la apertura")
-    if termino_dt > oficina_cierre_dt:
-        raise ValueError("No es valida la hora-minuto porque el termino es posterior al cierre")
+    # if inicio_dt < oficina_apertura_dt:
+    #    raise ValueError("No es valida la hora-minuto porque es anterior a la apertura")
+    # if termino_dt > oficina_cierre_dt:
+    #    raise ValueError("No es valida la hora-minuto porque el termino es posterior al cierre")
+
+    # Validar la hora_minuto, respecto a las horas disponibles
+    if hora_minuto not in get_cit_horas_disponibles(db, oficina_id=oficina_id, cit_servicio_id=cit_servicio_id, fecha=fecha):
+        raise ValueError("No es valida la hora-minuto porque no esta disponible")
 
     # Validar que las citas en ese tiempo para esa oficina NO hayan llegado al limite de personas
     cit_citas = get_cit_citas_anonimas(db, oficina_id=oficina_id, fecha=fecha, hora_minuto=hora_minuto)
@@ -177,6 +145,10 @@ def create_cit_cita(
     cit_citas = get_cit_citas(db, cit_cliente_id=cit_cliente_id)
     if cit_citas.count() >= LIMITE_CITAS_PENDIENTES:
         raise ValueError("No se puede crear la cita porque ya se alcanzo su limite de citas pendientes")
+
+    # Definir los tiempos de la cita
+    inicio_dt = datetime(year=fecha.year, month=fecha.month, day=fecha.day, hour=hora_minuto.hour, minute=hora_minuto.minute)
+    termino_dt = datetime(year=fecha.year, month=fecha.month, day=fecha.day, hour=hora_minuto.hour, minute=hora_minuto.minute) + timedelta(hours=cit_servicio.duracion.hour, minutes=cit_servicio.duracion.minute)
 
     # Insertar registro
     cit_cita = CitCita(
