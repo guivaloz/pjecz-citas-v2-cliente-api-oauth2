@@ -5,7 +5,7 @@ from datetime import date, timedelta, datetime
 from typing import Any
 from sqlalchemy.orm import Session
 
-from ..cit_citas.crud import get_cit_citas_anonimas
+from ..cit_citas_anonimas.crud import get_cit_citas_anonimas
 from ..cit_dias_disponibles.crud import get_cit_dias_disponibles
 from ..cit_horas_bloqueadas.crud import get_horas_bloquedas
 from ..cit_servicios.crud import get_cit_servicio
@@ -32,21 +32,33 @@ def get_cit_horas_disponibles(
     if fecha not in get_cit_dias_disponibles(db, oficina_id=oficina_id):
         raise ValueError("No es valida la fecha")
 
+    # Tomar los tiempos de inicio y termino de la oficina
+    apertura = oficina.apertura
+    cierre = oficina.cierre
+
+    # Si el servicio tiene un tiempo desde
+    if cit_servicio.desde and apertura < cit_servicio.desde:
+        apertura = cit_servicio.desde
+
+    # Si el servicio tiene un tiempo hasta
+    if cit_servicio.hasta and cierre > cit_servicio.hasta:
+        cierre = cit_servicio.hasta
+
     # Definir los tiempos de inicio, de final y el timedelta de la duracion
     tiempo_inicial = datetime(
         year=fecha.year,
         month=fecha.month,
         day=fecha.day,
-        hour=oficina.apertura.hour,
-        minute=oficina.apertura.minute,
+        hour=apertura.hour,
+        minute=apertura.minute,
         second=0,
     )
     tiempo_final = datetime(
         year=fecha.year,
         month=fecha.month,
         day=fecha.day,
-        hour=oficina.cierre.hour,
-        minute=oficina.cierre.minute,
+        hour=cierre.hour,
+        minute=cierre.minute,
         second=0,
     )
     duracion = timedelta(
