@@ -15,6 +15,8 @@ class CitClienteOut(BaseModel):
     curp: str
     telefono: Optional[str]
     email: str
+    limite_citas_pendientes: Optional[int]
+    enviar_boletin: bool
 
     class Config:
         """SQLAlchemy config"""

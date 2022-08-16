@@ -14,7 +14,7 @@ def get_cit_citas_anonimas(db: Session, oficina_id: int, fecha: date = None, hor
     consulta = db.query(CitCita)
 
     # Filtrar por la oficina
-    oficina = get_oficina(db, oficina_id)  # Causara index error si no existe, esta eliminada o no puede agendar citas
+    oficina = get_oficina(db, oficina_id)
     consulta = consulta.filter(CitCita.oficina == oficina)
 
     # Si se filtra por fecha

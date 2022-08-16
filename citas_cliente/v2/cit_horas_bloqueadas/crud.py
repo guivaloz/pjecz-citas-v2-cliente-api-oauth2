@@ -14,7 +14,7 @@ def get_horas_bloquedas(db: Session, oficina_id: int, fecha: date) -> Any:
     consulta = db.query(CitHoraBloqueada)
 
     # Filtro por oficina
-    oficina = get_oficina(db, oficina_id)  # Causara index error si no existe, esta eliminada o no puede agendar citas
+    oficina = get_oficina(db, oficina_id)
     consulta = consulta.filter(CitHoraBloqueada.oficina == oficina)
 
     # Filtro por fecha
