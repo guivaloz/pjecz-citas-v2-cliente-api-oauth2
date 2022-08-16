@@ -113,7 +113,7 @@ def create_cit_pago(
         raise ValueError("No esta la cantidad en el rango permitido")
 
     # Validar el tramite y servicio
-    cit_tramite_servicio = get_cit_tramite_servicio(db, cit_tramite_servicio_id=cit_tramite_servicio_id)  # Causara index error si no existe o esta eliminada
+    cit_tramite_servicio = get_cit_tramite_servicio(db, cit_tramite_servicio_id=cit_tramite_servicio_id)
 
     # Validar email
     email = email.strip().lower()
@@ -169,7 +169,7 @@ def process_cit_pago(
     """Procesar un pago"""
 
     # Validar que exista el pago
-    cit_pago = get_cit_pago(db, cit_pago_id=id)  # Causara index error si no existe o si esta eliminado
+    cit_pago = get_cit_pago(db, cit_pago_id=id)
 
     # Validar que el estado proporcionado no sea PENDIENTE
     if estado == "PENDIENTE":

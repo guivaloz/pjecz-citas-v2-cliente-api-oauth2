@@ -23,7 +23,7 @@ def get_cit_horas_disponibles(
     """Consultar las horas disponibles, entrega un listado de horas"""
 
     # Consultar oficina
-    oficina = get_oficina(db, oficina_id)  # Causara index error si no existe, esta eliminada o no puede agendar citas
+    oficina = get_oficina(db, oficina_id)
 
     # Consultar el servicio
     cit_servicio = get_cit_servicio(db, cit_servicio_id)

@@ -29,7 +29,7 @@ def get_cit_citas(
     consulta = db.query(CitCita)
 
     # Consultar el cliente
-    cit_cliente = get_cit_cliente(db, cit_cliente_id=cit_cliente_id)  # Causara index error si no existe o esta eliminada
+    cit_cliente = get_cit_cliente(db, cit_cliente_id=cit_cliente_id)
     consulta = consulta.filter(CitCita.cit_cliente == cit_cliente)
 
     # Se consultan todas los citas desde hoy
@@ -107,11 +107,17 @@ def create_cit_cita(
 ) -> CitCitaOut:
     """Crear una cita"""
 
+    # Consultar el cliente
+    cit_cliente = get_cit_cliente(db, cit_cliente_id=cit_cliente_id)
+
     # Consultar y validar la oficina
     oficina = get_oficina(db, oficina_id=oficina_id)
 
     # Consultar y validar el servicio
     cit_servicio = get_cit_servicio(db, cit_servicio_id=cit_servicio_id)
+
+    # Consultar las citas del cliente, desde hoy y con estado PENDIENTE
+    cit_citas = get_cit_citas(db, cit_cliente_id=cit_cliente_id)
 
     # Validar que ese servicio lo ofrezca esta oficina
     cit_oficinas_servicios = get_cit_oficinas_servicios(db, oficina_id=oficina_id).all()
@@ -121,16 +127,6 @@ def create_cit_cita(
     # Validar la fecha, debe ser un dia disponible
     if fecha not in get_cit_dias_disponibles(db, oficina_id=oficina_id):
         raise ValueError("No es valida la fecha")
-
-    # Definir los tiempos de la oficina
-    # oficina_apertura_dt = datetime(year=fecha.year, month=fecha.month, day=fecha.day, hour=oficina.apertura.hour, minute=oficina.apertura.minute)
-    # oficina_cierre_dt = datetime(year=fecha.year, month=fecha.month, day=fecha.day, hour=oficina.cierre.hour, minute=oficina.cierre.minute)
-
-    # Validar la hora_minuto, respecto a la apertura de la oficina
-    # if inicio_dt < oficina_apertura_dt:
-    #    raise ValueError("No es valida la hora-minuto porque es anterior a la apertura")
-    # if termino_dt > oficina_cierre_dt:
-    #    raise ValueError("No es valida la hora-minuto porque el termino es posterior al cierre")
 
     # Validar la hora_minuto, respecto a las horas disponibles
     if hora_minuto not in get_cit_horas_disponibles(db, oficina_id=oficina_id, cit_servicio_id=cit_servicio_id, fecha=fecha):
@@ -142,13 +138,20 @@ def create_cit_cita(
         raise ValueError("No se puede crear la cita porque ya se alcanzo el limite de personas")
 
     # Validar que la cantidad de citas pendientes no haya llegado al limite de este cliente
-    cit_citas = get_cit_citas(db, cit_cliente_id=cit_cliente_id)
-    if cit_citas.count() >= LIMITE_CITAS_PENDIENTES:
+    tope = LIMITE_CITAS_PENDIENTES
+    if cit_cliente.limite_citas_pendientes and cit_cliente.limite_citas_pendientes > LIMITE_CITAS_PENDIENTES:
+        tope = cit_cliente.limite_citas_pendientes
+    if cit_citas.count() >= tope:
         raise ValueError("No se puede crear la cita porque ya se alcanzo su limite de citas pendientes")
 
     # Definir los tiempos de la cita
     inicio_dt = datetime(year=fecha.year, month=fecha.month, day=fecha.day, hour=hora_minuto.hour, minute=hora_minuto.minute)
     termino_dt = datetime(year=fecha.year, month=fecha.month, day=fecha.day, hour=hora_minuto.hour, minute=hora_minuto.minute) + timedelta(hours=cit_servicio.duracion.hour, minutes=cit_servicio.duracion.minute)
+
+    # Validar que no tenga una cita pendiente en la misma fecha y hora
+    for cit_cita in cit_citas.all():
+        if cit_cita.inicio == inicio_dt:
+            raise ValueError("No se puede crear la cita porque ya tiene una cita pendiente en esta fecha y hora")
 
     # Insertar registro
     cit_cita = CitCita(
