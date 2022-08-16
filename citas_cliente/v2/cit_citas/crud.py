@@ -116,6 +116,9 @@ def create_cit_cita(
     # Consultar y validar el servicio
     cit_servicio = get_cit_servicio(db, cit_servicio_id=cit_servicio_id)
 
+    # Consultar las citas del cliente, desde hoy y con estado PENDIENTE
+    cit_citas = get_cit_citas(db, cit_cliente_id=cit_cliente_id)
+
     # Validar que ese servicio lo ofrezca esta oficina
     cit_oficinas_servicios = get_cit_oficinas_servicios(db, oficina_id=oficina_id).all()
     if cit_servicio_id not in [cit_oficina_servicio.cit_servicio_id for cit_oficina_servicio in cit_oficinas_servicios]:
@@ -138,13 +141,17 @@ def create_cit_cita(
     tope = LIMITE_CITAS_PENDIENTES
     if cit_cliente.limite_citas_pendientes and cit_cliente.limite_citas_pendientes > LIMITE_CITAS_PENDIENTES:
         tope = cit_cliente.limite_citas_pendientes
-    cit_citas = get_cit_citas(db, cit_cliente_id=cit_cliente_id)
     if cit_citas.count() >= tope:
         raise ValueError("No se puede crear la cita porque ya se alcanzo su limite de citas pendientes")
 
     # Definir los tiempos de la cita
     inicio_dt = datetime(year=fecha.year, month=fecha.month, day=fecha.day, hour=hora_minuto.hour, minute=hora_minuto.minute)
     termino_dt = datetime(year=fecha.year, month=fecha.month, day=fecha.day, hour=hora_minuto.hour, minute=hora_minuto.minute) + timedelta(hours=cit_servicio.duracion.hour, minutes=cit_servicio.duracion.minute)
+
+    # Validar que no tenga una cita pendiente en la misma fecha y hora
+    for cit_cita in cit_citas.all():
+        if cit_cita.inicio == inicio_dt:
+            raise ValueError("No se puede crear la cita porque ya tiene una cita pendiente en esta fecha y hora")
 
     # Insertar registro
     cit_cita = CitCita(
