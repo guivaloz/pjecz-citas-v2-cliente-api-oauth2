@@ -146,10 +146,9 @@ def create_cit_cita(
     termino_dt = datetime(year=fecha.year, month=fecha.month, day=fecha.day, hour=hora_minuto.hour, minute=hora_minuto.minute) + timedelta(hours=cit_servicio.duracion.hour, minutes=cit_servicio.duracion.minute)
 
     # Validar que no tenga una cita pendiente en la misma fecha y hora
-    # cit_citas = get_cit_citas(db, cit_cliente_id=cit_cliente_id)
-    # for cit_cita in cit_citas.all():
-    #    if cit_cita.inicio == inicio_dt:
-    #        raise ValueError("No se puede crear la cita porque ya tiene una cita pendiente en esta fecha y hora")
+    for cit_cita in get_cit_citas(db, cit_cliente_id=cit_cliente_id).all():
+        if cit_cita.inicio == inicio_dt:
+            raise ValueError("No se puede crear la cita porque ya tiene una cita pendiente en esta fecha y hora")
 
     # Insertar registro
     cit_cita = CitCita(

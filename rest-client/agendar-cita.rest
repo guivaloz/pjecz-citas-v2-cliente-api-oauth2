@@ -52,7 +52,7 @@ content-type: application/json
     "oficina_id": 71,
     "cit_servicio_id": 2,
     "fecha": "2022-08-22",
-    "hora_minuto": "10:00"
+    "hora_minuto": "11:15"
 }
 
 ### GET mis citas
