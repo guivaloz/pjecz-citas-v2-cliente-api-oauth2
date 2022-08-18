@@ -28,8 +28,8 @@ class CitCliente(Base, UniversalMixin):
     contrasena_md5 = Column(String(256), nullable=False, default="")
     contrasena_sha256 = Column(String(256), nullable=False, default="")
     renovacion = Column(Date(), nullable=False)
-    limite_citas_pendientes = Column(Integer(), nullable=True)
-    enviar_boletin = Column(Boolean(), nullable=False, default=True)
+    limite_citas_pendientes = Column(Integer(), nullable=True, default=0)
+    enviar_boletin = Column(Boolean(), nullable=True, default=True)
 
     # Hijos
     cit_clientes_recuperaciones = relationship("CitClienteRecuperacion", back_populates="cit_cliente")
