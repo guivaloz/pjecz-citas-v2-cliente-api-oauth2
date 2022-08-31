@@ -6,9 +6,9 @@ from pydantic import BaseModel
 
 
 class EncServicioIn(BaseModel):
-    """Esquema para entregar encuesta de servicio"""
+    """Esquema para recibir una encuesta de servicio"""
 
-    id: int
+    hashid: str
     cit_cliente_id: int
     oficina_id: int
     respuesta_01: int
@@ -18,8 +18,9 @@ class EncServicioIn(BaseModel):
 
 
 class EncServicioOut(EncServicioIn):
-    """Esquema para entregar encuesta de servicio"""
+    """Esquema para entregar una encuesta de servicio"""
 
+    id: int
     cit_cliente_email: str
     cit_cliente_nombre: str
     oficina_clave: str

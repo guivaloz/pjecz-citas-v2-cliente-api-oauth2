@@ -8,7 +8,7 @@ from pydantic import BaseModel
 class EncSistemaIn(BaseModel):
     """Esquema para entregar encuesta de sistema"""
 
-    id: int
+    hashid: str
     cit_cliente_id: int
     respuesta_01: int
     respuesta_02: str
@@ -18,6 +18,7 @@ class EncSistemaIn(BaseModel):
 class EncSistemaOut(EncSistemaIn):
     """Esquema para entregar encuesta de sistema"""
 
+    id: int
     cit_cliente_email: str
     cit_cliente_nombre: str
     respuesta_01: Optional[int] = None
