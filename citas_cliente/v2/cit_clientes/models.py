@@ -34,7 +34,8 @@ class CitCliente(Base, UniversalMixin):
     # Hijos
     cit_clientes_recuperaciones = relationship("CitClienteRecuperacion", back_populates="cit_cliente")
     cit_citas = relationship("CitCita", back_populates="cit_cliente")
-    cit_pagos = relationship("CitPago", back_populates="cit_cliente")
+    enc_servicios = relationship("EncServicio", back_populates="cit_cliente")
+    enc_sistemas = relationship("EncSistema", back_populates="cit_cliente")
 
     @property
     def nombre(self):
@@ -53,11 +54,11 @@ class CitCliente(Base, UniversalMixin):
             "CIT DIAS DISPONIBLES": 1,
             "CIT HORAS DISPONIBLES": 1,
             "CIT OFICINAS SERVICIOS": 1,
-            "CIT PAGOS": 3,
             "CIT SERVICIOS": 1,
-            "CIT TRAMITES SERVICIOS": 1,
             "DISTRITOS": 1,
             "DOMICILIOS": 1,
+            "ENC SERVICIOS": 2,
+            "ENC SISTEMAS": 2,
             "MATERIAS": 1,
             "OFICINAS": 1,
         }
