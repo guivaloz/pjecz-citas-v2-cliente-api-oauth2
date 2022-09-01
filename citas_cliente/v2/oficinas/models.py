@@ -37,6 +37,7 @@ class Oficina(Base, UniversalMixin):
     cit_citas = relationship("CitCita", back_populates="oficina")
     cit_horas_bloqueadas = relationship("CitHoraBloqueada", back_populates="oficina")
     cit_oficinas_servicios = relationship("CitOficinaServicio", back_populates="oficina")
+    enc_servicios = relationship("EncServicio", back_populates="oficina")
 
     @property
     def distrito_nombre(self):
