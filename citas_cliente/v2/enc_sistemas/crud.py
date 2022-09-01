@@ -3,6 +3,8 @@ Encuestas Sistemas V2, CRUD (create, read, update, and delete)
 """
 from sqlalchemy.orm import Session
 
+from lib.safe_string import safe_string
+
 from .models import EncSistema
 from .schemas import EncSistemaIn
 
@@ -38,11 +40,21 @@ def update_enc_sistema(db: Session, encuesta: EncSistemaIn) -> EncSistema:
     # Validar
     enc_sistema = validate_enc_sistema(db, encuesta.hashid)
 
-    # Actualizar
+    # Respuesta 1 es entero de 1 a 5
+    if encuesta.respuesta_01 < 1 or encuesta.respuesta_01 > 5:
+        raise ValueError("El valor de la respuesta 1 esta fuera del rango")
     enc_sistema.respuesta_01 = encuesta.respuesta_01
-    enc_sistema.respuesta_02 = encuesta.respuesta_02
-    enc_sistema.respuesta_03 = encuesta.respuesta_03
+
+    # Respuesta 2 es texto
+    enc_sistema.respuesta_02 = safe_string(encuesta.respuesta_02)
+
+    # Respuesta 3 es texto
+    enc_sistema.respuesta_03 = safe_string(encuesta.respuesta_03)
+
+    # Cambiar el estado a Contestada
     enc_sistema.estado = "CONTESTADA"
+
+    # Actualizar
     db.add(enc_sistema)
     db.commit()
     db.refresh(enc_sistema)
