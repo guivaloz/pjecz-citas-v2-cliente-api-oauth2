@@ -22,8 +22,8 @@ class EncSistemaOut(EncSistemaIn):
     cit_cliente_email: str
     cit_cliente_nombre: str
     respuesta_01: Optional[int] = None
-    respuesta_02: Optional[str] = None
-    respuesta_03: Optional[str] = None
+    respuesta_02: Optional[str] = ""
+    respuesta_03: Optional[str] = ""
     estado: str
 
     class Config:

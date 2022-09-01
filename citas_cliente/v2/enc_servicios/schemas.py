@@ -29,7 +29,7 @@ class EncServicioOut(EncServicioIn):
     respuesta_01: Optional[int] = None
     respuesta_02: Optional[int] = None
     respuesta_03: Optional[int] = None
-    respuesta_04: Optional[str] = None
+    respuesta_04: Optional[str] = ""
     estado: str
 
     class Config:
