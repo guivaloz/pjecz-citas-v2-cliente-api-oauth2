@@ -9,8 +9,6 @@ class EncServicioIn(BaseModel):
     """Esquema para recibir una encuesta de servicio"""
 
     hashid: str
-    cit_cliente_id: int
-    oficina_id: int
     respuesta_01: int
     respuesta_02: int
     respuesta_03: int
@@ -21,8 +19,10 @@ class EncServicioOut(EncServicioIn):
     """Esquema para entregar una encuesta de servicio"""
 
     id: int
+    cit_cliente_id: int
     cit_cliente_email: str
     cit_cliente_nombre: str
+    oficina_id: int
     oficina_clave: str
     oficina_descripcion: str
     oficina_descripcion_corta: str

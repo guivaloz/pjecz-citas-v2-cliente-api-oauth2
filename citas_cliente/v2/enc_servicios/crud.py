@@ -28,7 +28,7 @@ def validate_enc_servicio(db: Session, hashid: str) -> EncServicio:
 
     # Si el estado no es PENDIENTE causa excepcion
     if enc_servicio.estado != "PENDIENTE":
-        raise IndexError("No esta pendiente esa encuesta de servicio")
+        raise IndexError("Esta encuesta ya fue llenada o fue cancelada")
 
     # Entregar
     return enc_servicio
