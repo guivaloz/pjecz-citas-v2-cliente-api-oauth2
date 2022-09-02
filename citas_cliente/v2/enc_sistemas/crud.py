@@ -15,20 +15,20 @@ def validate_enc_sistema(db: Session, hashid: str) -> EncSistema:
     # Validar hashid, si no es valido causa excepcion
     enc_sistema_id = EncSistema.decode_id(hashid)
     if enc_sistema_id is None:
-        raise IndexError("No se pudo descifrar el ID de la encuesta de servicio")
+        raise IndexError("No se pudo descifrar el ID de la encuesta")
 
     # Consultar, si no se encuentra causa excepcion
     enc_sistema = db.query(EncSistema).get(enc_sistema_id)
     if enc_sistema is None:
-        raise IndexError("No existe la encuesta de servicio con el ID dado")
+        raise IndexError("No existe la encuesta con el ID dado")
 
     # Si ya esta eliminado causa excepcion
     if enc_sistema.estatus != "A":
-        raise IndexError("No es activa esa encuesta de servicio, fue eliminada")
+        raise IndexError("No es activa esa encuesta, fue eliminada")
 
     # Si el estado no es PENDIENTE causa excepcion
     if enc_sistema.estado != "PENDIENTE":
-        raise IndexError("No esta pendiente esa encuesta de servicio")
+        raise IndexError("La encuesta ya fue contestada o cancelada")
 
     # Entregar
     return enc_sistema
@@ -51,8 +51,8 @@ def update_enc_sistema(db: Session, encuesta: EncSistemaIn) -> EncSistema:
     # Respuesta 3 es texto
     enc_sistema.respuesta_03 = safe_string(encuesta.respuesta_03)
 
-    # Cambiar el estado a Contestada
-    enc_sistema.estado = "CONTESTADA"
+    # Cambiar el estado
+    enc_sistema.estado = "CONTESTADO"
 
     # Actualizar
     db.add(enc_sistema)

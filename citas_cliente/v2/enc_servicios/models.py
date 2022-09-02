@@ -40,6 +40,11 @@ class EncServicio(Base, UniversalMixin):
     estado = Column(Enum(*ESTADOS, name="estados", native_enum=False))
 
     @property
+    def hashid(self):
+        """Retorna el ID hasheado"""
+        return self.encode_id()
+
+    @property
     def cit_cliente_email(self):
         """Retorna el email del cliente"""
         return self.cit_cliente.email

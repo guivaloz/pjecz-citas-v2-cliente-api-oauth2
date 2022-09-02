@@ -15,20 +15,20 @@ def validate_enc_servicio(db: Session, hashid: str) -> EncServicio:
     # Validar hashid, si no es valido causa excepcion
     enc_servicio_id = EncServicio.decode_id(hashid)
     if enc_servicio_id is None:
-        raise IndexError("No se pudo descifrar el ID de la encuesta de servicio")
+        raise IndexError("No se pudo descifrar el ID de la encuesta")
 
     # Consultar, si no se encuentra causa excepcion
     enc_servicio = db.query(EncServicio).get(enc_servicio_id)
     if enc_servicio is None:
-        raise IndexError("No existe la encuesta de servicio con el ID dado")
+        raise IndexError("No existe la encuesta con el ID dado")
 
     # Si ya esta eliminado causa excepcion
     if enc_servicio.estatus != "A":
-        raise IndexError("No es activa esa encuesta de servicio, fue eliminada")
+        raise IndexError("No es activa esa encuesta, fue eliminada")
 
     # Si el estado no es PENDIENTE causa excepcion
     if enc_servicio.estado != "PENDIENTE":
-        raise IndexError("Esta encuesta ya fue llenada o fue cancelada")
+        raise IndexError("La encuesta ya fue contestada o cancelada")
 
     # Entregar
     return enc_servicio
@@ -58,8 +58,8 @@ def update_enc_servicio(db: Session, encuesta: EncServicioIn) -> EncServicio:
     # Respuesta 4 es un texto
     enc_servicio.respuesta_04 = safe_string(encuesta.respuesta_04)
 
-    # Cambiar el estado a Contestada
-    enc_servicio.estado = "CONTESTADA"
+    # Cambiar el estado
+    enc_servicio.estado = "CONTESTADO"
 
     # Actualizar
     db.add(enc_servicio)
