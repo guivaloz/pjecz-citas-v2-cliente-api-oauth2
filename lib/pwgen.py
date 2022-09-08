@@ -24,3 +24,10 @@ def generar_aleatorio(largo=16):
     todos = minusculas + mayusculas + digitos
     temp = random.sample(todos, largo)
     return "".join(temp)
+
+
+def generar_codigo_asistencia(largo=4):
+    """Generar codigo asistencia"""
+    digitos = string.digits
+    temp = random.sample(digitos, largo)
+    return "".join(temp)
