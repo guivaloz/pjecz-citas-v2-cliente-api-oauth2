@@ -2,7 +2,7 @@
 Cit Citas V2, modelos
 """
 from collections import OrderedDict
-from sqlalchemy import Boolean, Column, DateTime, Enum, ForeignKey, Integer, Text
+from sqlalchemy import Boolean, Column, DateTime, Enum, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import relationship
 
 from lib.database import Base
@@ -17,6 +17,7 @@ class CitCita(Base, UniversalMixin):
             ("ASISTIO", "Asistió"),
             ("CANCELO", "Canceló"),
             ("PENDIENTE", "Pendiente"),
+            ("INASISTENCIA", "Inasistencia"),
         ]
     )
 
@@ -40,9 +41,7 @@ class CitCita(Base, UniversalMixin):
     notas = Column(Text(), nullable=False, default="", server_default="")
     estado = Column(Enum(*ESTADOS, name="tipos_estados", native_enum=False))
     asistencia = Column(Boolean(), nullable=False, default=False, server_default="false")
-
-    # Hijos
-    # cit_citas_documentos = relationship("CitCitaDocumento", back_populates="cit_cita")
+    codigo_asistencia = Column(String(4))
 
     @property
     def cit_servicio_descripcion(self):

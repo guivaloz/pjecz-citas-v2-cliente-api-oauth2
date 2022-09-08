@@ -1,0 +1,29 @@
+@root = {{$dotenv HOST}}
+@baseUrl = {{root}}/v2
+@hashid = {{$dotenv HASHID}}
+@cadena_validar = {{$dotenv CADENA_VALIDAR}}
+@password = {{$dotenv PASSWORD}}
+
+### Bienvenida
+GET {{root}}
+
+### Validar encuesta de servicios MAL HECHA
+GET {{baseUrl}}/enc_servicios/validar
+    ?user=ContrasenaAdmin
+    &pass=UnaMalaContrasena
+
+### Validar encuesta de servicios YA CONTESTADA o CURRUPTA
+GET {{baseUrl}}/enc_servicios/validar
+    ?hashid=XYwjzDwZ
+
+### Contestar encuesta de servicios
+POST {{baseUrl}}/enc_servicios/contestar
+content-type: application/json
+
+{
+    "hashid": "XYwjzDwZ",
+    "respuesta_01": 3,
+    "respuesta_02": 1,
+    "respuesta_03": 5,
+    "respuesta_04": "Esta es una segunda observacion"
+}

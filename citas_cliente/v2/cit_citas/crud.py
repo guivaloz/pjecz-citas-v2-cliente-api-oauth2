@@ -5,6 +5,7 @@ from datetime import date, datetime, time, timedelta
 from typing import Any
 from sqlalchemy.orm import Session
 
+from lib.pwgen import generar_codigo_asistencia
 from lib.safe_string import safe_string
 from lib.redis import task_queue
 
@@ -160,6 +161,7 @@ def create_cit_cita(
         notas=safe_string(input_str=nota, max_len=512),
         estado="PENDIENTE",
         asistencia=False,
+        codigo_asistencia=generar_codigo_asistencia(),
     )
     db.add(cit_cita)
     db.commit()
