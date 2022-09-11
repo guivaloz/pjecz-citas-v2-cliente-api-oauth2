@@ -39,5 +39,8 @@ def get_cit_citas_anonimas(db: Session, oficina_id: int, fecha: date = None, hor
     )
     consulta = consulta.filter(CitCita.termino <= hasta_tiempo)
 
+    # Descartar las citas canceladas
+    consulta = consulta.filter(CitCita.estado != "CANCELO")
+
     # Entregar
     return consulta.filter_by(estatus="A").order_by(CitCita.id)
