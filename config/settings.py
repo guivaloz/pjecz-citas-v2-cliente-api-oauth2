@@ -35,6 +35,9 @@ ORIGINS = [
 REDIS_URL = os.environ.get("REDIS_URL", "redis://127.0.0.1")
 TASK_QUEUE = os.environ.get("TASK_QUEUE", "pjecz_citas_v2")
 
+# Salt sirve para cifrar el ID con HashID, debe ser igual en Admin
+SALT = os.environ.get("SALT", "Esta es una muy mala cadena aleatoria")
+
 # URLs de las encuestas
 POLL_SERVICE_URL = os.environ.get("POLL_SERVICE_URL", "")
 POLL_SYSTEM_URL = os.environ.get("POLL_SYSTEM_URL", "")

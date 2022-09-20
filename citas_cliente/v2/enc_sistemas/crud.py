@@ -1,8 +1,12 @@
 """
 Encuestas Sistemas V2, CRUD (create, read, update, and delete)
 """
-from sqlalchemy.orm import Session
+from typing import Optional
 
+from sqlalchemy.orm import Session
+from hashids import Hashids
+
+from config.settings import POLL_SYSTEM_URL, SALT
 from lib.safe_string import safe_string
 
 from .models import EncSistema
@@ -61,3 +65,20 @@ def update_enc_sistema(db: Session, encuesta: EncSistemaIn) -> EncSistema:
 
     # Entregar
     return enc_sistema
+
+
+def get_enc_sistema_url(db: Session, cit_cliente_id: int) -> Optional[str]:
+    """Obtener la URL de la encuesta de sistemas del cliente si existe"""
+
+    # Consultar la encuesta de sistemas PENDIENTE
+    enc_sistema = db.query(EncSistema).filter(EncSistema.cit_cliente_id == cit_cliente_id).filter(EncSistema.estado == "PENDIENTE").first()
+
+    # Si no existe, entregar None
+    if enc_sistema is None:
+        return None
+
+    # Preparar el cifrado
+    hashids = Hashids(SALT, min_length=8)
+
+    # Entregar la URL
+    return f"{POLL_SYSTEM_URL}?hashid={hashids.encode(enc_sistema.id)}"

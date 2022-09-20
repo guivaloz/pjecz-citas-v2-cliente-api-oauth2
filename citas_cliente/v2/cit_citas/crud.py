@@ -72,7 +72,34 @@ def get_cit_cita(db: Session, cit_cliente_id: int, cit_cita_id: int) -> CitCitaO
     return cit_cita
 
 
-def cancel_cit_cita(db: Session, cit_cliente_id: int, cit_cita_id: int) -> CitCitaOut:
+def get_cit_citas_disponibles_cantidad(
+    db: Session,
+    cit_cliente_id: int,
+) -> int:
+    """Consultar la cantidad de citas que puede agendar (que es su limite menos las pendientes)"""
+
+    # Consultar el cliente
+    cit_cliente = get_cit_cliente(db, cit_cliente_id=cit_cliente_id)
+
+    # Definir la cantidad limite de citas del cliente
+    limite = LIMITE_CITAS_PENDIENTES
+    if cit_cliente.limite_citas_pendientes > limite:
+        limite = cit_cliente.limite_citas_pendientes
+
+    # Consultar las citas PENDIENTES
+    citas_pendientes_cantidad = get_cit_citas(db=db, cit_cliente_id=cit_cliente_id).count()
+
+    # Entregar la cantidad de citas disponibles que puede agendar
+    if citas_pendientes_cantidad >= limite:
+        return 0
+    return limite - citas_pendientes_cantidad
+
+
+def cancel_cit_cita(
+    db: Session,
+    cit_cliente_id: int,
+    cit_cita_id: int,
+) -> CitCitaOut:
     """Cancelar una cita"""
 
     # Consultar

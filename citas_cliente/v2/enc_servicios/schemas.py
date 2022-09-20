@@ -36,3 +36,9 @@ class EncServicioOut(EncServicioIn):
         """SQLAlchemy config"""
 
         orm_mode = True
+
+
+class EncServicioURLOut(BaseModel):
+    """Esquema para entregar una URL de encuesta de servicio"""
+
+    url: str
