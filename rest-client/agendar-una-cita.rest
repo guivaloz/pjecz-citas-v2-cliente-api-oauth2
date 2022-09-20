@@ -17,6 +17,10 @@ username={{username}}&password={{password}}
 GET {{baseUrl}}/distritos
 Authorization: Bearer {{auth.response.body.access_token}}
 
+### GET Distritos
+GET {{baseUrl}}/distritos/6
+Authorization: Bearer {{auth.response.body.access_token}}
+
 ### GET Oficinas del Distrito
 GET {{baseUrl}}/oficinas
     ?distrito_id=6
@@ -40,7 +44,7 @@ Authorization: Bearer {{auth.response.body.access_token}}
 GET {{baseUrl}}/cit_horas_disponibles
     ?oficina_id=71
     &cit_servicio_id=2
-    &fecha=2022-08-22
+    &fecha=2022-08-19
 Authorization: Bearer {{auth.response.body.access_token}}
 
 ### POST crear cita

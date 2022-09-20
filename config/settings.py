@@ -34,3 +34,7 @@ ORIGINS = [
 # Redis
 REDIS_URL = os.environ.get("REDIS_URL", "redis://127.0.0.1")
 TASK_QUEUE = os.environ.get("TASK_QUEUE", "pjecz_citas_v2")
+
+# URLs de las encuestas
+POLL_SERVICE_URL = os.environ.get("POLL_SERVICE_URL", "")
+POLL_SYSTEM_URL = os.environ.get("POLL_SYSTEM_URL", "")

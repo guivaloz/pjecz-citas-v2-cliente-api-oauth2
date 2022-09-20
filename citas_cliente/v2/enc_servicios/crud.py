@@ -1,6 +1,7 @@
 """
 Encuestas Servicios V2, CRUD (create, read, update, and delete)
 """
+from typing import Optional
 from sqlalchemy.orm import Session
 
 from lib.safe_string import safe_string
@@ -65,6 +66,20 @@ def update_enc_servicio(db: Session, encuesta: EncServicioIn) -> EncServicio:
     db.add(enc_servicio)
     db.commit()
     db.refresh(enc_servicio)
+
+    # Entregar
+    return enc_servicio
+
+
+def get_enc_servicio(db: Session, cit_cliente_id: int) -> Optional[EncServicio]:
+    """Obtener la encuesta de servicio del cliente si existe"""
+
+    # Consultar la encuesta de servicio PENDIENTE
+    enc_servicio = db.query(EncServicio).filter(EncServicio.cit_cliente_id == cit_cliente_id).filter(EncServicio.estado == "PENDIENTE").first()
+
+    # Si no existe, entregar None
+    if enc_servicio is None:
+        return None
 
     # Entregar
     return enc_servicio
