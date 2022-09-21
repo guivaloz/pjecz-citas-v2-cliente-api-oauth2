@@ -38,8 +38,8 @@ except ImportError:
 
 # FastAPI
 app = FastAPI(
-    title="Citas V2 API OAuth2",
-    description="API del Sistema de Citas V2 del Poder Judicial del Estado de Coahuila de Zaragoza",
+    title="Citas V2 Cliente",
+    description="API del sistema de citas para la interfaz del cliente.",
 )
 
 # CORSMiddleware

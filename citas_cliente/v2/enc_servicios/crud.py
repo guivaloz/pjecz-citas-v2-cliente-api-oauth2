@@ -1,8 +1,12 @@
 """
 Encuestas Servicios V2, CRUD (create, read, update, and delete)
 """
-from sqlalchemy.orm import Session
+from typing import Optional
 
+from sqlalchemy.orm import Session
+from hashids import Hashids
+
+from config.settings import POLL_SERVICE_URL, SALT
 from lib.safe_string import safe_string
 
 from .models import EncServicio
@@ -68,3 +72,20 @@ def update_enc_servicio(db: Session, encuesta: EncServicioIn) -> EncServicio:
 
     # Entregar
     return enc_servicio
+
+
+def get_enc_servicio_url(db: Session, cit_cliente_id: int) -> Optional[str]:
+    """Obtener la URL de la encuesta de servicio del cliente si existe"""
+
+    # Consultar la encuesta de servicio PENDIENTE
+    enc_servicio = db.query(EncServicio).filter(EncServicio.cit_cliente_id == cit_cliente_id).filter(EncServicio.estado == "PENDIENTE").first()
+
+    # Si no existe, entregar None
+    if enc_servicio is None:
+        return None
+
+    # Preparar el cifrado
+    hashids = Hashids(SALT, min_length=8)
+
+    # Entregar la URL
+    return f"{POLL_SERVICE_URL}?hashid={hashids.encode(enc_servicio.id)}"

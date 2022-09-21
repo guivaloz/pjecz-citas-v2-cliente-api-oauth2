@@ -11,7 +11,7 @@ from lib.fastapi_pagination import LimitOffsetPage
 from ..cit_clientes.authentications import get_current_active_user
 from ..cit_clientes.schemas import CitClienteInDB
 from ..permisos.models import Permiso
-from .crud import cancel_cit_cita, create_cit_cita, get_cit_cita, get_cit_citas
+from .crud import cancel_cit_cita, create_cit_cita, get_cit_cita, get_cit_citas, get_cit_citas_disponibles_cantidad
 from .schemas import CitCitaIn, CitCitaOut
 
 cit_citas = APIRouter(prefix="/v2/cit_citas", tags=["citas"])
@@ -50,6 +50,23 @@ async def detalle_cit_cita(
     except ValueError as error:
         raise HTTPException(status_code=status.HTTP_406_NOT_ACCEPTABLE, detail=f"Not acceptable: {str(error)}") from error
     return CitCitaOut.from_orm(cit_cita)
+
+
+@cit_citas.get("/disponibles", response_model=int)
+async def cantidad_cit_citas_disponibles(
+    current_user: CitClienteInDB = Depends(get_current_active_user),
+    db: Session = Depends(get_db),
+):
+    """Consultar la cantidad de citas que puede agendar (que es su limite menos las pendientes)"""
+    if "CIT CITAS" not in current_user.permissions or current_user.permissions["CIT CITAS"] < Permiso.VER:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Forbidden")
+    try:
+        cantidad = get_cit_citas_disponibles_cantidad(db, cit_cliente_id=current_user.id)
+    except IndexError as error:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Not found: {str(error)}") from error
+    except ValueError as error:
+        raise HTTPException(status_code=status.HTTP_406_NOT_ACCEPTABLE, detail=f"Not acceptable: {str(error)}") from error
+    return cantidad
 
 
 @cit_citas.post("/nueva", response_model=CitCitaOut)

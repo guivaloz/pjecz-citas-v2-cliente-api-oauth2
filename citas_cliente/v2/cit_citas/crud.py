@@ -5,6 +5,7 @@ from datetime import date, datetime, time, timedelta
 from typing import Any
 from sqlalchemy.orm import Session
 
+from config.settings import LIMITE_CITAS_PENDIENTES
 from lib.pwgen import generar_codigo_asistencia
 from lib.safe_string import safe_string
 from lib.redis import task_queue
@@ -18,8 +19,6 @@ from ..cit_servicios.crud import get_cit_servicio
 from ..oficinas.crud import get_oficina
 from .models import CitCita
 from .schemas import CitCitaOut
-
-LIMITE_CITAS_PENDIENTES = 30
 
 
 def get_cit_citas(
@@ -72,7 +71,34 @@ def get_cit_cita(db: Session, cit_cliente_id: int, cit_cita_id: int) -> CitCitaO
     return cit_cita
 
 
-def cancel_cit_cita(db: Session, cit_cliente_id: int, cit_cita_id: int) -> CitCitaOut:
+def get_cit_citas_disponibles_cantidad(
+    db: Session,
+    cit_cliente_id: int,
+) -> int:
+    """Consultar la cantidad de citas que puede agendar (que es su limite menos las pendientes)"""
+
+    # Consultar el cliente
+    cit_cliente = get_cit_cliente(db, cit_cliente_id=cit_cliente_id)
+
+    # Definir la cantidad limite de citas del cliente
+    limite = LIMITE_CITAS_PENDIENTES
+    if cit_cliente.limite_citas_pendientes > limite:
+        limite = cit_cliente.limite_citas_pendientes
+
+    # Consultar las citas PENDIENTES
+    citas_pendientes_cantidad = get_cit_citas(db=db, cit_cliente_id=cit_cliente_id).count()
+
+    # Entregar la cantidad de citas disponibles que puede agendar
+    if citas_pendientes_cantidad >= limite:
+        return 0
+    return limite - citas_pendientes_cantidad
+
+
+def cancel_cit_cita(
+    db: Session,
+    cit_cliente_id: int,
+    cit_cita_id: int,
+) -> CitCitaOut:
     """Cancelar una cita"""
 
     # Consultar
@@ -136,11 +162,8 @@ def create_cit_cita(
         raise ValueError("No se puede crear la cita porque ya se alcanzo el limite de personas en la oficina")
 
     # Validar que la cantidad de citas pendientes no haya llegado al limite de este cliente
-    tope = LIMITE_CITAS_PENDIENTES
-    if cit_cliente.limite_citas_pendientes and cit_cliente.limite_citas_pendientes > LIMITE_CITAS_PENDIENTES:
-        tope = cit_cliente.limite_citas_pendientes
-    if cit_citas_anonimas.count() >= tope:
-        raise ValueError("No se puede crear la cita porque ya se alcanzo su limite de citas pendientes")
+    if get_cit_citas_disponibles_cantidad(db, cit_cliente_id=cit_cliente_id) <= 0:
+        raise ValueError("No se puede crear la cita porque ya se alcanzo el limite de citas pendientes")
 
     # Definir los tiempos de la cita
     inicio_dt = datetime(year=fecha.year, month=fecha.month, day=fecha.day, hour=hora_minuto.hour, minute=hora_minuto.minute)

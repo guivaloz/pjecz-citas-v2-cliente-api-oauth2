@@ -17,16 +17,6 @@ username={{username}}&password={{password}}
 GET {{root}}/profile
 Authorization: Bearer {{auth.response.body.access_token}}
 
-### Materias
-GET {{baseUrl}}/materias
-Authorization: Bearer {{auth.response.body.access_token}}
-
-### Distritos
-GET {{baseUrl}}/distritos
-Authorization: Bearer {{auth.response.body.access_token}}
-
-### Autoridades
-GET {{baseUrl}}/autoridades
-    ?offset=0
-    &limit=10
+### Cantidad de citas disponibles
+GET {{baseUrl}}/cit_citas/disponibles
 Authorization: Bearer {{auth.response.body.access_token}}

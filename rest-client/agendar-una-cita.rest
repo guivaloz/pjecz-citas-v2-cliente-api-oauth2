@@ -13,8 +13,16 @@ Content-Type: application/x-www-form-urlencoded
 
 username={{username}}&password={{password}}
 
+### Perfil
+GET {{baseUrl}}/profile
+Authorization: Bearer {{auth.response.body.access_token}}
+
 ### GET Distritos
 GET {{baseUrl}}/distritos
+Authorization: Bearer {{auth.response.body.access_token}}
+
+### GET Distritos
+GET {{baseUrl}}/distritos/6
 Authorization: Bearer {{auth.response.body.access_token}}
 
 ### GET Oficinas del Distrito
@@ -40,7 +48,7 @@ Authorization: Bearer {{auth.response.body.access_token}}
 GET {{baseUrl}}/cit_horas_disponibles
     ?oficina_id=71
     &cit_servicio_id=2
-    &fecha=2022-08-22
+    &fecha=2022-09-29
 Authorization: Bearer {{auth.response.body.access_token}}
 
 ### POST crear cita
@@ -51,8 +59,8 @@ content-type: application/json
 {
     "oficina_id": 71,
     "cit_servicio_id": 2,
-    "fecha": "2022-08-22",
-    "hora_minuto": "11:15"
+    "fecha": "2022-09-29",
+    "hora_minuto": "10:00"
 }
 
 ### GET mis citas
