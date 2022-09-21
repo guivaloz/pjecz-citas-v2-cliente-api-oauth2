@@ -31,6 +31,9 @@ ORIGINS = [
     "https://citas.justiciadigital.gob.mx",
 ]
 
+# Limite de citas pendientes por cliente
+LIMITE_CITAS_PENDIENTES=int(os.environ.get("LIMITE_CITAS_PENDIENTES", "0"))
+
 # Redis
 REDIS_URL = os.environ.get("REDIS_URL", "redis://127.0.0.1")
 TASK_QUEUE = os.environ.get("TASK_QUEUE", "pjecz_citas_v2")
