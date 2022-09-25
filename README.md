@@ -21,8 +21,19 @@ Cree un archivo para las variables de entorno `.env`
     ALGORITHM=HS256
     SECRET_KEY=****************************************************************
 
+    # Limite de citas pendientes por cliente
+    LIMITE_CITAS_PENDIENTES=30
+
+    # Redis
+    REDIS_URL=redis://127.0.0.1
+    TASK_QUEUE=pjecz_citas_v2
+
     # Salt sirve para cifrar el ID con HashID, debe ser igual en Admin
     SALT=********************************
+
+    # URLs de las encuestas
+    POLL_SERVICE_URL=http://127.0.0.1:3000/poll_service
+    POLL_SYSTEM_URL=http://127.0.0.1:3000/poll_system
 
 Para Bash Shell cree un archivo `.bashrc` con este contenido
 
@@ -38,19 +49,20 @@ Para Bash Shell cree un archivo `.bashrc` con este contenido
     figlet Citas V2 API OAuth2
     echo
 
-    echo "-- Database"
+    echo "-- Variables de entorno"
+    echo "   ACCESS_TOKEN_EXPIRE_MINUTES: ${ACCESS_TOKEN_EXPIRE_MINUTES}"
+    echo "   ALGORITHM: ${ALGORITHM}"
     echo "   DB_HOST: ${DB_HOST}"
     echo "   DB_NAME: ${DB_NAME}"
-    echo "   DB_PASS: ${DB_PASS}"
     echo "   DB_USER: ${DB_USER}"
-    echo
-    echo "-- OAuth2"
-    echo "   ACCESS_TOKEN_EXPIRE_MINUTES: ${ACCESS_TOKEN_EXPIRE_MINUTES}"
-    echo "   ALGORITHM:                   ${ALGORITHM}"
-    echo "   SECRET_KEY:                  ${SECRET_KEY}"
-    echo
-    echo "-- Jupyter notebooks"
-    echo "   PYTHONPATH: ${PYTHONPATH}"
+    echo "   DB_PASS: ${DB_PASS}"
+    echo "   LIMITE_CITAS_PENDIENTES: ${LIMITE_CITAS_PENDIENTES}"
+    echo "   POLL_SERVICE_URL: ${POLL_SERVICE_URL}"
+    echo "   POLL_SYSTEM_URL: ${POLL_SYSTEM_URL}"
+    echo "   REDIS_URL: ${REDIS_URL}"
+    echo "   SALT: ${SALT}"
+    echo "   SECRET_KEY: ${SECRET_KEY}"
+    echo "   TASK_QUEUE: ${TASK_QUEUE}"
     echo
 
     export PGDATABASE=${DB_NAME}

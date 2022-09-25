@@ -119,6 +119,12 @@ def cancel_cit_cita(
     db.commit()
     db.refresh(cit_cita)
 
+    # Agregar tarea en el fondo para que se envie un mensaje via correo electronico
+    task_queue.enqueue(
+        "citas_admin.blueprints.cit_citas.tasks.enviar_cancelado",
+        cit_cita_id=cit_cita.id,
+    )
+
     # Entregar
     return cit_cita
 
@@ -134,7 +140,7 @@ def create_cit_cita(
 ) -> CitCitaOut:
     """Crear una cita"""
 
-    # Consultar el cliente
+    # Consultar y validar el cliente
     cit_cliente = get_cit_cliente(db, cit_cliente_id=cit_cliente_id)
 
     # Consultar y validar la oficina
@@ -192,7 +198,7 @@ def create_cit_cita(
 
     # Agregar tarea en el fondo para que se envie un mensaje via correo electronico
     task_queue.enqueue(
-        "citas_admin.blueprints.cit_citas.tasks.enviar",
+        "citas_admin.blueprints.cit_citas.tasks.enviar_pendiente",
         cit_cita_id=cit_cita.id,
     )
 
