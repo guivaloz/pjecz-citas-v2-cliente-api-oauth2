@@ -6,6 +6,7 @@ import re
 from sqlalchemy.orm import Session
 from passlib.context import CryptContext
 
+from config.settings import LIMITE_CITAS_PENDIENTES
 from lib.pwgen import generar_aleatorio
 from lib.redis import task_queue
 from lib.safe_string import safe_string, CURP_REGEXP, EMAIL_REGEXP, TELEFONO_REGEXP
@@ -150,6 +151,7 @@ def terminate_new_account(db: Session, registro: CitClienteRegistroConcluirIn) -
         contrasena_md5="",
         contrasena_sha256=pwd_context.hash(registro.password),
         renovacion=renovacion_fecha.date(),
+        limite_citas_pendientes=LIMITE_CITAS_PENDIENTES,
     )
     db.add(cit_cliente)
 
