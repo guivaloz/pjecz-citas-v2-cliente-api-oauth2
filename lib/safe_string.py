@@ -5,7 +5,7 @@ import re
 from datetime import date
 from unidecode import unidecode
 
-CURP_REGEXP = r"^[A-Z]{4}\d{6}[A-Z]{6}\d{2}$"
+CURP_REGEXP = r"^[A-Z]{4}\d{6}[A-Z]{6}[A-Z0-9]{2}$"
 EMAIL_REGEXP = r"^[\w.-]+@[\w.-]+\.\w+$"
 PASSWORD_REGEXP = r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,24}$"
 TELEFONO_REGEXP = r"^[1-9]\d{9}$"
