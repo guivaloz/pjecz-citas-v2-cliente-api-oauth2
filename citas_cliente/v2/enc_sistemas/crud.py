@@ -50,10 +50,10 @@ def update_enc_sistema(db: Session, encuesta: EncSistemaIn) -> EncSistema:
     enc_sistema.respuesta_01 = encuesta.respuesta_01
 
     # Respuesta 2 es texto
-    enc_sistema.respuesta_02 = safe_string(encuesta.respuesta_02)
+    enc_sistema.respuesta_02 = safe_string(encuesta.respuesta_02, max_len=512)
 
     # Respuesta 3 es texto
-    enc_sistema.respuesta_03 = safe_string(encuesta.respuesta_03)
+    enc_sistema.respuesta_03 = safe_string(encuesta.respuesta_03, max_len=512)
 
     # Cambiar el estado
     enc_sistema.estado = "CONTESTADO"
