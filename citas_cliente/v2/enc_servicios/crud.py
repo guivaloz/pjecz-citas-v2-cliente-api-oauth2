@@ -60,7 +60,7 @@ def update_enc_servicio(db: Session, encuesta: EncServicioIn) -> EncServicio:
     enc_servicio.respuesta_03 = encuesta.respuesta_03
 
     # Respuesta 4 es un texto
-    enc_servicio.respuesta_04 = safe_string(encuesta.respuesta_04)
+    enc_servicio.respuesta_04 = safe_string(encuesta.respuesta_04, max_len=512)
 
     # Cambiar el estado
     enc_servicio.estado = "CONTESTADO"
