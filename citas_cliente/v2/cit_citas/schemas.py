@@ -32,6 +32,7 @@ class CitCitaOut(BaseModel):
     estado: str
     asistencia: str
     codigo_asistencia: str
+    puede_cancelarse: bool
 
     class Config:
         """SQLAlchemy config"""
