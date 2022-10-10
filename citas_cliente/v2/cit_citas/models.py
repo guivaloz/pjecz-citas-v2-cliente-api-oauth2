@@ -45,6 +45,7 @@ class CitCita(Base, UniversalMixin):
     estado = Column(Enum(*ESTADOS, name="tipos_estados", native_enum=False))
     asistencia = Column(Boolean(), nullable=False, default=False, server_default="false")
     codigo_asistencia = Column(String(4))
+    cancelar_antes = Column(DateTime())
 
     @property
     def cit_servicio_descripcion(self):
