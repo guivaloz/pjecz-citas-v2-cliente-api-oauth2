@@ -51,7 +51,7 @@ def get_cit_citas(
     consulta = consulta.filter_by(estado="PENDIENTE")
 
     # Entregar
-    return consulta.filter_by(estatus="A").order_by(CitCita.id)
+    return consulta.filter_by(estatus="A").order_by(CitCita.inicio)
 
 
 def get_cit_cita(db: Session, cit_cliente_id: int, cit_cita_id: int) -> CitCitaOut:
