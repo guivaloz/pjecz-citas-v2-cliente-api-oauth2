@@ -16,6 +16,7 @@ class CitClienteOut(BaseModel):
     telefono: Optional[str]
     email: str
     limite_citas_pendientes: Optional[int]
+    autoriza_mensajes: bool
     enviar_boletin: bool
 
     class Config:

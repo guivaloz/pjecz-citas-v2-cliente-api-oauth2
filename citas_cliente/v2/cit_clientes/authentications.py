@@ -45,6 +45,7 @@ def get_cit_cliente(username: str, db: Session = Depends(get_db)):
             "telefono": cit_cliente.telefono,
             "email": cit_cliente.email,
             "limite_citas_pendientes": cit_cliente.limite_citas_pendientes,
+            "autoriza_mensajes": cit_cliente.autoriza_mensajes,
             "enviar_boletin": cit_cliente.enviar_boletin,
             "username": cit_cliente.email,
             "permissions": cit_cliente.permissions,
