@@ -1,5 +1,5 @@
 """
-Oficinas V2, rutas (paths)
+Pagos Pagos V2, rutas (paths)
 """
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi_pagination.ext.sqlalchemy import paginate
@@ -11,25 +11,26 @@ from lib.fastapi_pagination import LimitOffsetPage
 from ..cit_clientes.authentications import get_current_active_user
 from ..cit_clientes.schemas import CitClienteInDB
 from ..permisos.models import Permiso
-from .crud import get_oficinas, get_oficina
-from .schemas import OficinaOut
+from .crud import get_pag_pagos, get_pag_pago
+from .schemas import PagPagoOut
 
-oficinas = APIRouter(prefix="/v2/oficinas", tags=["oficinas"])
+pag_pagos = APIRouter(prefix="/v2/pag_pagos", tags=["pagos"])
 
 
-@oficinas.get("/", response_model=LimitOffsetPage[OficinaOut])
-async def listado_oficinas(
-    distrito_id: int = None,
+@pag_pagos.get("", response_model=LimitOffsetPage[PagPagoOut])
+async def listado_pag_pagos(
+    estado: str = None,
     current_user: CitClienteInDB = Depends(get_current_active_user),
     db: Session = Depends(get_db),
 ):
-    """Listado de oficinas"""
-    if "OFICINAS" not in current_user.permissions or current_user.permissions["OFICINAS"] < Permiso.VER:
+    """Listado de pagos"""
+    if "PAG PAGOS" not in current_user.permissions or current_user.permissions["PAG PAGOS"] < Permiso.VER:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Forbidden")
     try:
-        listado = get_oficinas(
+        listado = get_pag_pagos(
             db=db,
-            distrito_id=distrito_id,
+            cit_cliente_id=current_user.cit_cliente_id,
+            estado=estado,
         )
     except IndexError as error:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Not found: {str(error)}") from error
@@ -38,19 +39,23 @@ async def listado_oficinas(
     return paginate(listado)
 
 
-@oficinas.get("/{oficina_id}", response_model=OficinaOut)
-async def detalle_oficina(
-    oficina_id: int,
+@pag_pagos.get("/{pag_pago_id}", response_model=PagPagoOut)
+async def detalle_pag_pago(
+    pag_pago_id: int,
     current_user: CitClienteInDB = Depends(get_current_active_user),
     db: Session = Depends(get_db),
 ):
-    """Detalle de una oficina a partir de su id"""
-    if "OFICINAS" not in current_user.permissions or current_user.permissions["OFICINAS"] < Permiso.VER:
+    """Detalle de un pago a partir de su id"""
+    if "PAG PAGOS" not in current_user.permissions or current_user.permissions["PAG PAGOS"] < Permiso.VER:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Forbidden")
     try:
-        oficina = get_oficina(db, oficina_id)
+        pag_pago = get_pag_pago(
+            db=db,
+            cit_cliente_id=current_user.cit_cliente_id,
+            pag_pago_id=pag_pago_id,
+        )
     except IndexError as error:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Not found: {str(error)}") from error
     except ValueError as error:
         raise HTTPException(status_code=status.HTTP_406_NOT_ACCEPTABLE, detail=f"Not acceptable: {str(error)}") from error
-    return OficinaOut.from_orm(oficina)
+    return PagPagoOut.from_orm(pag_pago)
