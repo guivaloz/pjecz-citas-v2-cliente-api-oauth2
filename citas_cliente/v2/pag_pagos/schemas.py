@@ -12,9 +12,10 @@ class PagPagoOut(BaseModel):
     cit_cliente_nombre: str
     cit_cliente_curp: str
     cit_cliente_email: str
-    total: float
-    estado: str
     email: str
+    estado: str
+    folio: str
+    total: float
     ya_se_envio_comprobante: bool
 
     class Config:
@@ -26,14 +27,42 @@ class PagPagoOut(BaseModel):
 class PagCarroIn(BaseModel):
     """Esquema para recibir del carro de pagos"""
 
+    nombres: str
+    apellido_primero: str
+    apellido_segundo: str
+    curp: str
+    email: str
+    telefono: str
+    pag_tramite_servicio_clave: str
+
 
 class PagCarroOut(BaseModel):
     """Esquema para entregar al carro de pagos"""
+
+    pag_pago_id: int
+    descripcion: str
+    email: str
+    monto: float
+    url: str
 
 
 class PagResultadoIn(BaseModel):
     """Esquema para recibir del carro de pagos"""
 
+    estado: str  # Temporal para probar el front-end
+    folio: str  # Temporal para probar el front-end
+    pag_pago_id: int  # Temporal para probar el front-end
+    xml_encriptado: str
+
 
 class PagResultadoOut(BaseModel):
     """Esquema para entregar al carro de pagos"""
+
+    pag_pago_id: int
+    nombres: str
+    apellido_primero: str
+    apellido_segundo: str
+    email: str
+    estado: str
+    folio: str
+    total: float
