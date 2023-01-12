@@ -42,35 +42,29 @@ async def listado_pag_pagos(
 @pag_pagos.post("/carro", response_model=PagCarroOut)
 async def carro(
     datos: PagCarroIn,
-    current_user: CitClienteInDB = Depends(get_current_active_user),
     db: Session = Depends(get_db),
 ):
     """Recibir, procesar y entregar datos del carro de pagos"""
-    if "PAG PAGOS" not in current_user.permissions or current_user.permissions["PAG PAGOS"] < Permiso.CREAR:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Forbidden")
     try:
-        carro = create_payment(
+        pag_carro_out = create_payment(
             db=db,
-            cit_cliente_id=current_user.id,
+            datos=datos,
         )
     except IndexError as error:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Not found: {str(error)}") from error
     except ValueError as error:
         raise HTTPException(status_code=status.HTTP_406_NOT_ACCEPTABLE, detail=f"Not acceptable: {str(error)}") from error
-    return carro
+    return pag_carro_out
 
 
 @pag_pagos.post("/resultado", response_model=PagResultadoOut)
 async def resultado(
     datos: PagResultadoIn,
-    current_user: CitClienteInDB = Depends(get_current_active_user),
     db: Session = Depends(get_db),
 ):
     """Recibir, procesar y entregar datos del resultado de pagos"""
-    if "PAG PAGOS" not in current_user.permissions or current_user.permissions["PAG PAGOS"] < Permiso.CREAR:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Forbidden")
     try:
-        resultado = update_payment(
+        pag_resultado_out = update_payment(
             db=db,
             cit_cliente_id=current_user.id,
         )
@@ -78,7 +72,7 @@ async def resultado(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Not found: {str(error)}") from error
     except ValueError as error:
         raise HTTPException(status_code=status.HTTP_406_NOT_ACCEPTABLE, detail=f"Not acceptable: {str(error)}") from error
-    return resultado
+    return pag_resultado_out
 
 
 @pag_pagos.get("/{pag_pago_id}", response_model=PagPagoOut)
