@@ -39,6 +39,7 @@ class PagCarroIn(BaseModel):
 class PagCarroOut(BaseModel):
     """Esquema para entregar al carro de pagos"""
 
+    pag_pago_id: int
     descripcion: str
     email: str
     monto: float
@@ -57,6 +58,7 @@ class PagResultadoIn(BaseModel):
 class PagResultadoOut(BaseModel):
     """Esquema para entregar al carro de pagos"""
 
+    pag_pago_id: int
     nombres: str
     apellido_primero: str
     apellido_segundo: str

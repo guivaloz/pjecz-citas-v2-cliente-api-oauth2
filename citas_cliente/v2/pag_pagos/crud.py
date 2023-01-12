@@ -154,6 +154,7 @@ def create_payment(
 
     # Entregar
     return PagCarroOut(
+        pag_pago_id=pag_pago.id,
         descripcion=pag_tramite_servicio.descripcion,
         email=email,
         monto=pag_pago.total,
@@ -200,11 +201,12 @@ def update_payment(
 
     # Entregar
     return PagResultadoOut(
-        nombres=None,
-        apellido_primero=None,
-        apellido_segundo=None,
-        email=None,
-        estado=None,
-        folio=None,
-        total=None,
+        pag_pago_id=pag_pago.id,
+        nombres=pag_pago.cit_cliente.nombres,
+        apellido_primero=pag_pago.cit_cliente.apellido_primero,
+        apellido_segundo=pag_pago.cit_cliente.apellido_segundo,
+        email=pag_pago.email,
+        estado=pag_pago.estado,
+        folio=pag_pago.folio,
+        total=pag_pago.total,
     )
