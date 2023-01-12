@@ -66,7 +66,7 @@ async def resultado(
     try:
         pag_resultado_out = update_payment(
             db=db,
-            cit_cliente_id=current_user.id,
+            datos=datos,
         )
     except IndexError as error:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Not found: {str(error)}") from error

@@ -48,6 +48,19 @@ class PagCarroOut(BaseModel):
 class PagResultadoIn(BaseModel):
     """Esquema para recibir del carro de pagos"""
 
+    estado: str  # Temporal para probar el front-end
+    folio: str  # Temporal para probar el front-end
+    pag_pago_id: int  # Temporal para probar el front-end
+    xml_encriptado: str
+
 
 class PagResultadoOut(BaseModel):
     """Esquema para entregar al carro de pagos"""
+
+    nombres: str
+    apellido_primero: str
+    apellido_segundo: str
+    email: str
+    estado: str
+    folio: str
+    total: float

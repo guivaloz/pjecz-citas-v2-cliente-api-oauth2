@@ -146,6 +146,8 @@ def create_payment(
         ya_se_envio_comprobante=False,
     )
     db.add(pag_pago)
+    db.commit()
+    db.refresh(pag_pago)
 
     # Establecer URL del banco
     url = "https://www.noexiste.com.mx/"
@@ -165,6 +167,44 @@ def update_payment(
 ) -> Any:
     """Actualizar un pago"""
 
+    # Validar el XML que mando el banco
+    if datos.xml_encriptado.strip() == "":
+        raise ValueError("El XML está vacío")
+
+    # Desencriptar el XML que mando el banco
+
+    # Temporal para probar el front-end
+    estado = safe_string(datos.estado)  # Temporal para probar el front-end
+    folio = safe_string(datos.folio)  # Temporal para probar el front-end
+    pag_pago_id = datos.pag_pago_id  # Temporal para probar el front-end
+    if estado not in PagPago.ESTADOS:
+        raise ValueError("El estado no es valido")
+
+    # Consultar el pago
+    pag_pago = db.query(PagPago).get(pag_pago_id)
+
+    # Validar el pago
+    if pag_pago is None:
+        raise IndexError("No existe ese pago")
+    if pag_pago.estatus != "A":
+        raise IndexError("No es activo ese pago, está eliminado")
+    if pag_pago.estado != "SOLICITADO":
+        raise IndexError("No es un pago solicitado al banco, ya fue procesado")
+
+    # Actualizar el pago
+    pag_pago.estado = estado
+    pag_pago.folio = folio
+    db.add(pag_pago)
+    db.commit()
+    db.refresh(pag_pago)
+
     # Entregar
-    resultado = PagResultadoOut()
-    return resultado
+    return PagResultadoOut(
+        nombres=None,
+        apellido_primero=None,
+        apellido_segundo=None,
+        email=None,
+        estado=None,
+        folio=None,
+        total=None,
+    )
