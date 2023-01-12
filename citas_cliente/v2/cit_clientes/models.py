@@ -69,6 +69,8 @@ class CitCliente(Base, UniversalMixin):
             "ENC SERVICIOS": 2,
             "ENC SISTEMAS": 2,
             "MATERIAS": 1,
+            "PAG PAGOS": 3,
+            "PAG TRAMITES SERVICIOS": 1,
             "OFICINAS": 1,
         }
 

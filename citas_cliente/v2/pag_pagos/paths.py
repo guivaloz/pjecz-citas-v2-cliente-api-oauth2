@@ -11,8 +11,8 @@ from lib.fastapi_pagination import LimitOffsetPage
 from ..cit_clientes.authentications import get_current_active_user
 from ..cit_clientes.schemas import CitClienteInDB
 from ..permisos.models import Permiso
-from .crud import get_pag_pagos, get_pag_pago
-from .schemas import PagPagoOut
+from .crud import get_pag_pagos, get_pag_pago, create_payment, update_payment
+from .schemas import PagPagoOut, PagCarroIn, PagCarroOut, PagResultadoIn, PagResultadoOut
 
 pag_pagos = APIRouter(prefix="/v2/pag_pagos", tags=["pagos"])
 
@@ -37,6 +37,48 @@ async def listado_pag_pagos(
     except ValueError as error:
         raise HTTPException(status_code=status.HTTP_406_NOT_ACCEPTABLE, detail=f"Not acceptable: {str(error)}") from error
     return paginate(listado)
+
+
+@pag_pagos.post("/carro", response_model=PagCarroOut)
+async def carro(
+    datos: PagCarroIn,
+    current_user: CitClienteInDB = Depends(get_current_active_user),
+    db: Session = Depends(get_db),
+):
+    """Recibir, procesar y entregar datos del carro de pagos"""
+    if "PAG PAGOS" not in current_user.permissions or current_user.permissions["PAG PAGOS"] < Permiso.CREAR:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Forbidden")
+    try:
+        carro = create_payment(
+            db=db,
+            cit_cliente_id=current_user.id,
+        )
+    except IndexError as error:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Not found: {str(error)}") from error
+    except ValueError as error:
+        raise HTTPException(status_code=status.HTTP_406_NOT_ACCEPTABLE, detail=f"Not acceptable: {str(error)}") from error
+    return carro
+
+
+@pag_pagos.post("/resultado", response_model=PagResultadoOut)
+async def resultado(
+    datos: PagResultadoIn,
+    current_user: CitClienteInDB = Depends(get_current_active_user),
+    db: Session = Depends(get_db),
+):
+    """Recibir, procesar y entregar datos del resultado de pagos"""
+    if "PAG PAGOS" not in current_user.permissions or current_user.permissions["PAG PAGOS"] < Permiso.CREAR:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Forbidden")
+    try:
+        resultado = update_payment(
+            db=db,
+            cit_cliente_id=current_user.id,
+        )
+    except IndexError as error:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Not found: {str(error)}") from error
+    except ValueError as error:
+        raise HTTPException(status_code=status.HTTP_406_NOT_ACCEPTABLE, detail=f"Not acceptable: {str(error)}") from error
+    return resultado
 
 
 @pag_pagos.get("/{pag_pago_id}", response_model=PagPagoOut)

@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 from lib.safe_string import safe_string
 
 from .models import PagPago
+from .schemas import PagCarroOut, PagResultadoOut
 from ..cit_clientes.crud import get_cit_cliente
 
 
@@ -54,3 +55,25 @@ def get_pag_pago(
 
     # Entregar
     return pag_pago
+
+
+def create_payment(
+    db: Session,
+    cit_cliente_id: int,
+) -> PagCarroOut:
+    """Crear un pago"""
+
+    # Entregar
+    carro = PagCarroOut()
+    return carro
+
+
+def update_payment(
+    db: Session,
+    cit_cliente_id: int,
+) -> Any:
+    """Actualizar un pago"""
+
+    # Entregar
+    resultado = PagResultadoOut()
+    return resultado

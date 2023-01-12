@@ -21,3 +21,19 @@ class PagPagoOut(BaseModel):
         """SQLAlchemy config"""
 
         orm_mode = True
+
+
+class PagCarroIn(BaseModel):
+    """Esquema para recibir del carro de pagos"""
+
+
+class PagCarroOut(BaseModel):
+    """Esquema para entregar al carro de pagos"""
+
+
+class PagResultadoIn(BaseModel):
+    """Esquema para recibir del carro de pagos"""
+
+
+class PagResultadoOut(BaseModel):
+    """Esquema para entregar al carro de pagos"""
