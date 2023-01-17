@@ -40,6 +40,21 @@ class PagPago(Base, UniversalMixin):
     total = Column(Numeric(precision=8, scale=2, decimal_return_scale=2), nullable=False)
     ya_se_envio_comprobante = Column(Boolean, nullable=False, default=False)
 
+    @property
+    def cit_cliente_nombre(self):
+        """Nombre del cliente"""
+        return self.cit_cliente.nombre
+
+    @property
+    def pag_tramite_servicio_clave(self):
+        """Clave"""
+        return self.pag_tramite_servicio.clave
+
+    @property
+    def pag_tramite_servicio_descripcion(self):
+        """Descripción"""
+        return self.pag_tramite_servicio.descripcion
+
     def __repr__(self):
         """Representación"""
         return f"<PagPago {self.descripcion}>"
