@@ -75,20 +75,16 @@ async def resultado(
     return pag_resultado_out
 
 
-@pag_pagos.get("/{pag_pago_id}", response_model=PagPagoOut)
+@pag_pagos.get("/{pag_pago_id_hasheado}", response_model=PagPagoOut)
 async def detalle_pag_pago(
-    pag_pago_id: int,
-    current_user: CitClienteInDB = Depends(get_current_active_user),
+    pag_pago_id_hasheado: str,
     db: Session = Depends(get_db),
 ):
     """Detalle de un pago a partir de su id"""
-    if "PAG PAGOS" not in current_user.permissions or current_user.permissions["PAG PAGOS"] < Permiso.VER:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Forbidden")
     try:
         pag_pago = get_pag_pago(
             db=db,
-            cit_cliente_id=current_user.cit_cliente_id,
-            pag_pago_id=pag_pago_id,
+            pag_pago_id_hasheado=pag_pago_id_hasheado,
         )
     except IndexError as error:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Not found: {str(error)}") from error

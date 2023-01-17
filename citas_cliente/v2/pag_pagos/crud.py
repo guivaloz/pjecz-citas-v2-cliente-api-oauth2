@@ -2,12 +2,13 @@
 Pag Pagos V2, CRUD (create, read, update, and delete)
 """
 from datetime import datetime, timedelta
+from hashids import Hashids
 import re
 from typing import Any
 
 from sqlalchemy.orm import Session
 
-from config.settings import LIMITE_CITAS_PENDIENTES
+from config.settings import LIMITE_CITAS_PENDIENTES, SALT
 from lib.safe_string import safe_string, CURP_REGEXP, EMAIL_REGEXP, TELEFONO_REGEXP
 
 from .models import PagPago
@@ -15,6 +16,9 @@ from .schemas import PagCarroIn, PagCarroOut, PagResultadoIn, PagResultadoOut
 from ..cit_clientes.crud import get_cit_cliente, get_cit_cliente_from_curp, get_cit_cliente_from_email
 from ..cit_clientes.models import CitCliente
 from ..pag_tramites_servicios.crud import get_pag_tramite_servicio_from_clave
+
+hashids = Hashids(SALT, min_length=8)
+hashid_regexp = re.compile("[0-9a-zA-Z]{8,16}")
 
 
 def get_pag_pagos(
@@ -43,10 +47,14 @@ def get_pag_pagos(
 
 def get_pag_pago(
     db: Session,
-    cit_cliente_id: int,
-    pag_pago_id: int,
+    pag_pago_id_hasheado: str,
 ) -> PagPago:
     """Consultar un pago por su id"""
+
+    # Descrifrar el ID hasheado
+    if not hashid_regexp.match(pag_pago_id_hasheado):
+        raise ValueError("El ID del pago no es válido")
+    pag_pago_id = hashids.decode(pag_pago_id_hasheado)[0]
 
     # Consultar
     pag_pago = db.query(PagPago).get(pag_pago_id)
@@ -56,8 +64,6 @@ def get_pag_pago(
         raise IndexError("No existe ese pago")
     if pag_pago.estatus != "A":
         raise IndexError("No es activo ese pago, está eliminado")
-    if pag_pago.cit_cliente_id != cit_cliente_id:
-        raise ValueError("No le pertenece esta cita")
 
     # Entregar
     return pag_pago
