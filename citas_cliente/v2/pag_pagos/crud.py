@@ -4,6 +4,7 @@ Pag Pagos V2, CRUD (create, read, update, and delete)
 from datetime import datetime, timedelta
 from hashids import Hashids
 import re
+import nest_asyncio
 from typing import Any
 
 from sqlalchemy.orm import Session
