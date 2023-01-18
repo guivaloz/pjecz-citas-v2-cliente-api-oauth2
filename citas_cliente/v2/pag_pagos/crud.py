@@ -4,12 +4,14 @@ Pag Pagos V2, CRUD (create, read, update, and delete)
 from datetime import datetime, timedelta
 from hashids import Hashids
 import re
+import nest_asyncio
 from typing import Any
 
 from sqlalchemy.orm import Session
 
 from config.settings import LIMITE_CITAS_PENDIENTES, SALT
 from lib.safe_string import safe_string, CURP_REGEXP, EMAIL_REGEXP, TELEFONO_REGEXP
+from lib.pagos_banco import create_pay_link, get_response, RESPUESTA_EXITO
 
 from .models import PagPago
 from .schemas import PagCarroIn, PagCarroOut, PagResultadoIn, PagResultadoOut
@@ -156,7 +158,10 @@ def create_payment(
     db.refresh(pag_pago)
 
     # Establecer URL del banco
-    url = "https://www.noexiste.com.mx/"
+    nest_asyncio.apply()
+    url = create_pay_link(pago_id=pag_pago.id, email=email, service_detail=pag_tramite_servicio.descripcion, cit_client_id=cit_cliente, amount=float(pag_tramite_servicio.costo))
+    if url is None:
+        raise ValueError("URL del formulario del Banco incorrecta")
 
     # Entregar
     return PagCarroOut(
@@ -179,11 +184,12 @@ def update_payment(
         raise ValueError("El XML está vacío")
 
     # Desencriptar el XML que mando el banco
+    respuesta = get_response(datos.xml_encriptado)
 
     # Temporal para probar el front-end
-    estado = safe_string(datos.estado)  # Temporal para probar el front-end
-    folio = safe_string(datos.folio)  # Temporal para probar el front-end
-    pag_pago_id = datos.pag_pago_id  # Temporal para probar el front-end
+    estado = "PAGADO" if respuesta["respuesta"] == RESPUESTA_EXITO else "FALLIDO"
+    folio = respuesta["folio"]
+    pag_pago_id = int(respuesta["pago_id"])
     if estado not in PagPago.ESTADOS:
         raise ValueError("El estado no es valido")
 
