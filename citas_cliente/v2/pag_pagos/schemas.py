@@ -50,9 +50,6 @@ class PagCarroOut(BaseModel):
 class PagResultadoIn(BaseModel):
     """Esquema para recibir del carro de pagos"""
 
-    estado: str  # Temporal para probar el front-end
-    folio: str  # Temporal para probar el front-end
-    pag_pago_id: int  # Temporal para probar el front-end
     xml_encriptado: str
 
 

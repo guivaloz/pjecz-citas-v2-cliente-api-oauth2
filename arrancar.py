@@ -18,7 +18,7 @@ def uvicorn_run():
     parser.add_argument("--host", type=str, default="127.0.0.1", help="Host default 127.0.0.1")
     parser.add_argument("--port", type=int, default=PORT, help=f"Port default {PORT}")
     parser.add_argument("--reload", type=bool, default=True, help="Reload default True")
-    parser.add_argument("--loop", type=str, default="auto", help="auto|asyncio|uvloop")
+    parser.add_argument("--loop", type=str, default="asyncio", help="auto|asyncio|uvloop")
     args = parser.parse_args()
 
     # Definir comando a ejecutar
