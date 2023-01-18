@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<CENTEROFPAYMENTS>
+    <reference>$pago_id$</reference>
+    <response>$respuesta$</response>
+    <foliocpagos>$folio$</foliocpagos>
+    <auth>$auth$</auth>
+    <cd_response>00</cd_response>
+    <cd_error/>
+    <nb_error/>
+    <time>06:52:13</time>
+    <date>09/08/2022</date>
+    <nb_company>SANDBOX MIT</nb_company>
+    <nb_merchant>1234567 WEBPAYPLUS</nb_merchant>
+    <cc_type>CREDITO/BANCO MIT/Visa</cc_type>
+    <tp_operation>VENTA</tp_operation>
+    <cc_name/>
+    <cc_number>1234</cc_number>
+    <cc_expmonth>12</cc_expmonth>
+    <cc_expyear>25</cc_expyear>
+    <amount>$amount$</amount>
+    <emv_key_date/>
+    <number_tkn>411111JQP2V41111</number_tkn>
+    <id_url>SNDBX001</id_url>
+    <email>$email$</email>
+    <cc_mask>545454XXXXXX1234</cc_mask>
+        <datos_adicionales>
+            <data id="1" display="true">
+                <label>Talla</label>
+                <value>Grande</value>
+            </data>
+            <data id="2" display="false">
+                <label>Color</label>
+                <value>Azul</value>
+            </data>
+        </datos_adicionales>
+</CENTEROFPAYMENTS>

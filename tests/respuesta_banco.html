@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador de respuestas del banco</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+</head>
+<body>
+    <div class="container">
+        <div class="row mb-3">
+            <h1>Simulador de Respuesta de un pago hecho al Banco (Santander)</h1>
+            <form action="#" method="POST">
+                <div id="mensaje" class="alert alert-light" role="alert"></div>                
+                <label id="strResponse_label" for="strResponse" class="form-label">strResponse</label>
+
+                <textarea id="strResponse" name="strResponse" class="form-control" rows="18" cols="80"></textarea>
+                <br/>
+                <input type="reset" class="btn btn-secondary" value="Limpiar">
+                <input type="submit" class="btn btn-primary" value="Enviar">
+            </form>
+        </div>
+        <div class="row">
+            <div class="col-auto">
+                <button type="button" class="btn btn-success" onclick="send_response_valid()">Respuesta Válida</button>
+                <button type="button" class="btn btn-danger" onclick="send_response_error()">Respuesta Error</button>
+                <button type="button" class="btn btn-warning" onclick="send_response_denied()">Respuesta Denegada</button>
+            </div>
+        </div>
+    </div>
+</body>
+
+<script type="text/javascript">
+    function send_response_valid(){
+        let textarea = document.getElementById("strResponse");
+        textarea.value = "CG9uiRdpVhGepgWqskhsQiQsdg1xV64dXVClN5bjUcAGd5N3VUQnmWoO5u6Rj6j4hYPkWXeeedxN0VKGDzqYUXx+qNdHCAFqV3bXaqgPjDPilSgMOTtVN8en7po7v3hvzajdK6tuJKOCkF9krg5jVpV5iqyQfFtEDTcWHNIj7Dg9uLhdkqSk9JPhMM1iOnEmuiHCIq8QRSvaMNY+TXuWkZIhLGu035GlJaaMv77I+Qv7LwVFjr04qUTxr87+9mOpgb9ZrxQWaAlXLqVWJSQgX9UnOiESPo0h+zQ/642UDqpwbw84COzIQS0DqIMBzD3e/U+9D81Q22MBNjT7xFlNeHUlZJ5SdiQguUNE1566V7GCWXostRR/QXXxLjaUC6uIdr11y9XYUcprtXMqWZ6c8LlYNT9Nte3KucHcyqouFCS4YK6d2iI02sTeteAbNxr2tN6ZpxuH5v8QAdmi5KimqyvH+URaUkfyt5ZMT2yXxkBSnfwIZpD/bZQiSiGqVB28IlIU2m0YQkWWW46Qq4qaQYWVVNqr8Tvi23NXg+FRGnHlE3bYbD90nFirE7gyu37486GZ9tAsAF/E9tmC/oSY3eo9KJpJVjKZaJPRtVP+GVaaHoC6AqOPoCt93Ymx5PecwipJyjBiAkWibkO+hDIRoboUQAWnFuzoxlG5OEOA6aBvh3NWzvAHUiattBEQGDMoqBuoJl4sC3CGvX2S9/y3Mz01RrckFUqi8zfdHBOMp3PxO2sZqToLlNWKoHssabxUSgeDxHlKaH9mpL2k2K4y8MHQEjfbdspjMjaxVH8QvPU2btDy2S/RHWO/Pf2Peg7ntjH6K2WmX4MbhjmAkm3Ri+2k/xmioVlCs0e46/EIhYfoof9W3c+kYp6buwau+Yl1/+HL4lj5EMlGLUL7dKTZKrpU9ciP5KRuge91KMWTL5t3F7zx//COREt31djUhKTg35ydmKsQe+Yze+x+ffhAbG7HCIfgYyuon5ySRC5p5R5Qz3aUZPH0cbEhM4DuvKoZigksY1ZU1MCqIJeOyZ8HqxTPJpmG6P2XbIbuj/rBWIDqkyUvQLqSAx5eLUC54oynaPa7lhc0NEByZXgh/vK5U8TYwOGnkl32OmvyL0caA/9yEUYE/7+t1xdn2QmrQD0SCQnH8SC+DAtQScfPbTRbS0NJc4p3ATIbGeRsxELJ+CC/9bciigfutGoLuPqCHeuKFCGN4CkaWkXlUzKjvwvv5LKtkSt9wkgilmO/klB6EjBvZFZ19l81FURfRHO2eu/S6NE88+oylaodbTnFNVM8LaMcJYjJEX6mtu3CboNdlBjHsvL+06JYeztyTfQ5EDaZbUkDqKaDJe0JlfF8ZO6Cr0NnNIZ8oRxGhviq45VZj6XYhZMgsNWoiKnTWG+gmrpyJWWoAzHui9L1twaHcx8V80KOgcFUGXDi3ndhDamJuPtSp1do9e5UEaLutwZOwOcqBBzagpkcEylVD44W+0NbzeqPLH8HlGA58safvrAia7EdtPhA1HLrzMnkkyn3mDo0Lp0Qcd5FJSR1eXCyhvyZVTMChZDGFXajGe/1t+9DbTQ=";
+        
+        let mensaje = document.getElementById("mensaje");
+        mensaje.textContent = "Respuesta válida. Se espera una respuesta de: EXITO.";
+        mensaje.className = "alert alert-success"
+    }
+
+    function send_response_error(){
+        let textarea = document.getElementById("strResponse");
+        textarea.value = "m/sSiFlnjO9UqFL6vA/l3+VTxDS4F2C2TD8qmiMyc81NB61El4/yL8Xb4e7tbKRGOgUov3wRbsusrIRSnNQz34s6fhh4QK9YRGEZV89CUs5j17VCJULu5SMwweeJP4YYU67Yy1Y9vS3Wc1P6CW9Sv9mPckytAQ9G6R8SLPKF38fLiHyEZA2eRdvw0n8vWjD+c8q2Ta471dKsG0ew+ExWq+mSfQ/U2iow/IxPLB2jk3il+ppQ0GVrGyNHsIdTZd8gOiJWyuNIyJXAi13rU4JZ2DUSm4o6UtAqA3ZxPDN9BkhH1gV0pApn0WLr2av6iPUlCCa09fRI9nOebatIG8TuKcZ9VrjwdUFUyJfCFOv4wGs3qUIR/023VxdVxKXIxXeFqDEdw45/FPny9VGwdV3a0iZ7fZvhrAebTZsnwt44XPWhRihPs/TZ/tcaSUGeiWc5ql+9oBGffC2NlkFddUZ1v3WUn/Uza02eIuaI7Tlj9k4UcDghr9YugJVkfes5+VCNShqQ4vbtKmzsY66mWk0Qruj9ZZPGE4YN5YCx8gbX1lQ/6qEw/JSTfJLn6YVJHE6qzRDI2E2n+BV0fzbPLUt6zl96zgM+4N/1gd5eu/2dLSZVgAMXSUEB5J+L7Cz3pvleyvBiqtika14RFbpl/dNcC+Di/eo696LxPXknXLfXA/TDXVtm1+SW1y11HKXnuQcB4lwd5m35ciorI+irmbQBiRnUJ5UUcdz+mOQ89STw+USQagEfR1UZVwNs42L/VkeUUa/fWugs6cTzg5dv7Gm29bWHjt9J2aCmKqp27zLI4rpnvGt/4OZQu/+eWCmkiZFUMN4hdwM02a7LYE9ohOZTWfsh4QUDNNYX4WGl/q63gNL2K9ffUcZ99lDkGw9AFBS+iRJdb+iroaGn1ZdfwetLhRLZwb80Rms8SF/OUGSSkRq4y5Sv4aV3CWSzxHLbeTX3lDG4qxS5SA8trASXZBeIaB+xLQTPv4ygVHMSIjmerhk6bahHZj8rfmdUES7RnqST5DUbbNjaUYd7Nqp5QnnESp+cf8LgJ5ILalbb9y0dviAB4GwE2pAegnz6CltYFn0J3rMXFOwaDklGsQ4HCzZ1e30yotJSmddo1uCI+WqAN3l9BwLueJFoTfetX9bL61wpgZPwvrtfA/tpKahYcnrbws8+7w7+598x+x5utBrTdQPgLCG1P2sEddXqGEz6+Og/4ietrVOQB2GWjiUG3ljS92yMq/TIp/Mel215wO02L54roIw+rY2Zfjdf4vn0ksFDpuv8zY+Y3W5ksl4IaqIK9k2f0h79xpz06kjl+hJDiWY9KN+2Irjy8gGTijav8JrE9mjYmrUkEX5ACOqCkm8oo+8rf1RsS/YhMhrwwSc3bhNZssZnnKVkNRUqxA0bi0HtdoCiKvvknZ5rTGXP8yqrGjPaFHiX3K/eqfEgqeM/6TEIsmWeFenEeYOYue59QUiBTdj+Rac62w4+XpbXjuKwm4qGb6Fmh6ouXTBW5EzhJ5VZxpyi1Ou/AMDPBUdO/HEznjTZ3CN9FQS1KKCJOyYxUk6q0tg3QE8Jy4SU95bpFZU=";
+    
+        let mensaje = document.getElementById("mensaje");
+        mensaje.textContent = "Respuesta Erronea. Se espera una respuesta de la API: FALLIDO.";
+        mensaje.className = "alert alert-danger"
+    }
+
+    function send_response_denied(){
+        let textarea = document.getElementById("strResponse");
+        textarea.value = "uqVbHHQmlSKtCuOxFr4KQDRoh1+E9LrBOfsoj35+0hPKvEYSRDydq6AHuHQX7yTz4pEnjhNn2DP/hAZV4Rj/JNrZrHXt7/U1Sp9DlMjDFQWoPrbjEhM6+Uy1LWJXqF2eSp52c/kJDkk+UshuPAQSpxg++X3xCrQcR0+U6vJgOqMyL2L+O/NMk/YZuNbGuFxMAoitk6KZ76uHRvOyIZW5ITDmtPRgQV05K0eK7tfkKGWUPkImobkLnCGiSrkP3O+tzh3q5c8UXlk6etDtRkG/C75KpdJgm4YR5c1wB5Ch0OReeslPIcc394dBwZYDeNBqBaDDG6eIzX7CZuUyUSk2rbE3q/szNTJG5Ujn7SmX5QGoli7jUbZI4uLN+epqcXE62bCL097RiT4N/Wz77DYFleXLdh+h5g1OXBsTUJ1HDAWglcdzwasokvqxhmmnKpZETa0OI4oVBUIsPcpV7jD0iHbm16trBqzcWKb+7TfEfzoToH/HFdARr719lFW37I2KBOTYUvqjeOaliHWZF+vO2Ll+n7QtmBCYhKaU/49gOrxUj2151csOuXKC7iqrA/hKHxJ6iKnB0/3LJJxTyRV+d04+Kvg6H6fvtGGIe4MtrXOmKVvJcRmal2E1St6N1vRlQykr73X+g7J/MAV6WQ18TTEqmD6gdr7UQzzJn8py6TjwIBbs513ZfHhDLkHEb7UgsVL1fcefpNljX6PreB5mgC8HVKTNnr+TLzTS4E1Y7ZmNxn0/uJ68B1kgHB+ht+OYpUMEK/9SM4Tttqi7Q18yNhj/wcxMEnENs9Vg5l2+u75mRoVYhH7cLZ2xW1+5ve/VNe+gPoPEVxAUF04nifUJuRxKipDGLSnDogkeY+w91CDExy/2sSSXqmBtL0wCQKfxdjPXXqOOzh3reKsHkgvy4TU8tDaW7YhiNQx0GbYvpExUD7P2ilKQUg3WUTVsfN38yaa2/+a8i1ownAFEv5PWuxJ63F4yoaFhHo2QtRhHNl8oAgF0ZJEGCyagCczKuLLL+53bT/zrCI0Ri1O9e8AduNMb4nCfesn4/yfCF/Us3vFgwc7QWUg1V5+6jkn0+Hom4JCvRDfqT+7SJF4W3VVbNJ0jrjKzAzz/getPEItcR52k7ezcWdSOSeMKNDoX2FYCC3Yl2tvqVRjo777RtkTUyirY0LXhbcicXRdKu7dSHHvMBEP9gRRQgaIWE4mJiVBxGGr/Fg2Ycei+Ski6N+gF8v3P3bPpPffEEO8aBMao7efYrSxyAd2Gn9EOKJdMTSmFxB1vdJ0mdE9NXJjvgj0TUZBq48VQAQ8Mlj+ojfjHIsP4Blu67jwFtjqMQ/8zcbiKOjndVdlXiQ1TEt9NSuF8b9mB+SzYQsK9TvbYorRxJ7YMgSYNfpEPY09wzi14T1npAVdb1PDTfjAhWcrSvz6mPxrmhqVdVERKxfgSSafA952W/eTErLmACLRKyNhCSuzKukzr7eMGZxo/OIS2IixVxMsqLvVY5zGHd89ep2zd2QZpG94SucsprgGIyw0jR1a1DYcBJPmb6ACxd5BzTKAgK0qChARneATeg9uqESPGcQA=";
+    
+        let mensaje = document.getElementById("mensaje");
+        mensaje.textContent = "Respuesta Denegada. Se espera una respuesta de la API: FALLIDO.";
+        mensaje.className = "alert alert-warning"
+    }
+</script>
+
+</html>
