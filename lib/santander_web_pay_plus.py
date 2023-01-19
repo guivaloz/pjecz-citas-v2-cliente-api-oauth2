@@ -17,6 +17,8 @@ RESPUESTA_ERROR = "error"
 
 load_dotenv()
 WPP_COMMERCE_ID = os.getenv("WPP_COMMERCE_ID", None)
+WPP_COMPANY_ID = os.getenv("WPP_COMPANY_ID", None)
+WPP_BRANCH_ID = os.getenv("WPP_BRANCH_ID", None)
 WPP_KEY = os.getenv("WPP_KEY", None)
 WPP_PASS = os.getenv("WPP_PASS", None)
 WPP_TIMEOUT = int(os.getenv("WPP_TIMEOUT", "12"))
@@ -33,6 +35,14 @@ def create_chain_xml(
 ) -> str:
     """Crear cadena XML"""
 
+    # Validar WPP_COMPANY_ID
+    if WPP_COMPANY_ID is None:
+        raise CitasMissingConfigurationError("Falta declarar la variable de entorno WPP_COMPANY_ID.")
+
+    # Validar WPP_BRANCH_ID
+    if WPP_BRANCH_ID is None:
+        raise CitasMissingConfigurationError("Falta declarar la variable de entorno WPP_BRANCH_ID.")
+
     # Validar WPP_USER
     if WPP_USER is None:
         raise CitasMissingConfigurationError("Falta declarar la variable de entorno WPP_USER.")
@@ -46,8 +56,8 @@ def create_chain_xml(
 
     # Inicializar datos de la organización
     business = ET.SubElement(root, "business")
-    ET.SubElement(business, "id_company").text = "SNBX"  # TODO: Nombre asignado a nuestra organización. Cambiarla al recibirla por parte del Banco
-    ET.SubElement(business, "id_branch").text = "01SNBXBRNCH"  # TODO: ID asignado a nuestra organización, Cambiarla al recibirla por parte del Banco
+    ET.SubElement(business, "id_company").text = WPP_COMPANY_ID
+    ET.SubElement(business, "id_branch").text = WPP_BRANCH_ID
     ET.SubElement(business, "user").text = WPP_USER
     ET.SubElement(business, "pwd").text = WPP_PASS
 

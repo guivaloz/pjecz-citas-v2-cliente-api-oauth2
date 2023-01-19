@@ -33,10 +33,13 @@ Cree un archivo para las variables de entorno `.env`
 
     # Santander Web Pay Plus
     WPP_COMMERCE_ID=XXXXXXXX
-    WPP_USER=XXXXXXXX
-    WPP_PASS=XXXXXXXX
+    WPP_COMPANY_ID=XXXXXXXX
+    WPP_BRANCH_ID=XXXXXXXX
     WPP_KEY=XXXXXXXX
+    WPP_PASS=XXXXXXXX
+    WPP_TIMEOUT=XXXXXXXX
     WPP_URL=XXXXXXXX
+    WPP_USER=XXXXXXXX
 
     # URLs de las encuestas
     POLL_SERVICE_URL=http://127.0.0.1:3000/poll_service
@@ -73,6 +76,14 @@ Para Bash Shell cree un archivo `.bashrc` con este contenido
     echo "   SALT: ${SALT}"
     echo "   SECRET_KEY: ${SECRET_KEY}"
     echo "   TASK_QUEUE: ${TASK_QUEUE}"
+    echo "   WPP_COMMERCE_ID: ${WPP_COMMERCE_ID}"
+    echo "   WPP_COMPANY_ID: ${WPP_COMPANY_ID}"
+    echo "   WPP_BRANCH_ID: ${WPP_BRANCH_ID}"
+    echo "   WPP_KEY: ${WPP_KEY}"
+    echo "   WPP_PASS: ${WPP_PASS}"
+    echo "   WPP_TIMEOUT: ${WPP_TIMEOUT}"
+    echo "   WPP_URL: ${WPP_URL}"
+    echo "   WPP_USER: ${WPP_USER}"
     echo
 
     export PGDATABASE=${DB_NAME}
