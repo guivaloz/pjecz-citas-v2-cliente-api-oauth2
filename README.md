@@ -31,9 +31,19 @@ Cree un archivo para las variables de entorno `.env`
     # Salt sirve para cifrar el ID con HashID, debe ser igual en Admin
     SALT=********************************
 
+    # Santander Web Pay Plus
+    WPP_COMMERCE_ID=XXXXXXXX
+    WPP_USER=XXXXXXXX
+    WPP_PASS=XXXXXXXX
+    WPP_KEY=XXXXXXXX
+    WPP_URL=XXXXXXXX
+
     # URLs de las encuestas
     POLL_SERVICE_URL=http://127.0.0.1:3000/poll_service
     POLL_SYSTEM_URL=http://127.0.0.1:3000/poll_system
+
+    # Arrancar con gunicorn o uvicorn
+    ARRANCAR=uvicorn
 
 Para Bash Shell cree un archivo `.bashrc` con este contenido
 
