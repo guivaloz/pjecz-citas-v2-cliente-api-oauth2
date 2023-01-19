@@ -2,25 +2,22 @@
 Pag Pagos V2, CRUD (create, read, update, and delete)
 """
 from datetime import datetime, timedelta
-from hashids import Hashids
-import re
-import nest_asyncio
 from typing import Any
 
+import nest_asyncio
 from sqlalchemy.orm import Session
 
-from config.settings import LIMITE_CITAS_PENDIENTES, SALT
-from lib.safe_string import safe_string, CURP_REGEXP, EMAIL_REGEXP, TELEFONO_REGEXP
-from lib.pagos_banco import create_pay_link, get_response, RESPUESTA_EXITO
+from config.settings import LIMITE_CITAS_PENDIENTES
+from lib.exceptions import CitasAnyError
+from lib.hashids import descifrar_id
+from lib.safe_string import safe_curp, safe_email, safe_string, safe_telefono
+from lib.santander_web_pay_plus import create_pay_link, convert_xml_encrypt_to_dict, RESPUESTA_EXITO
 
 from .models import PagPago
 from .schemas import PagCarroIn, PagCarroOut, PagResultadoIn, PagResultadoOut
 from ..cit_clientes.crud import get_cit_cliente, get_cit_cliente_from_curp, get_cit_cliente_from_email
 from ..cit_clientes.models import CitCliente
 from ..pag_tramites_servicios.crud import get_pag_tramite_servicio_from_clave
-
-hashids = Hashids(SALT, min_length=8)
-hashid_regexp = re.compile("[0-9a-zA-Z]{8,16}")
 
 
 def get_pag_pagos(
@@ -54,9 +51,9 @@ def get_pag_pago(
     """Consultar un pago por su id"""
 
     # Descrifrar el ID hasheado
-    if not hashid_regexp.match(pag_pago_id_hasheado):
+    pag_pago_id = descifrar_id(pag_pago_id_hasheado)
+    if pag_pago_id is None:
         raise ValueError("El ID del pago no es válido")
-    pag_pago_id = hashids.decode(pag_pago_id_hasheado)[0]
 
     # Consultar
     pag_pago = db.query(PagPago).get(pag_pago_id)
@@ -92,20 +89,13 @@ def create_payment(
     if apellido_segundo == "":
         raise ValueError("El apellido segundo no es valido")
 
-    # Validar curp
-    curp = safe_string(datos.curp)
-    if re.match(CURP_REGEXP, curp) is None:
-        raise ValueError("El CURP no es valido")
-
-    # Validar email
-    email = datos.email.strip().lower()
-    if re.match(EMAIL_REGEXP, email) is None:
-        raise ValueError("El correo electronico no es valido")
-
-    # Validar telefono
-    telefono = datos.telefono.strip()
-    if re.match(TELEFONO_REGEXP, telefono) is None:
-        raise ValueError("El telefono no es valido")
+    # Validar curp, email y telefono
+    try:
+        curp = safe_curp(datos.curp)
+        email = safe_email(datos.email)
+        telefono = safe_telefono(datos.telefono)
+    except ValueError as error:
+        raise error
 
     # Validar pag_tramite_servicio_clave
     pag_tramite_servicio = get_pag_tramite_servicio_from_clave(db, datos.pag_tramite_servicio_clave)
@@ -157,11 +147,18 @@ def create_payment(
     db.commit()
     db.refresh(pag_pago)
 
-    # Establecer URL del banco
+    # Crear URL al banco
     nest_asyncio.apply()
-    url = create_pay_link(pago_id=pag_pago.id, email=email, service_detail=pag_tramite_servicio.descripcion, cit_client_id=cit_cliente, amount=float(pag_tramite_servicio.costo))
-    if url is None:
-        raise ValueError("URL del formulario del Banco incorrecta")
+    try:
+        url = create_pay_link(
+            pago_id=pag_pago.id,
+            email=email,
+            service_detail=pag_tramite_servicio.descripcion,
+            cit_client_id=cit_cliente,
+            amount=float(pag_tramite_servicio.costo),
+        )
+    except CitasAnyError as error:
+        raise ValueError("No se pudo crear el URL al banco") from error
 
     # Entregar
     return PagCarroOut(
@@ -176,7 +173,7 @@ def create_payment(
 def update_payment(
     db: Session,
     datos: PagResultadoIn,
-) -> Any:
+) -> PagResultadoOut:
     """Actualizar un pago"""
 
     # Validar el XML que mando el banco
@@ -184,16 +181,13 @@ def update_payment(
         raise ValueError("El XML está vacío")
 
     # Desencriptar el XML que mando el banco
-    respuesta = get_response(datos.xml_encriptado)
-
-    # Temporal para probar el front-end
-    estado = "PAGADO" if respuesta["respuesta"] == RESPUESTA_EXITO else "FALLIDO"
-    folio = respuesta["folio"]
-    pag_pago_id = int(respuesta["pago_id"])
-    if estado not in PagPago.ESTADOS:
-        raise ValueError("El estado no es valido")
+    try:
+        respuesta = convert_xml_encrypt_to_dict(datos.xml_encriptado)
+    except CitasAnyError as error:
+        raise ValueError("El XML no es válido") from error
 
     # Consultar el pago
+    pag_pago_id = int(respuesta["pago_id"])
     pag_pago = db.query(PagPago).get(pag_pago_id)
 
     # Validar el pago
@@ -204,9 +198,14 @@ def update_payment(
     if pag_pago.estado != "SOLICITADO":
         raise IndexError("No es un pago solicitado al banco, ya fue procesado")
 
+    # Definir el estado, puede ser PAGADO o FALLIDO
+    estado = "PAGADO" if respuesta["respuesta"] == RESPUESTA_EXITO else "FALLIDO"
+    if estado not in PagPago.ESTADOS:
+        raise ValueError("El estado no es valido")
+
     # Actualizar el pago
     pag_pago.estado = estado
-    pag_pago.folio = folio
+    pag_pago.folio = respuesta["folio"]
     db.add(pag_pago)
     db.commit()
     db.refresh(pag_pago)

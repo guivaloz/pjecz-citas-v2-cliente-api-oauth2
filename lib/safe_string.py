@@ -24,14 +24,26 @@ def safe_clave(input_str):
     return new_string
 
 
+def safe_curp(input_str):
+    """Safe CURP"""
+    if not isinstance(input_str, str):
+        return ValueError("CURP no es texto")
+    removed_spaces = re.sub(r"\s", "", input_str)
+    removed_simbols = re.sub(r"[()\[\]:/.-]+", "", removed_spaces)
+    final = unidecode(removed_simbols.upper())
+    if re.fullmatch(CURP_REGEXP, final) is None:
+        return ValueError("CURP es incorrecto")
+    return final
+
+
 def safe_email(input_str):
     """Safe email"""
     if not isinstance(input_str, str) or input_str.strip() == "":
-        return ""
+        return ValueError("Email es incorrecto")
     new_string = input_str.strip().lower()
     regexp = re.compile(EMAIL_REGEXP)
     if regexp.match(new_string) is None:
-        return ""
+        return ValueError("Email es incorrecto")
     return new_string
 
 
@@ -60,3 +72,13 @@ def safe_string(input_str, max_len=250):
     removed_multiple_spaces = re.sub(r"\s+", " ", new_string)
     final = removed_multiple_spaces.strip().upper()
     return (final[:max_len] + "...") if len(final) > max_len else final
+
+
+def safe_telefono(input_str):
+    """Safe telefono"""
+    if not isinstance(input_str, str):
+        return ValueError("Telefono no es texto")
+    solo_numeros = re.sub(r"[^0-9]+", "", unidecode(input_str))
+    if re.match(TELEFONO_REGEXP, solo_numeros) is None:
+        return ValueError("Telefono está incompleto")
+    return solo_numeros
