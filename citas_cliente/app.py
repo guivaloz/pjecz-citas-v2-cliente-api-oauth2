@@ -27,7 +27,8 @@ from citas_cliente.v2.enc_servicios.paths import enc_servicios
 from citas_cliente.v2.enc_sistemas.paths import enc_sistemas
 from citas_cliente.v2.materias.paths import materias
 from citas_cliente.v2.oficinas.paths import oficinas
-from citas_cliente.v2.pag_pagos.paths import pag_pagos
+from citas_cliente.v2.pag_pagos.paths import pag_pagos as pag_pagos_v2
+from citas_cliente.v3.pag_pagos.paths import pag_pagos as pag_pagos_v3
 from citas_cliente.v2.pag_tramites_servicios.paths import pag_tramites_servicios as pag_tramites_servicios_v2
 from citas_cliente.v3.pag_tramites_servicios.paths import pag_tramites_servicios as pag_tramites_servicios_v3
 
@@ -65,7 +66,8 @@ app.include_router(enc_servicios)
 app.include_router(enc_sistemas)
 app.include_router(materias)
 app.include_router(oficinas)
-app.include_router(pag_pagos)
+app.include_router(pag_pagos_v2)
+app.include_router(pag_pagos_v3)
 app.include_router(pag_tramites_servicios_v2)
 app.include_router(pag_tramites_servicios_v3)
 

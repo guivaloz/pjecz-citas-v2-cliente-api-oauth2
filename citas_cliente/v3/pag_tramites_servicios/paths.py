@@ -12,7 +12,7 @@ from lib.fastapi_pagination_custom_page import CustomPage, custom_page_success_f
 from .crud import get_pag_tramites_servicios, get_pag_tramite_servicio
 from .schemas import PagTramiteServicioOut, OnePagTramiteServicioOut
 
-pag_tramites_servicios = APIRouter(prefix="/v3/pag_tramites_servicios", tags=["pagos"])
+pag_tramites_servicios = APIRouter(prefix="/v3/pag_tramites_servicios", tags=["pagos v3"])
 
 
 @pag_tramites_servicios.get("", response_model=CustomPage[PagTramiteServicioOut])

@@ -1,5 +1,5 @@
 """
-Pag Pagos V2, CRUD (create, read, update, and delete)
+Pagos Pagos V2, CRUD (create, read, update, and delete)
 """
 from datetime import datetime, timedelta
 from typing import Any

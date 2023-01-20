@@ -10,7 +10,7 @@ from lib.exceptions import CitasAnyError
 from .crud import get_pag_pago, create_payment, update_payment
 from .schemas import OnePagPagoOut, PagCarroIn, OnePagCarroOut, PagResultadoIn, OnePagResultadoOut
 
-pag_pagos = APIRouter(prefix="/v2/pag_pagos", tags=["pagos"])
+pag_pagos = APIRouter(prefix="/v3/pag_pagos", tags=["pagos v3"])
 
 
 @pag_pagos.post("/carro", response_model=OnePagCarroOut)

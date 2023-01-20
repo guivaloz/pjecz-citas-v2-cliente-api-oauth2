@@ -9,7 +9,7 @@ from lib.database import get_db
 from .crud import get_pag_pago, create_payment, update_payment
 from .schemas import PagPagoOut, PagCarroIn, PagCarroOut, PagResultadoIn, PagResultadoOut
 
-pag_pagos = APIRouter(prefix="/v2/pag_pagos", tags=["pagos"])
+pag_pagos = APIRouter(prefix="/v2/pag_pagos", tags=["pagos v2"])
 
 
 @pag_pagos.post("/carro", response_model=PagCarroOut)
