@@ -4,8 +4,7 @@ Cit Servicios V2, CRUD (create, read, update, and delete)
 from typing import Any
 from sqlalchemy.orm import Session
 
-from .models import CitServicio
-
+from ...core.cit_servicios.models import CitServicio
 from ..cit_categorias.crud import get_cit_categoria
 
 

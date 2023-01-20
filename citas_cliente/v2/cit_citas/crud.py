@@ -10,6 +10,7 @@ from lib.pwgen import generar_codigo_asistencia
 from lib.safe_string import safe_string
 from lib.redis import task_queue
 
+from ...core.cit_citas.models import CitCita
 from ..cit_citas_anonimas.crud import get_cit_citas_anonimas
 from ..cit_clientes.crud import get_cit_cliente
 from ..cit_dias_disponibles.crud import get_cit_dias_disponibles
@@ -18,7 +19,6 @@ from ..cit_horas_disponibles.crud import get_cit_horas_disponibles
 from ..cit_oficinas_servicios.crud import get_cit_oficinas_servicios
 from ..cit_servicios.crud import get_cit_servicio
 from ..oficinas.crud import get_oficina
-from .models import CitCita
 from .schemas import CitCitaOut
 
 

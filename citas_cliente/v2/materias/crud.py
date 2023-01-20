@@ -4,7 +4,7 @@ Materias V2, CRUD (create, read, update, and delete)
 from typing import Any
 from sqlalchemy.orm import Session
 
-from .models import Materia
+from ...core.materias.models import Materia
 
 
 def get_materias(db: Session) -> Any:

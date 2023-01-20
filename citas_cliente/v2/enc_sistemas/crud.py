@@ -9,7 +9,7 @@ from hashids import Hashids
 from config.settings import POLL_SYSTEM_URL, SALT
 from lib.safe_string import safe_string
 
-from .models import EncSistema
+from ...core.enc_sistemas.models import EncSistema
 from .schemas import EncSistemaIn
 
 

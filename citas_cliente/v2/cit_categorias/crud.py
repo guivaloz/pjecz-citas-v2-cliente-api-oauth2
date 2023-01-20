@@ -4,7 +4,7 @@ Cit Categorias V2, CRUD (create, read, update, and delete)
 from typing import Any
 from sqlalchemy.orm import Session
 
-from .models import CitCategoria
+from ...core.cit_categorias.models import CitCategoria
 
 
 def get_cit_categorias(db: Session) -> Any:

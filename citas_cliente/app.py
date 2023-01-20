@@ -9,7 +9,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from fastapi_pagination import add_pagination
 from sqlalchemy.orm import Session
 
-from config.settings import ACCESS_TOKEN_EXPIRE_MINUTES
+from config.settings import ACCESS_TOKEN_EXPIRE_MINUTES, ORIGINS
 from lib.database import get_db
 
 from citas_cliente.v2.autoridades.paths import autoridades
@@ -28,15 +28,11 @@ from citas_cliente.v2.enc_sistemas.paths import enc_sistemas
 from citas_cliente.v2.materias.paths import materias
 from citas_cliente.v2.oficinas.paths import oficinas
 from citas_cliente.v2.pag_pagos.paths import pag_pagos
-from citas_cliente.v2.pag_tramites_servicios.paths import pag_tramites_servicios
+from citas_cliente.v2.pag_tramites_servicios.paths import pag_tramites_servicios as pag_tramites_servicios_v2
+from citas_cliente.v3.pag_tramites_servicios.paths import pag_tramites_servicios as pag_tramites_servicios_v3
 
 from citas_cliente.v2.cit_clientes.authentications import authenticate_user, create_access_token, get_current_active_user
 from citas_cliente.v2.cit_clientes.schemas import Token, CitClienteInDB
-
-try:
-    from instance.settings import ORIGINS
-except ImportError:
-    from config.settings import ORIGINS
 
 # FastAPI
 app = FastAPI(
@@ -70,7 +66,8 @@ app.include_router(enc_sistemas)
 app.include_router(materias)
 app.include_router(oficinas)
 app.include_router(pag_pagos)
-app.include_router(pag_tramites_servicios)
+app.include_router(pag_tramites_servicios_v2)
+app.include_router(pag_tramites_servicios_v3)
 
 # Pagination
 add_pagination(app)

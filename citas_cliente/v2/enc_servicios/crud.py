@@ -9,7 +9,7 @@ from hashids import Hashids
 from config.settings import POLL_SERVICE_URL, SALT
 from lib.safe_string import safe_string
 
-from .models import EncServicio
+from ...core.enc_servicios.models import EncServicio
 from .schemas import EncServicioIn
 
 

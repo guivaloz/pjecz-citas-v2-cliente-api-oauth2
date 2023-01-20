@@ -5,7 +5,7 @@ from datetime import date
 from typing import Any
 from sqlalchemy.orm import Session
 
-from .models import CitDiaInhabil
+from ...core.cit_dias_inhabiles.models import CitDiaInhabil
 
 
 def get_cit_dias_inhabiles(db: Session) -> Any:

@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 
 from lib.safe_string import CURP_REGEXP, EMAIL_REGEXP, PASSWORD_REGEXP, PASSWORD_REGEXP_MESSAGE
 
-from .models import CitCliente
+from ...core.cit_clientes.models import CitCliente
 from .schemas import CitClienteActualizarContrasenaIn
 
 

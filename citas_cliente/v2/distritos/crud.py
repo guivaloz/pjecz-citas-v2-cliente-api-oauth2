@@ -4,7 +4,7 @@ Distritos V2, CRUD (create, read, update, and delete)
 from typing import Any
 from sqlalchemy.orm import Session
 
-from .models import Distrito
+from ...core.distritos.models import Distrito
 
 
 def get_distritos(db: Session) -> Any:

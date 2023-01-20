@@ -8,11 +8,12 @@ from sqlalchemy.orm import Session
 from lib.database import get_db
 from lib.fastapi_pagination import LimitOffsetPage
 
-from ..autoridades.crud import get_autoridades
-from ..autoridades.schemas import AutoridadOut
+from ...core.permisos.models import Permiso
 from ..cit_clientes.authentications import get_current_active_user
 from ..cit_clientes.schemas import CitClienteInDB
-from ..permisos.models import Permiso
+
+from ..autoridades.crud import get_autoridades
+from ..autoridades.schemas import AutoridadOut
 from .crud import get_distritos, get_distrito
 from .schemas import DistritoOut
 

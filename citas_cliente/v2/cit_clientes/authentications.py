@@ -12,7 +12,8 @@ from sqlalchemy.orm import Session
 
 from config.settings import SECRET_KEY, ALGORITHM
 from lib.database import get_db
-from .models import CitCliente
+
+from ...core.cit_clientes.models import CitCliente
 from .schemas import TokenData, CitClienteInDB
 
 pwd_context = CryptContext(schemes=["pbkdf2_sha256", "des_crypt"], deprecated="auto")  # In tutorial use schemes=["bcrypt"]
