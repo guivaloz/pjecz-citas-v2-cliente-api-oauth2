@@ -116,11 +116,11 @@ def create_payment(
     try:
         cit_cliente = get_cit_cliente_from_curp(db, curp)
         si_existe = True
-    except (IndexError, ValueError):
+    except CitasAnyError:
         try:
             cit_cliente = get_cit_cliente_from_email(db, email)
             si_existe = True
-        except (IndexError, ValueError):
+        except CitasAnyError:
             si_existe = False
 
     # Si no se encuentra el cliente, crearlo
