@@ -9,7 +9,14 @@ from dotenv import load_dotenv
 import requests
 
 from lib.AESEncryption import AES128Encryption
-from lib.exceptions import CitasAnyError, CitasConnectionError, CitasMissingConfigurationError, CitasTimeoutError, CitasRequestError
+from lib.exceptions import (
+    CitasConnectionError,
+    CitasMissingConfigurationError,
+    CitasNotValidAnswerError,
+    CitasTimeoutError,
+    CitasRequestError,
+    CitasUnknownError,
+)
 
 RESPUESTA_EXITO = "approved"
 RESPUESTA_DENEGADA = "denied"
@@ -153,6 +160,8 @@ async def send_chain(chain: str) -> str:
         raise CitasTimeoutError("Error porque se agoto el tiempo de espera con WPP") from error
     except requests.exceptions.RequestException as error:
         raise CitasRequestError("Error al enviar la cadena a WPP") from error
+    except Exception as error:
+        raise CitasUnknownError("Error desconocido al enviar la cadena a WPP") from error
 
     # Entregar
     return response.text
@@ -191,18 +200,18 @@ def create_pay_link(
     except asyncio.TimeoutError as error:
         raise CitasTimeoutError("Error porque se agoto el tiempo de espera con WPP") from error
     except Exception as error:
-        raise CitasAnyError("Error al tratar de enviar la cadena XML a WPP") from error
+        raise CitasUnknownError("Error al tratar de enviar la cadena XML a WPP") from error
 
     # Si no hay respuesta, causar error
     if respuesta is None or respuesta == "":
-        raise CitasAnyError("Error en la respuesta de WPP (respuesta vacía)")
+        raise CitasNotValidAnswerError("Error en la respuesta de WPP (respuesta vacía)")
 
     # Descrifar la respuesta y extraer la url
     url = get_url_from_xml_encrypt(respuesta)
 
     # Si no hay url, causar error
     if url is None or url == "":
-        raise CitasAnyError("Error en la respuesta de WPP (url vacía)")
+        raise CitasNotValidAnswerError("Error en la respuesta de WPP (url vacía)")
 
     # Entregar
     return url

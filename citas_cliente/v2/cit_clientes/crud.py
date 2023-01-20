@@ -42,7 +42,7 @@ def get_cit_cliente_from_curp(db: Session, cliente_curp: str) -> CitCliente:
 
 
 def get_cit_cliente_from_email(db: Session, cliente_email: str) -> CitCliente:
-    """Consultar un cliente por su id"""
+    """Consultar un cliente por su email"""
     if re.match(EMAIL_REGEXP, cliente_email) is None:
         raise ValueError("El correo electronico no es valido")
     cit_cliente = db.query(CitCliente).filter_by(email=cliente_email).first()

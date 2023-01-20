@@ -35,6 +35,10 @@ class CitasNotExistsError(CitasAnyError):
     """Excepción porque no existe"""
 
 
+class CitasNotValidAnswerError(CitasAnyError):
+    """Excepción porque la respuesta no es válida"""
+
+
 class CitasNotValidParamError(CitasAnyError):
     """Excepción porque un parámetro es inválido"""
 
@@ -49,3 +53,7 @@ class CitasRequestError(CitasAnyError):
 
 class CitasTimeoutError(CitasAnyError):
     """Excepción porque se agoto el tiempo de espera"""
+
+
+class CitasUnknownError(CitasAnyError):
+    """Excepción porque hubo un error desconocido"""

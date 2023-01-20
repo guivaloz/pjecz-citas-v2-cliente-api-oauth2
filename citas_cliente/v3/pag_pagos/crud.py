@@ -1,5 +1,5 @@
 """
-Pag Pagos V2, CRUD (create, read, update, and delete)
+Pagos Pagos V3, CRUD (create, read, update, and delete)
 """
 from datetime import datetime, timedelta
 from typing import Any
@@ -8,7 +8,7 @@ import nest_asyncio
 from sqlalchemy.orm import Session
 
 from config.settings import LIMITE_CITAS_PENDIENTES
-from lib.exceptions import CitasAnyError
+from lib.exceptions import CitasAnyError, CitasIsDeletedError, CitasNotExistsError, CitasNotValidParamError
 from lib.hashids import descifrar_id
 from lib.safe_string import safe_curp, safe_email, safe_string, safe_telefono
 from lib.santander_web_pay_plus import create_pay_link, convert_xml_encrypt_to_dict, RESPUESTA_EXITO
@@ -53,16 +53,16 @@ def get_pag_pago(
     # Descrifrar el ID hasheado
     pag_pago_id = descifrar_id(pag_pago_id_hasheado)
     if pag_pago_id is None:
-        raise ValueError("El ID del pago no es válido")
+        raise CitasNotExistsError("El ID del pago no es válido")
 
     # Consultar
     pag_pago = db.query(PagPago).get(pag_pago_id)
 
     # Validar
     if pag_pago is None:
-        raise IndexError("No existe ese pago")
+        raise CitasNotExistsError("No existe ese pago")
     if pag_pago.estatus != "A":
-        raise IndexError("No es activo ese pago, está eliminado")
+        raise CitasIsDeletedError("No es activo ese pago, está eliminado")
 
     # Entregar
     return pag_pago
@@ -77,25 +77,35 @@ def create_payment(
     # Validar nombres
     nombres = safe_string(datos.nombres)
     if nombres == "":
-        raise ValueError("El nombre no es valido")
+        raise CitasNotValidParamError("El nombre no es valido")
 
     # Validar apellido_primero
     apellido_primero = safe_string(datos.apellido_primero)
     if apellido_primero == "":
-        raise ValueError("El apellido primero no es valido")
+        raise CitasNotValidParamError("El apellido primero no es valido")
 
     # Validar apellido_segundo
     apellido_segundo = safe_string(datos.apellido_segundo)
     if apellido_segundo == "":
-        raise ValueError("El apellido segundo no es valido")
+        raise CitasNotValidParamError("El apellido segundo no es valido")
 
-    # Validar curp, email y telefono
+    # Validar curp
     try:
         curp = safe_curp(datos.curp)
+    except ValueError as error:
+        raise CitasNotValidParamError("La CURP no es valida") from error
+
+    # Validar email
+    try:
         email = safe_email(datos.email)
+    except ValueError as error:
+        raise CitasNotValidParamError("El email no es valido") from error
+
+    # Validar telefono
+    try:
         telefono = safe_telefono(datos.telefono)
     except ValueError as error:
-        raise error
+        raise CitasNotValidParamError("El telefono no es valido") from error
 
     # Validar pag_tramite_servicio_clave
     pag_tramite_servicio = get_pag_tramite_servicio_from_clave(db, datos.pag_tramite_servicio_clave)
@@ -158,7 +168,7 @@ def create_payment(
             amount=float(pag_tramite_servicio.costo),
         )
     except CitasAnyError as error:
-        raise ValueError("No se pudo crear el URL al banco") from error
+        raise error
 
     # Entregar
     return PagCarroOut(
@@ -178,13 +188,13 @@ def update_payment(
 
     # Validar el XML que mando el banco
     if datos.xml_encriptado.strip() == "":
-        raise ValueError("El XML está vacío")
+        raise CitasNotValidParamError("El XML está vacío")
 
     # Desencriptar el XML que mando el banco
     try:
         respuesta = convert_xml_encrypt_to_dict(datos.xml_encriptado)
     except CitasAnyError as error:
-        raise ValueError("El XML no es válido") from error
+        raise error
 
     # Consultar el pago
     pag_pago_id = int(respuesta["pago_id"])
@@ -192,16 +202,16 @@ def update_payment(
 
     # Validar el pago
     if pag_pago is None:
-        raise IndexError("No existe ese pago")
+        raise CitasNotExistsError("No existe ese pago")
     if pag_pago.estatus != "A":
-        raise IndexError("No es activo ese pago, está eliminado")
+        raise CitasIsDeletedError("No es activo ese pago, está eliminado")
     if pag_pago.estado != "SOLICITADO":
-        raise IndexError("No es un pago solicitado al banco, ya fue procesado")
+        raise CitasNotExistsError("No es un pago solicitado al banco, ya fue procesado")
 
     # Definir el estado, puede ser PAGADO o FALLIDO
     estado = "PAGADO" if respuesta["respuesta"] == RESPUESTA_EXITO else "FALLIDO"
     if estado not in PagPago.ESTADOS:
-        raise ValueError("El estado no es valido")
+        raise CitasNotValidParamError("El estado no es valido")
 
     # Actualizar el pago
     pag_pago.estado = estado
