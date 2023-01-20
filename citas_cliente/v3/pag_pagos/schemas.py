@@ -6,7 +6,7 @@ from pydantic import BaseModel
 from lib.schemas_base import OneBaseOut
 
 
-class PagoOut(BaseModel):
+class PagPagoOut(BaseModel):
     """Esquema para entregar pagos"""
 
     id: int | None
@@ -27,7 +27,7 @@ class PagoOut(BaseModel):
         orm_mode = True
 
 
-class OnePagoOut(PagoOut, OneBaseOut):
+class OnePagPagoOut(PagPagoOut, OneBaseOut):
     """Esquema para entregar un pago"""
 
 
