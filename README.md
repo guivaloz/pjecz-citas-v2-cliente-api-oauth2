@@ -137,46 +137,70 @@ Cree el archivo `instance/settings.py` que cargue las variables de entorno
         "http://127.0.0.1:3000",
     ]
 
-## Crear Entorno Virtual
+## Mejores practicas
 
-Crear el enorno virtual dentro de la copia local del repositorio, con
+Usa las recomendaciones de [I've been abusing HTTP Status Codes in my APIs for years](https://blog.slimjim.xyz/posts/stop-using-http-codes/)
 
-    python -m venv venv
+### Respuesta exitosa
 
-O con virtualenv
+Status code: **200**
 
-    virtualenv -p python3 venv
+Body que entrega un listado
 
-Active el entorno virtual, en Linux con...
+    {
+        "success": true,
+        "message": "Success",
+        "result": {
+            "total": 2812,
+            "items": [ { "id": 1, ... } ],
+            "limit": 100,
+            "offset": 0
+        }
+    }
 
-    source venv/bin/activate
+Body que entrega un item
 
-O en windows con
+    {
+        "success": true,
+        "message": "Success",
+        "id": 123,
+        ...
+    }
 
-    venv/Scripts/activate
+### Respuesta fallida: registro no encontrado
 
-Verifique que haya el mínimo de paquetes con
+Status code: **200**
 
-    pip list
+Body
 
-Actualice el pip de ser necesario
+    {
+        "success": false,
+        "message": "No employee found for ID 100"
+    }
 
-    pip install --upgrade pip
+### Respuesta fallida: ruta incorrecta
 
-Y luego instale los paquetes requeridos
+Status code: **404**
 
-    pip install -r requirements.txt
+## Configure Poetry
 
-Verifique con
+Por defecto, el entorno se guarda en un directorio unico en `~/.cache/pypoetry/virtualenvs`
 
-    pip list
+Modifique para que el entorno se guarde en el mismo directorio que el proyecto
 
-## FastAPI
+    poetry config --list
+    poetry config virtualenvs.in-project true
 
-Arrancar con uvicorn
+Verifique que este en True
 
-    uvicorn --host=0.0.0.0 --port 8005 --reload citas_cliente.app:app
+    poetry config virtualenvs.in-project
 
-O arrancar con gunicorn
+## Google Cloud deployment
 
-    gunicorn -w 4 -k uvicorn.workers.UvicornWorker citas_cliente.app:app
+Crear el archivo `requirements.txt`
+
+    poetry export -f requirements.txt --output requirements.txt --without-hashes
+
+Y subir a Google Cloud
+
+    gcloud app deploy
