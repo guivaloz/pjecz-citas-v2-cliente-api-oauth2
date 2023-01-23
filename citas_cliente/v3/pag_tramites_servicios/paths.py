@@ -9,7 +9,7 @@ from lib.database import get_db
 from lib.exceptions import CitasAnyError
 from lib.fastapi_pagination_custom_page import CustomPage, custom_page_success_false
 
-from .crud import get_pag_tramites_servicios, get_pag_tramite_servicio
+from .crud import get_pag_tramites_servicios, get_pag_tramite_servicio_from_clave
 from .schemas import PagTramiteServicioOut, OnePagTramiteServicioOut
 
 pag_tramites_servicios = APIRouter(prefix="/v3/pag_tramites_servicios", tags=["pagos v3"])
@@ -34,7 +34,7 @@ async def detalle_pag_tramite_servicio(
 ):
     """Detalle de un tramite y servicio a partir de su id"""
     try:
-        pag_tramite_servicio = get_pag_tramite_servicio(
+        pag_tramite_servicio = get_pag_tramite_servicio_from_clave(
             db=db,
             clave=clave,
         )
