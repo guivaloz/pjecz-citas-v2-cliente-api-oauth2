@@ -5,8 +5,8 @@ from datetime import date
 from typing import Any
 from sqlalchemy.orm import Session
 
+from ...core.cit_horas_bloqueadas.models import CitHoraBloqueada
 from ..oficinas.crud import get_oficina
-from .models import CitHoraBloqueada
 
 
 def get_horas_bloquedas(db: Session, oficina_id: int, fecha: date) -> Any:

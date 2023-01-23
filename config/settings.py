@@ -9,8 +9,6 @@ DB_HOST = os.environ.get("DB_HOST", "127.0.0.1")
 DB_NAME = os.environ.get("DB_NAME", "pjecz_citas_v2")
 DB_PASS = os.environ.get("DB_PASS", "wrongpassword")
 DB_USER = os.environ.get("DB_USER", "nouser")
-DB_SOCKET_DIR = os.environ.get("DB_SOCKET_DIR", "/cloudsql")
-CLOUD_SQL_CONNECTION_NAME = os.environ.get("CLOUD_SQL_CONNECTION_NAME", "none")
 
 # Google Cloud SQL a Minerva con PostgreSQL
 SQLALCHEMY_DATABASE_URI = f"postgresql+psycopg2://{DB_USER}:{DB_PASS}@{DB_HOST}/{DB_NAME}"
@@ -27,9 +25,7 @@ ACCESS_TOKEN_EXPIRE_MINUTES = int(os.environ.get("ACCESS_TOKEN_EXPIRE_MINUTES", 
 # running in a browser has JavaScript code that communicates with a backend,
 # and the backend is in a different "origin" than the frontend.
 # https://fastapi.tiangolo.com/tutorial/cors/
-ORIGINS = [
-    "https://citas.justiciadigital.gob.mx",
-]
+ORIGINS = os.environ.get("ORIGINS", "http://localhost:5000,http://127.0.0.1:5000").split(",")
 
 # Limite de citas pendientes por cliente
 LIMITE_CITAS_PENDIENTES = int(os.environ.get("LIMITE_CITAS_PENDIENTES", "0"))

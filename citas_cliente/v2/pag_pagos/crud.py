@@ -1,5 +1,5 @@
 """
-Pag Pagos V2, CRUD (create, read, update, and delete)
+Pagos Pagos V2, CRUD (create, read, update, and delete)
 """
 from datetime import datetime, timedelta
 from typing import Any
@@ -13,11 +13,11 @@ from lib.hashids import descifrar_id
 from lib.safe_string import safe_curp, safe_email, safe_string, safe_telefono
 from lib.santander_web_pay_plus import create_pay_link, convert_xml_encrypt_to_dict, RESPUESTA_EXITO
 
-from .models import PagPago
-from .schemas import PagCarroIn, PagCarroOut, PagResultadoIn, PagResultadoOut
+from ...core.cit_clientes.models import CitCliente
+from ...core.pag_pagos.models import PagPago
 from ..cit_clientes.crud import get_cit_cliente, get_cit_cliente_from_curp, get_cit_cliente_from_email
-from ..cit_clientes.models import CitCliente
 from ..pag_tramites_servicios.crud import get_pag_tramite_servicio_from_clave
+from .schemas import PagCarroIn, PagCarroOut, PagResultadoIn, PagResultadoOut
 
 
 def get_pag_pagos(
@@ -48,7 +48,7 @@ def get_pag_pago(
     db: Session,
     pag_pago_id_hasheado: str,
 ) -> PagPago:
-    """Consultar un pago por su id"""
+    """Consultar un pago por su id hasheado"""
 
     # Descrifrar el ID hasheado
     pag_pago_id = descifrar_id(pag_pago_id_hasheado)

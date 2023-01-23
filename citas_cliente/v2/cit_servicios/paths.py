@@ -8,9 +8,10 @@ from sqlalchemy.orm import Session
 from lib.database import get_db
 from lib.fastapi_pagination import LimitOffsetPage
 
+from ...core.permisos.models import Permiso
 from ..cit_clientes.authentications import get_current_active_user
 from ..cit_clientes.schemas import CitClienteInDB
-from ..permisos.models import Permiso
+
 from .crud import get_cit_servicios, get_cit_servicio
 from .schemas import CitServicioOut
 

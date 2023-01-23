@@ -5,8 +5,8 @@ from datetime import date, datetime, time
 from typing import Any
 from sqlalchemy.orm import Session
 
+from ...core.cit_citas.models import CitCita
 from ..oficinas.crud import get_oficina
-from ..cit_citas.models import CitCita
 
 
 def get_cit_citas_anonimas(db: Session, oficina_id: int, fecha: date = None, hora_minuto: time = None) -> Any:

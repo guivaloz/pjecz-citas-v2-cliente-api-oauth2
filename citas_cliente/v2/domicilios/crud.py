@@ -4,7 +4,7 @@ Domicilios V2, CRUD (create, read, update, and delete)
 from typing import Any
 from sqlalchemy.orm import Session
 
-from .models import Domicilio
+from ...core.domicilios.models import Domicilio
 
 
 def get_domicilios(db: Session) -> Any:

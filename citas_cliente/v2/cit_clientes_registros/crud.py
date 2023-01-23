@@ -11,9 +11,9 @@ from lib.pwgen import generar_aleatorio
 from lib.redis import task_queue
 from lib.safe_string import safe_string, CURP_REGEXP, EMAIL_REGEXP, TELEFONO_REGEXP
 
-from .models import CitClienteRegistro
+from ...core.cit_clientes.models import CitCliente
+from ...core.cit_clientes_registros.models import CitClienteRegistro
 from .schemas import CitClienteRegistroIn, CitClienteRegistroConcluirIn
-from ..cit_clientes.models import CitCliente
 
 EXPIRACION_HORAS = 48
 

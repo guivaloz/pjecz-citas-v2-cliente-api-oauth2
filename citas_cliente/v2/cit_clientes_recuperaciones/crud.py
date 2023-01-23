@@ -8,9 +8,9 @@ from passlib.context import CryptContext
 from lib.pwgen import generar_aleatorio
 from lib.redis import task_queue
 
-from .models import CitClienteRecuperacion
-from .schemas import CitClienteRecuperacionIn, CitClienteRecuperacionConcluirIn
+from ...core.cit_clientes_recuperaciones.models import CitClienteRecuperacion
 from ..cit_clientes.crud import get_cit_cliente, get_cit_cliente_from_email
+from .schemas import CitClienteRecuperacionIn, CitClienteRecuperacionConcluirIn
 
 EXPIRACION_HORAS = 48
 

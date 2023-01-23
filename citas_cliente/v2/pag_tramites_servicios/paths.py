@@ -1,5 +1,5 @@
 """
-Pag Tramites y Servicios V2, rutas (paths)
+Pagos Tramites y Servicios V2, rutas (paths)
 """
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi_pagination.ext.sqlalchemy import paginate
@@ -11,7 +11,7 @@ from lib.fastapi_pagination import LimitOffsetPage
 from .crud import get_pag_tramites_servicios, get_pag_tramite_servicio_from_clave
 from .schemas import PagTramiteServicioOut
 
-pag_tramites_servicios = APIRouter(prefix="/v2/pag_tramites_servicios", tags=["pagos"])
+pag_tramites_servicios = APIRouter(prefix="/v2/pag_tramites_servicios", tags=["pagos v2"])
 
 
 @pag_tramites_servicios.get("", response_model=LimitOffsetPage[PagTramiteServicioOut])

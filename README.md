@@ -10,6 +10,9 @@ Genere el `SECRET_KEY` con este comando
 
 Cree un archivo para las variables de entorno `.env`
 
+    # CORS Origins separados por comas
+    ORIGINS=http://localhost:8005,http://127.0.0.1:8005
+
     # Database
     DB_HOST=127.0.0.1
     DB_NAME=pjecz_citas_v2
