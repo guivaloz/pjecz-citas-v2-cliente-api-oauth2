@@ -57,3 +57,15 @@ class CitasTimeoutError(CitasAnyError):
 
 class CitasUnknownError(CitasAnyError):
     """Excepción porque hubo un error desconocido"""
+
+
+class CitasEncryptError(CitasAnyError):
+    """Excepción a la hora de encriptar el XML"""
+
+
+class CitasGetURLFromXMLEncrypted(CitasAnyError):
+    """Excepción a la hora de desencriptar el XML"""
+
+
+class CitasDesencryptError(CitasAnyError):
+    """Excepción a la hora de desencriptar el XML"""
