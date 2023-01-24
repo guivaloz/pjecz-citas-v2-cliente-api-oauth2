@@ -93,7 +93,7 @@ def main():
     except Exception as error:
         raise CitasGetURLFromXMLEncryptedError("Error al obtener la URL del Banco desde su XML encriptado") from error
 
-    if args.nivel == "respuesta_banco_xml":
+    if args.nivel == "respuesta_banco_url":
         print("===[ URL del Formulario del Banco ]===")
         print(url)
         return 0
