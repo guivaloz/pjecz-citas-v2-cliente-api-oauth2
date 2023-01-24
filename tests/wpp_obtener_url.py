@@ -12,7 +12,7 @@ from lib.exceptions import (
     CitasUnknownError,
     CitasNotValidAnswerError,
     CitasDesencryptError,
-    CitasGetURLFromXMLEncrypted,
+    CitasGetURLFromXMLEncryptedError,
 )
 
 
@@ -91,7 +91,7 @@ def main():
     try:
         url = get_url_from_xml_encrypt(respuesta)
     except Exception as error:
-        raise CitasGetURLFromXMLEncrypted("Error al obtener la URL del Banco desde su XML encriptado") from error
+        raise CitasGetURLFromXMLEncryptedError("Error al obtener la URL del Banco desde su XML encriptado") from error
 
     if args.nivel == "url_banco":
         print("===[ URL del Formulario del Banco ]===")
