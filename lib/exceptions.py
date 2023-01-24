@@ -60,12 +60,12 @@ class CitasUnknownError(CitasAnyError):
 
 
 class CitasEncryptError(CitasAnyError):
-    """Excepción a la hora de encriptar el XML"""
+    """Excepción porque hubo un error al encriptar el XML"""
 
 
-class CitasGetURLFromXMLEncrypted(CitasAnyError):
-    """Excepción a la hora de desencriptar el XML"""
+class CitasGetURLFromXMLEncryptedError(CitasAnyError):
+    """Excepción porque hubo un error al obtener al URL del XML ecriptado"""
 
 
 class CitasDesencryptError(CitasAnyError):
-    """Excepción a la hora de desencriptar el XML"""
+    """Excepción porque hubo error al desencriptar el XML"""

@@ -18,7 +18,7 @@ from lib.exceptions import (
     CitasRequestError,
     CitasUnknownError,
     CitasEncryptError,
-    CitasGetURLFromXMLEncrypted,
+    CitasGetURLFromXMLEncryptedError,
     CitasDesencryptError,
 )
 
@@ -239,7 +239,7 @@ def create_pay_link(
     try:
         url = get_url_from_xml_encrypt(respuesta)
     except Exception as error:
-        raise CitasGetURLFromXMLEncrypted(f"Error al obtener la URL del Banco desde su XML encriptado. {error}") from error
+        raise CitasGetURLFromXMLEncryptedError(f"Error al obtener la URL del Banco desde su XML encriptado. {str(error)}") from error
 
     # Entregar
     return url
