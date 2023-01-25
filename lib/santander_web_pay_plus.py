@@ -3,6 +3,7 @@ Santander Web Pay Plus
 """
 import asyncio
 import os
+import urllib
 import xml.etree.ElementTree as ET
 
 from dotenv import load_dotenv
@@ -16,6 +17,9 @@ from lib.exceptions import (
     CitasTimeoutError,
     CitasRequestError,
     CitasUnknownError,
+    CitasEncryptError,
+    CitasGetURLFromXMLEncryptedError,
+    CitasDesencryptError,
 )
 
 RESPUESTA_EXITO = "approved"
@@ -124,8 +128,8 @@ def decrypt_chain(chain_encrypted: str) -> str:
     return plaintext
 
 
-async def send_chain(chain: str) -> str:
-    """Enviar cadena a WPP"""
+def create_chain_xml_sender(chain: str) -> str:
+    """Crear cadena para XML de envío WPP"""
 
     # Get the commerce ID
     if WPP_COMMERCE_ID is None:
@@ -142,7 +146,15 @@ async def send_chain(chain: str) -> str:
     chain_bytes = ET.tostring(root, encoding="unicode")
 
     # Prepare the request
-    payload = "xml=" + chain_bytes
+    encodedString = urllib.parse.quote(chain_bytes, "utf-8")
+    return encodedString
+
+
+async def send_chain(chain: str) -> str:
+    """Enviar cadena a WPP"""
+
+    # Prepare the request
+    payload = "xml=" + create_chain_xml_sender(chain)
     headers = {"Content-Type": "application/x-www-form-urlencoded"}
 
     # Send the request
@@ -169,9 +181,21 @@ async def send_chain(chain: str) -> str:
 
 def get_url_from_xml_encrypt(xml_encrypt: str):
     """Extrae la url del xml de respuesta"""
-    xml = decrypt_chain(xml_encrypt)
+
+    # Se desencripta el XML enviado por el Banco
+    try:
+        xml = decrypt_chain(xml_encrypt)
+    except Exception as error:
+        raise CitasDesencryptError("No se puede desencriptar el XML del Banco") from error
+
     root = ET.fromstring(xml)
-    return root.find("nb_url").text
+    url = root.find("nb_url").text
+
+    if url is None or url == "":
+        # nb_response = root.find("nb_response").text
+        raise CitasNotValidAnswerError(f"Error en XML del Banco. (url vacía). nb_response={xml}")
+
+    return url
 
 
 def create_pay_link(
@@ -191,7 +215,12 @@ def create_pay_link(
         description=service_detail,
         cit_client_id=cit_client_id,
     )
-    chain_encrypt = encrypt_chain(chain).decode()  # bytes
+
+    # Encriptación del XML
+    try:
+        chain_encrypt = encrypt_chain(chain).decode()  # bytes
+    except Exception as error:
+        raise CitasEncryptError("Error al encriptar el XML") from error
 
     # Enviar cadena XML a WPP
     respuesta = None
@@ -203,15 +232,14 @@ def create_pay_link(
         raise CitasUnknownError("Error al tratar de enviar la cadena XML a WPP") from error
 
     # Si no hay respuesta, causar error
-    if respuesta is None or respuesta == "":
+    if respuesta is None or respuesta == "" or respuesta == "\n":
         raise CitasNotValidAnswerError("Error en la respuesta de WPP (respuesta vacía)")
 
-    # Descrifar la respuesta y extraer la url
-    url = get_url_from_xml_encrypt(respuesta)
-
-    # Si no hay url, causar error
-    if url is None or url == "":
-        raise CitasNotValidAnswerError("Error en la respuesta de WPP (url vacía)")
+    # Descifrar la respuesta y extraer la url
+    try:
+        url = get_url_from_xml_encrypt(respuesta)
+    except Exception as error:
+        raise CitasGetURLFromXMLEncryptedError(f"Error al obtener la URL del Banco desde su XML encriptado. {str(error)}") from error
 
     # Entregar
     return url
