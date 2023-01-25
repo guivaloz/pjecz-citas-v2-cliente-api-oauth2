@@ -5,8 +5,15 @@ WPP Obtener al URL del Banco para el Formulario de Pago
 import argparse
 import asyncio
 
-from lib.santander_web_pay_plus import create_chain_xml, encrypt_chain, create_chain_xml_sender, send_chain, decrypt_chain, get_url_from_xml_encrypt, create_pay_link
-
+from lib.santander_web_pay_plus import (
+    create_chain_xml,
+    create_chain_xml_sender,
+    create_pay_link,
+    decrypt_chain,
+    encrypt_chain,
+    get_url_from_xml_encrypt,
+    send_chain,
+)
 from lib.exceptions import (
     CitasTimeoutError,
     CitasUnknownError,
