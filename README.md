@@ -1,6 +1,6 @@
 # pjecz-citas-v2-cliente-api-oauth2
 
-API del Sistema de Citas versión 2 del Poder Judicial del Estado de Coahuila de Zaragoza
+API del Sistema de Citas hecho con FastAPI.
 
 ## Mejores prácticas
 
@@ -139,10 +139,23 @@ Para Bash Shell cree un archivo `.bashrc` con este contenido
     echo "   PGUSER:     ${PGUSER}"
     echo
 
-    alias arrancar="uvicorn --host 0.0.0.0 --port 8005 --reload citas_cliente.app:app"
+    alias arrancar="uvicorn --host 0.0.0.0 --port 8080 --reload citas_cliente.app:app"
     echo "-- FastAPI"
     echo "   arrancar"
     echo
+
+## Configurar Poetry
+
+Por defecto, el entorno se guarda en un directorio unico en `~/.cache/pypoetry/virtualenvs`
+
+Modifique para que el entorno se guarde en el mismo directorio que el proyecto
+
+    poetry config --list
+    poetry config virtualenvs.in-project true
+
+Verifique que este en True
+
+    poetry config virtualenvs.in-project
 
 ## Instalar
 
@@ -166,18 +179,12 @@ Instalar dependencias
 
     poetry install
 
-## Configure Poetry
+## Arrancar
 
-Por defecto, el entorno se guarda en un directorio unico en `~/.cache/pypoetry/virtualenvs`
+Ejecutar FastAPI con el alias arrancar
 
-Modifique para que el entorno se guarde en el mismo directorio que el proyecto
-
-    poetry config --list
-    poetry config virtualenvs.in-project true
-
-Verifique que este en True
-
-    poetry config virtualenvs.in-project
+    . .bashrc
+    arrancar
 
 ## Google Cloud deployment
 
