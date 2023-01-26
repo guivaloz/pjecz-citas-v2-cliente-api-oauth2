@@ -24,7 +24,7 @@ from lib.exceptions import (
     CitasBankResponseInvalidError,
 )
 
-XML_ENCRYPT_REGEXP = r"^[a-zA-Z0-9%]{32,}$"
+XML_ENCRYPT_REGEXP = r"^[a-zA-Z0-9+\/=]{32,}$"
 
 RESPUESTA_EXITO = "approved"
 RESPUESTA_DENEGADA = "denied"
