@@ -71,5 +71,5 @@ class CitasDesencryptError(CitasAnyError):
     """Excepción porque hubo error al desencriptar el XML"""
 
 
-class CitasResponseInvalidError(CitasAnyError):
+class CitasBankResponseInvalidError(CitasAnyError):
     """Excepción porque la respuesta del banco no es válida"""

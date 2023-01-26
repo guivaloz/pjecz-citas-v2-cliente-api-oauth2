@@ -1,6 +1,7 @@
 """
 Santander Web Pay Plus
 """
+import re
 import asyncio
 import os
 import urllib
@@ -20,8 +21,10 @@ from lib.exceptions import (
     CitasEncryptError,
     CitasGetURLFromXMLEncryptedError,
     CitasDesencryptError,
-    CitasResponseInvalidError,
+    CitasBankResponseInvalidError,
 )
+
+XML_ENCRYPT_REGEXP = r"^[a-zA-Z0-9%]{32,}$"
 
 RESPUESTA_EXITO = "approved"
 RESPUESTA_DENEGADA = "denied"
@@ -261,8 +264,8 @@ def clean_xml(xml_str: str) -> str:
 def convert_xml_encrypt_to_dict(xml_encrypt_str: str) -> dict:
     """Convertir el xml encriptado a un diccionario"""
 
-    if len(xml_encrypt_str) < 16:
-        raise CitasResponseInvalidError("El tipo de respuesta esperado es demasiado corto para ser válido.")
+    if re.fullmatch(XML_ENCRYPT_REGEXP, xml_encrypt_str) is None:
+        raise CitasBankResponseInvalidError("Error en la respuesta del banco porque no cumple la validación por regexp.")
 
     # Inicializar diccionario de respuesta
     respuesta = {
@@ -277,7 +280,7 @@ def convert_xml_encrypt_to_dict(xml_encrypt_str: str) -> dict:
     try:
         xml = decrypt_chain(xml_encrypt_str)
     except Exception as error:
-        raise CitasResponseInvalidError(f"Error no se esperaba esa respuesta del Banco. {str(error)}") from error
+        raise CitasBankResponseInvalidError(f"Error en la respuesta del Banco porque es inválida. {str(error)}") from error
 
     xml = clean_xml(xml)
     root = ET.fromstring(xml)
