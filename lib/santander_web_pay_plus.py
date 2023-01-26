@@ -20,6 +20,7 @@ from lib.exceptions import (
     CitasEncryptError,
     CitasGetURLFromXMLEncryptedError,
     CitasDesencryptError,
+    CitasResponseInvalidError,
 )
 
 RESPUESTA_EXITO = "approved"
@@ -124,7 +125,10 @@ def decrypt_chain(chain_encrypted: str) -> str:
     if WPP_KEY is None:
         raise CitasMissingConfigurationError("Falta declarar la variable de entorno WPP_KEY.")
     aes_encryptor = AES128Encryption()
-    plaintext = aes_encryptor.decrypt(WPP_KEY, chain_encrypted)
+    try:
+        plaintext = aes_encryptor.decrypt(WPP_KEY, chain_encrypted)
+    except Exception as error:
+        raise CitasDesencryptError("Error al desencriptar la respuesta del Banco.") from error
     return plaintext
 
 
@@ -257,6 +261,9 @@ def clean_xml(xml_str: str) -> str:
 def convert_xml_encrypt_to_dict(xml_encrypt_str: str) -> dict:
     """Convertir el xml encriptado a un diccionario"""
 
+    if len(xml_encrypt_str) < 16:
+        raise CitasResponseInvalidError("El tipo de respuesta esperado es demasiado corto para ser válido.")
+
     # Inicializar diccionario de respuesta
     respuesta = {
         "pago_id": None,
@@ -267,7 +274,11 @@ def convert_xml_encrypt_to_dict(xml_encrypt_str: str) -> dict:
     }
 
     # Procesar el xml encriptado
-    xml = decrypt_chain(xml_encrypt_str)
+    try:
+        xml = decrypt_chain(xml_encrypt_str)
+    except Exception as error:
+        raise CitasResponseInvalidError(f"Error no se esperaba esa respuesta del Banco. {str(error)}") from error
+
     xml = clean_xml(xml)
     root = ET.fromstring(xml)
 
