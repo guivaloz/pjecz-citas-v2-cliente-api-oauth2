@@ -197,7 +197,7 @@ def get_url_from_xml_encrypt(xml_encrypt: str):
 
     if url is None or url == "":
         # nb_response = root.find("nb_response").text
-        raise CitasNotValidAnswerError(f"Error en XML del Banco. (url vacía). nb_response={xml}")
+        raise CitasNotValidAnswerError("Error en XML del Banco. (url vacía).")
 
     return url
 
