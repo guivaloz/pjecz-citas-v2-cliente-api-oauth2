@@ -265,7 +265,7 @@ def convert_xml_encrypt_to_dict(xml_encrypt_str: str) -> dict:
     """Convertir el xml encriptado a un diccionario"""
 
     if re.fullmatch(XML_ENCRYPT_REGEXP, xml_encrypt_str) is None:
-        raise CitasBankResponseInvalidError("Error en la respuesta del banco porque no cumple la validación por regexp.")
+        raise CitasBankResponseInvalidError(f"Error en la respuesta del banco porque no cumple la validación por regexp. [{xml_encrypt_str}].")
 
     # Inicializar diccionario de respuesta
     respuesta = {
