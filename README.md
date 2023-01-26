@@ -57,7 +57,7 @@ Para Bash Shell cree un archivo `.bashrc` con este contenido
         source ~/.bashrc
     fi
 
-    source venv/bin/activate
+    source .venv/bin/activate
     if [ -f .env ]; then
         export $(grep -v '^#' .env | xargs)
     fi
