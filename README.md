@@ -2,6 +2,47 @@
 
 API del Sistema de Citas versión 2 del Poder Judicial del Estado de Coahuila de Zaragoza
 
+## Mejores prácticas
+
+En la versión 3 usa las recomendaciones de [I've been abusing HTTP Status Codes in my APIs for years](https://blog.slimjim.xyz/posts/stop-using-http-codes/) que recomienda entregar un _status code_ **200** y un _body_ con el atributo `success` que indique si la operación fue exitosa o no, asi como un `message` donde explique el error.
+
+### Respuesta exitosa
+
+Status code: **200**
+
+Body que entrega un listado
+
+    {
+        "success": true,
+        "message": "Success",
+        "result": {
+            "total": 2812,
+            "items": [ { "id": 1, ... } ],
+            "limit": 100,
+            "offset": 0
+        }
+    }
+
+Body que entrega un item
+
+    {
+        "success": true,
+        "message": "Success",
+        "id": 123,
+        ...
+    }
+
+### Respuesta fallida: registro no encontrado
+
+Status code: **200**
+
+Body
+
+    {
+        "success": false,
+        "message": "No employee found for ID 100"
+    }
+
 ## Configurar
 
 Genere el `SECRET_KEY` con este comando
@@ -36,12 +77,12 @@ Cree un archivo para las variables de entorno `.env`
 
     # Santander Web Pay Plus
     WPP_COMMERCE_ID=XXXXXXXX
-    WPP_COMPANY_ID=XXXXXXXX
-    WPP_BRANCH_ID=XXXXXXXX
+    WPP_COMPANY_ID=XXXX
+    WPP_BRANCH_ID=NNNN
     WPP_KEY=XXXXXXXX
     WPP_PASS=XXXXXXXX
-    WPP_TIMEOUT=XXXXXXXX
-    WPP_URL=XXXXXXXX
+    WPP_TIMEOUT=12
+    WPP_URL=https://noexiste.com
     WPP_USER=XXXXXXXX
 
     # URLs de las encuestas
@@ -103,84 +144,27 @@ Para Bash Shell cree un archivo `.bashrc` con este contenido
     echo "   arrancar"
     echo
 
-Cree el archivo `instance/settings.py` que cargue las variables de entorno
+## Instalar
 
-    """
-    Configuración para desarrollo
-    """
-    import os
+Crear entorno virtual con Python 3.10
 
+    python3.10 -m venv .venv
 
-    # Base de datos
-    DB_USER = os.environ.get("DB_USER", "wronguser")
-    DB_PASS = os.environ.get("DB_PASS", "badpassword")
-    DB_NAME = os.environ.get("DB_NAME", "pjecz_citas_v2")
-    DB_HOST = os.environ.get("DB_HOST", "127.0.0.1")
+Activar entorno virtual
 
-    # MariaDB o MySQL
-    # SQLALCHEMY_DATABASE_URI = f"mysql+pymysql://{DB_USER}:{DB_PASS}@{DB_HOST}/{DB_NAME}"
+    source .venv/bin/activate
 
-    # PostgreSQL
-    SQLALCHEMY_DATABASE_URI = f"postgresql+psycopg2://{DB_USER}:{DB_PASS}@{DB_HOST}/{DB_NAME}"
+Actualizar pip de ser necesario
 
-    # SQLite
-    # SQLALCHEMY_DATABASE_URI = 'sqlite:///pjecz_citas_v2.sqlite3'
+    pip install --upgrade pip
 
-    # CORS or "Cross-Origin Resource Sharing" refers to the situations when a frontend
-    # running in a browser has JavaScript code that communicates with a backend,
-    # and the backend is in a different "origin" than the frontend.
-    # https://fastapi.tiangolo.com/tutorial/cors/
-    ORIGINS = [
-        "http://localhost:8005",
-        "http://localhost:3000",
-        "http://127.0.0.1:8005",
-        "http://127.0.0.1:3000",
-    ]
+Instalar Poetry de ser necesario
 
-## Mejores practicas
+    pip install poetry
 
-Usa las recomendaciones de [I've been abusing HTTP Status Codes in my APIs for years](https://blog.slimjim.xyz/posts/stop-using-http-codes/)
+Instalar dependencias
 
-### Respuesta exitosa
-
-Status code: **200**
-
-Body que entrega un listado
-
-    {
-        "success": true,
-        "message": "Success",
-        "result": {
-            "total": 2812,
-            "items": [ { "id": 1, ... } ],
-            "limit": 100,
-            "offset": 0
-        }
-    }
-
-Body que entrega un item
-
-    {
-        "success": true,
-        "message": "Success",
-        "id": 123,
-        ...
-    }
-
-### Respuesta fallida: registro no encontrado
-
-Status code: **200**
-
-Body
-
-    {
-        "success": false,
-        "message": "No employee found for ID 100"
-    }
-
-### Respuesta fallida: ruta incorrecta
-
-Status code: **404**
+    poetry install
 
 ## Configure Poetry
 
@@ -197,10 +181,43 @@ Verifique que este en True
 
 ## Google Cloud deployment
 
+Crear el archivo `app.yaml` con las variables para producción
+
+    runtime: python310
+    instance_class: F2
+    service: citas-api-oauth2
+    entrypoint: gunicorn -w 4 -k uvicorn.workers.UvicornWorker citas_cliente.app:app
+    env_variables:
+      ACCESS_TOKEN_EXPIRE_MINUTES: 30
+      ALGORITHM: HS256
+      CLOUD_SQL_CONNECTION_NAME: justicia-digital-gob-mx:us-west2:minerva
+      DB_HOST: NNN.NNN.NNN.NNN
+      DB_NAME: pjecz_citas_v2
+      DB_PASS: XXXXXXXXXXXXXXXX
+      DB_USER: adminpjeczcitasv2
+      LIMITE_CITAS_PENDIENTES: 30
+      ORIGINS: "https://citas.justiciadigital.gob.mx,https://pagos.justiciadigital.gob.mx"
+      POLL_SYSTEM_URL: "https://citas.justiciadigital.gob.mx/poll_system"
+      POLL_SERVICE_URL: "https://citas.justiciadigital.gob.mx/poll_service"
+      REDIS_URL: redis://NNN.NNN.NNN.NNN
+      SALT: XXXXXXXXXXXXXXXX
+      SECRET_KEY: XXXXXXXXXXXXXXXX
+      TASK_QUEUE: pjecz_citas_v2
+      WPP_COMMERCE_ID: "XXXXXXXXXXXXXXXX"
+      WPP_COMPANY_ID: XXXX
+      WPP_BRANCH_ID: "NNNN"
+      WPP_KEY: XXXXXXXXXXXXXXXX
+      WPP_PASS: XXXXXXXXXXXXXXXX
+      WPP_TIMEOUT: 24
+      WPP_URL: "https://noexiste.com"
+      WPP_USER: XXXXXXXXXXXXXXXX
+    vpc_access_connector:
+      name: projects/justicia-digital-gob-mx/locations/us-west2/connectors/cupido
+
 Crear el archivo `requirements.txt`
 
     poetry export -f requirements.txt --output requirements.txt --without-hashes
 
-Y subir a Google Cloud
+Y subir a Google Cloud con
 
     gcloud app deploy
