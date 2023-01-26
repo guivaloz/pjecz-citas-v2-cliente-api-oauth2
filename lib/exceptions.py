@@ -73,3 +73,7 @@ class CitasDesencryptError(CitasAnyError):
 
 class CitasBankResponseInvalidError(CitasAnyError):
     """Excepción porque la respuesta del banco no es válida"""
+
+
+class CitasXMLReadError(CitasAnyError):
+    """Excepción porque no se puede interpretar correctamente el XML desecriptado"""

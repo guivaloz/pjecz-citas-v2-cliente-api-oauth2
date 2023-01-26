@@ -22,6 +22,7 @@ from lib.exceptions import (
     CitasGetURLFromXMLEncryptedError,
     CitasDesencryptError,
     CitasBankResponseInvalidError,
+    CitasXMLReadError,
 )
 
 XML_ENCRYPT_REGEXP = r"^[a-zA-Z0-9+\/=]{32,}$"
@@ -252,15 +253,6 @@ def create_pay_link(
     return url
 
 
-def clean_xml(xml_str: str) -> str:
-    """Quita los comentarios del archivo XML que no puede procesar la clase XML"""
-    xml_limpio = ""
-    for line in xml_str.split("\n"):
-        if "<?" not in line:
-            xml_limpio += line
-    return xml_limpio
-
-
 def convert_xml_encrypt_to_dict(xml_encrypt_str: str) -> dict:
     """Convertir el xml encriptado a un diccionario"""
 
@@ -282,8 +274,11 @@ def convert_xml_encrypt_to_dict(xml_encrypt_str: str) -> dict:
     except Exception as error:
         raise CitasBankResponseInvalidError(f"Error en la respuesta del Banco porque es inválida. {str(error)}") from error
 
-    xml = clean_xml(xml)
-    root = ET.fromstring(xml)
+    # Lee el archivo XML
+    try:
+        root = ET.fromstring(xml)
+    except ET.ParseError as error:
+        raise CitasXMLReadError("Error no se entiende el archivo XML desencriptado.") from error
 
     # Obtener nodos de respuesta
     respuesta["pago_id"] = root.find("reference").text
