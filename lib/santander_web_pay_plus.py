@@ -1,6 +1,7 @@
 """
 Santander Web Pay Plus
 """
+import re
 import asyncio
 import os
 import urllib
@@ -20,7 +21,10 @@ from lib.exceptions import (
     CitasEncryptError,
     CitasGetURLFromXMLEncryptedError,
     CitasDesencryptError,
+    CitasBankResponseInvalidError,
 )
+
+XML_ENCRYPT_REGEXP = r"^[a-zA-Z0-9%]{32,}$"
 
 RESPUESTA_EXITO = "approved"
 RESPUESTA_DENEGADA = "denied"
@@ -124,7 +128,10 @@ def decrypt_chain(chain_encrypted: str) -> str:
     if WPP_KEY is None:
         raise CitasMissingConfigurationError("Falta declarar la variable de entorno WPP_KEY.")
     aes_encryptor = AES128Encryption()
-    plaintext = aes_encryptor.decrypt(WPP_KEY, chain_encrypted)
+    try:
+        plaintext = aes_encryptor.decrypt(WPP_KEY, chain_encrypted)
+    except Exception as error:
+        raise CitasDesencryptError("Error al desencriptar la respuesta del Banco.") from error
     return plaintext
 
 
@@ -193,7 +200,7 @@ def get_url_from_xml_encrypt(xml_encrypt: str):
 
     if url is None or url == "":
         # nb_response = root.find("nb_response").text
-        raise CitasNotValidAnswerError(f"Error en XML del Banco. (url vacía). nb_response={xml}")
+        raise CitasNotValidAnswerError("Error en XML del Banco. (url vacía).")
 
     return url
 
@@ -257,6 +264,9 @@ def clean_xml(xml_str: str) -> str:
 def convert_xml_encrypt_to_dict(xml_encrypt_str: str) -> dict:
     """Convertir el xml encriptado a un diccionario"""
 
+    if re.fullmatch(XML_ENCRYPT_REGEXP, xml_encrypt_str) is None:
+        raise CitasBankResponseInvalidError("Error en la respuesta del banco porque no cumple la validación por regexp.")
+
     # Inicializar diccionario de respuesta
     respuesta = {
         "pago_id": None,
@@ -267,7 +277,11 @@ def convert_xml_encrypt_to_dict(xml_encrypt_str: str) -> dict:
     }
 
     # Procesar el xml encriptado
-    xml = decrypt_chain(xml_encrypt_str)
+    try:
+        xml = decrypt_chain(xml_encrypt_str)
+    except Exception as error:
+        raise CitasBankResponseInvalidError(f"Error en la respuesta del Banco porque es inválida. {str(error)}") from error
+
     xml = clean_xml(xml)
     root = ET.fromstring(xml)
 

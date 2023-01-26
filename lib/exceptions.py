@@ -69,3 +69,7 @@ class CitasGetURLFromXMLEncryptedError(CitasAnyError):
 
 class CitasDesencryptError(CitasAnyError):
     """Excepción porque hubo error al desencriptar el XML"""
+
+
+class CitasBankResponseInvalidError(CitasAnyError):
+    """Excepción porque la respuesta del banco no es válida"""
