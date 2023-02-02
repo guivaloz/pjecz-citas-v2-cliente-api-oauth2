@@ -1,6 +1,7 @@
 """
 Pagos Pagos V3, esquemas de pydantic
 """
+from datetime import datetime
 from pydantic import BaseModel
 
 from lib.schemas_base import OneBaseOut
@@ -74,6 +75,7 @@ class PagResultadoOut(BaseModel):
     estado: str | None
     folio: str | None
     total: float | None
+    respuesta_tiempo: datetime | None
 
 
 class OnePagResultadoOut(PagResultadoOut, OneBaseOut):

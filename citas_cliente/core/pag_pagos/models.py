@@ -2,7 +2,7 @@
 Pagos Pagos V2, modelos
 """
 from collections import OrderedDict
-from sqlalchemy import Boolean, Column, Enum, ForeignKey, Integer, Numeric, String
+from sqlalchemy import Boolean, Column, DateTime, Enum, ForeignKey, Integer, Numeric, String, Text
 from sqlalchemy.orm import relationship
 
 from lib.database import Base
@@ -37,6 +37,8 @@ class PagPago(Base, UniversalMixin):
     estado = Column(Enum(*ESTADOS, name="estados", native_enum=False), nullable=False)
     email = Column(String(256), nullable=False, default="")  # Email opcional si el cliente desea que se le envie el comprobante a otra dirección
     folio = Column(String(256), nullable=False, default="")
+    resultado_tiempo = Column(DateTime, nullable=True)
+    resultado_xml = Column(Text, nullable=True)
     total = Column(Numeric(precision=8, scale=2, decimal_return_scale=2), nullable=False)
     ya_se_envio_comprobante = Column(Boolean, nullable=False, default=False)
 

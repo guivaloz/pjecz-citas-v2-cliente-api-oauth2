@@ -117,55 +117,78 @@ def create_chain_xml(
 
 def encrypt_chain(chain: str) -> str:
     """Cifrar cadena XML"""
+
+    # Validar WPP_KEY
     if WPP_KEY is None:
         raise CitasMissingConfigurationError("Falta declarar la variable de entorno WPP_KEY.")
+
+    # Cifrar la cadena
     aes_encryptor = AES128Encryption()
     ciphertext = aes_encryptor.encrypt(chain, WPP_KEY)
+
+    # Entregar cadena cifrada
     return ciphertext
 
 
 def decrypt_chain(chain_encrypted: str) -> str:
     """Descifrar cadena XML"""
+
+    # Validar WPP_KEY
     if WPP_KEY is None:
         raise CitasMissingConfigurationError("Falta declarar la variable de entorno WPP_KEY.")
+
+    # Validar la cadena cifrada con la expresión regular
+    if re.fullmatch(XML_ENCRYPT_REGEXP, chain_encrypted) is None:
+        raise CitasBankResponseInvalidError("Error porque la respuesta del banco no pasa la validación por expresión regular.")
+
+    # Descifrar la cadena
     aes_encryptor = AES128Encryption()
     try:
         plaintext = aes_encryptor.decrypt(WPP_KEY, chain_encrypted)
     except Exception as error:
-        raise CitasDesencryptError("Error al desencriptar la respuesta del Banco.") from error
+        raise CitasDesencryptError("Error porque no se pudo desencritar la respuesta del banco.") from error
+
+    # Entregar cadena descifrada
     return plaintext
 
 
 def create_chain_xml_sender(chain: str) -> str:
     """Crear cadena para XML de envío WPP"""
 
-    # Get the commerce ID
+    # Validar WPP_COMMERCE_ID
     if WPP_COMMERCE_ID is None:
-        raise CitasMissingConfigurationError("No se ha definido el WPP_COMMERCE_ID")
+        raise CitasMissingConfigurationError("Falta declarar la variable de entorno WPP_COMMERCE_ID.")
 
-    # Get the WPP URL
+    # Validar WPP_URL
     if WPP_URL is None:
-        raise CitasMissingConfigurationError("No se ha definido el WPP_URL")
+        raise CitasMissingConfigurationError("Falta declarar la variable de entorno WPP_URL.")
 
-    # Pack the chain
+    # Empacar la cadena
     root = ET.Element("pgs")
     ET.SubElement(root, "data0").text = WPP_COMMERCE_ID
     ET.SubElement(root, "data").text = chain
     chain_bytes = ET.tostring(root, encoding="unicode")
 
-    # Prepare the request
-    encodedString = urllib.parse.quote(chain_bytes, "utf-8")
-    return encodedString
+    # Entregar cadena
+    return urllib.parse.quote(chain_bytes, "utf-8")
 
 
 async def send_chain(chain: str) -> str:
     """Enviar cadena a WPP"""
 
-    # Prepare the request
+    # Validar WPP_URL
+    if WPP_URL is None:
+        raise CitasMissingConfigurationError("Falta declarar la variable de entorno WPP_URL.")
+
+    # Validar WPP_TIMEOUT
+    if WPP_TIMEOUT is None:
+        raise CitasMissingConfigurationError("Falta declarar la variable de entorno WPP_TIMEOUT.")
+
+    # Preparar la carga para la petición
     payload = "xml=" + create_chain_xml_sender(chain)
     headers = {"Content-Type": "application/x-www-form-urlencoded"}
 
-    # Send the request
+    # Enviar la petición al banco
     try:
         response = requests.request(
             "POST",
@@ -175,13 +198,13 @@ async def send_chain(chain: str) -> str:
             timeout=WPP_TIMEOUT,
         )
     except requests.exceptions.ConnectionError as error:
-        raise CitasConnectionError("Error porque no se pudo conectar a WPP") from error
+        raise CitasConnectionError("Error porque no se pudo conectar al banco.") from error
     except requests.exceptions.Timeout as error:
-        raise CitasTimeoutError("Error porque se agoto el tiempo de espera con WPP") from error
+        raise CitasTimeoutError("Error porque se agoto el tiempo de espera con el banco.") from error
     except requests.exceptions.RequestException as error:
-        raise CitasRequestError("Error al enviar la cadena a WPP") from error
+        raise CitasRequestError("Error al enviar la cadena al banco.") from error
     except Exception as error:
-        raise CitasUnknownError("Error desconocido al enviar la cadena a WPP") from error
+        raise CitasUnknownError("Error desconocido al enviar la cadena al banco.") from error
 
     # Entregar
     return response.text
@@ -190,19 +213,24 @@ async def send_chain(chain: str) -> str:
 def get_url_from_xml_encrypt(xml_encrypt: str):
     """Extrae la url del xml de respuesta"""
 
-    # Se desencripta el XML enviado por el Banco
+    # Desencriptar el XML
     try:
-        xml = decrypt_chain(xml_encrypt)
+        xml_str = decrypt_chain(xml_encrypt)
     except Exception as error:
-        raise CitasDesencryptError("No se puede desencriptar el XML del Banco") from error
+        raise CitasDesencryptError("No se puede desencriptar el XML del banco.") from error
 
-    root = ET.fromstring(xml)
+    # Leer el contenido XML
+    try:
+        root = ET.fromstring(xml_str)
+    except ET.ParseError as error:
+        raise CitasXMLReadError("Error porque el XML del banco no es válido.") from error
+
+    # Obtener el URL
     url = root.find("nb_url").text
-
     if url is None or url == "":
-        # nb_response = root.find("nb_response").text
-        raise CitasNotValidAnswerError("Error en XML del Banco. (url vacía).")
+        raise CitasXMLReadError("Error porque el XML del banco no tiene la URL.")
 
+    # Entregar
     return url
 
 
@@ -235,57 +263,63 @@ def create_pay_link(
     try:
         respuesta = asyncio.run(send_chain(chain_encrypt))
     except asyncio.TimeoutError as error:
-        raise CitasTimeoutError("Error porque se agoto el tiempo de espera con WPP") from error
+        raise CitasTimeoutError("Error porque se agoto el tiempo de espera con el banco.") from error
     except Exception as error:
-        raise CitasUnknownError("Error al tratar de enviar la cadena XML a WPP") from error
+        raise CitasUnknownError("Error al tratar de enviar la cadena XML al banco.") from error
 
     # Si no hay respuesta, causar error
     if respuesta is None or respuesta == "" or respuesta == "\n":
-        raise CitasNotValidAnswerError("Error en la respuesta de WPP (respuesta vacía)")
+        raise CitasNotValidAnswerError("Error en la respuesta del banco (respuesta vacía).")
 
     # Descifrar la respuesta y extraer la url
     try:
         url = get_url_from_xml_encrypt(respuesta)
     except Exception as error:
-        raise CitasGetURLFromXMLEncryptedError(f"Error al obtener la URL del Banco desde su XML encriptado. {str(error)}") from error
+        raise CitasGetURLFromXMLEncryptedError(f"Error al obtener la URL del banco desde su XML encriptado. {str(error)}") from error
 
     # Entregar
     return url
 
 
-def convert_xml_encrypt_to_dict(xml_encrypt_str: str) -> dict:
-    """Convertir el xml encriptado a un diccionario"""
+def convert_xml_to_dict(xml_str: str) -> dict:
+    """Convertir el xml descifrado a un diccionario"""
 
-    if re.fullmatch(XML_ENCRYPT_REGEXP, xml_encrypt_str) is None:
-        raise CitasBankResponseInvalidError(f"Error en la respuesta del banco porque no cumple la validación por regexp. [{xml_encrypt_str}].")
-
-    # Inicializar diccionario de respuesta
-    respuesta = {
-        "pago_id": None,
-        "respuesta": None,
-        "folio": None,
-        "auth": None,
-        "email": None,
-    }
-
-    # Procesar el xml encriptado
+    # Leer el contenido XML
     try:
-        xml = decrypt_chain(xml_encrypt_str)
-    except Exception as error:
-        raise CitasBankResponseInvalidError(f"Error en la respuesta del Banco porque es inválida. {str(error)}") from error
-
-    # Lee el archivo XML
-    try:
-        root = ET.fromstring(xml)
+        root = ET.fromstring(xml_str)
     except ET.ParseError as error:
-        raise CitasXMLReadError("Error no se entiende el archivo XML desencriptado.") from error
+        raise CitasXMLReadError("Error porque el XML que dio el banco no es válido.") from error
 
-    # Obtener nodos de respuesta
-    respuesta["pago_id"] = root.find("reference").text
-    respuesta["respuesta"] = root.find("response").text
-    respuesta["folio"] = root.find("foliocpagos").text
-    respuesta["auth"] = root.find("auth").text
-    respuesta["email"] = root.find("email").text
+    # Obtener pago_id
+    pago_id = root.find("reference").text
+    if pago_id is None or pago_id == "":
+        raise CitasXMLReadError("Error porque el XML no tiene el pago_id.")
+
+    # Obtener respuesta
+    respuesta = root.find("response").text
+    if respuesta is None or respuesta == "":
+        raise CitasXMLReadError("Error porque el XML no tiene la respuesta.")
+
+    # Obtener folio
+    folio = root.find("foliocpagos").text
+    if folio is None or folio == "":
+        raise CitasXMLReadError("Error porque el XML no tiene el folio.")
+
+    # Obtener auth
+    auth = root.find("auth").text
+    if auth is None or auth == "":
+        raise CitasXMLReadError("Error porque el XML no tiene el auth.")
+
+    # Obtener email
+    email = root.find("email").text
+    if email is None or email == "":
+        raise CitasXMLReadError("Error porque el XML no tiene el email.")
 
     # Entregar diccionario
-    return respuesta
+    return {
+        "pago_id": pago_id,
+        "respuesta": respuesta,
+        "folio": folio,
+        "auth": auth,
+        "email": email,
+    }
