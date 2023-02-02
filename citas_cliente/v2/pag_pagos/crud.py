@@ -5,19 +5,22 @@ from datetime import datetime, timedelta
 from typing import Any
 
 import nest_asyncio
+import pytz
 from sqlalchemy.orm import Session
 
 from config.settings import LIMITE_CITAS_PENDIENTES
 from lib.exceptions import CitasAnyError
 from lib.hashids import descifrar_id
 from lib.safe_string import safe_curp, safe_email, safe_string, safe_telefono
-from lib.santander_web_pay_plus import create_pay_link, convert_xml_encrypt_to_dict, RESPUESTA_EXITO
+from lib.santander_web_pay_plus import create_pay_link, convert_xml_to_dict, decrypt_chain, RESPUESTA_EXITO
 
 from ...core.cit_clientes.models import CitCliente
 from ...core.pag_pagos.models import PagPago
 from ..cit_clientes.crud import get_cit_cliente, get_cit_cliente_from_curp, get_cit_cliente_from_email
 from ..pag_tramites_servicios.crud import get_pag_tramite_servicio_from_clave
 from .schemas import PagCarroIn, PagCarroOut, PagResultadoIn, PagResultadoOut
+
+LOCAL_HUSO_HORARIO = pytz.timezone("America/Mexico_City")
 
 
 def get_pag_pagos(
@@ -182,7 +185,8 @@ def update_payment(
 
     # Desencriptar el XML que mando el banco
     try:
-        respuesta = convert_xml_encrypt_to_dict(datos.xml_encriptado)
+        respuesta_xml = decrypt_chain(datos.xml_encriptado)
+        respuesta = convert_xml_to_dict(respuesta_xml)
     except CitasAnyError as error:
         raise ValueError("El XML no es válido") from error
 
@@ -206,6 +210,8 @@ def update_payment(
     # Actualizar el pago
     pag_pago.estado = estado
     pag_pago.folio = respuesta["folio"]
+    pag_pago.respuesta_tiempo = datetime.now(tz=LOCAL_HUSO_HORARIO)
+    pag_pago.respuesta_xml = respuesta_xml
     db.add(pag_pago)
     db.commit()
     db.refresh(pag_pago)
