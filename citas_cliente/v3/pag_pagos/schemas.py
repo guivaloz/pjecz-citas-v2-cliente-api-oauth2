@@ -19,7 +19,7 @@ class PagPagoOut(BaseModel):
     email: str | None
     estado: str | None
     folio: str | None
-    respuesta_tiempo: datetime | None
+    resultado_tiempo: datetime | None
     total: float | None
     ya_se_envio_comprobante: bool | None
 
@@ -75,7 +75,7 @@ class PagResultadoOut(BaseModel):
     email: str | None
     estado: str | None
     folio: str | None
-    respuesta_tiempo: datetime | None
+    resultado_tiempo: datetime | None
     total: float | None
 
 
