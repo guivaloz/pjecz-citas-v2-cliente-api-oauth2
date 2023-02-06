@@ -25,7 +25,7 @@ from lib.exceptions import (
     CitasXMLReadError,
 )
 
-XML_ENCRYPT_REGEXP = r"^[a-zA-Z0-9+\/=]{32,}$"
+XML_ENCRYPT_REGEXP = r"^[a-zA-Z0-9=+\/]{32,}$"
 
 RESPUESTA_EXITO = "approved"
 RESPUESTA_DENEGADA = "denied"
@@ -137,9 +137,12 @@ def decrypt_chain(chain_encrypted: str) -> str:
     if WPP_KEY is None:
         raise CitasMissingConfigurationError("Falta declarar la variable de entorno WPP_KEY.")
 
+    # Eliminar avances de línea y espacios en blanco
+    chain_encrypted = chain_encrypted.replace("\n", "").replace(" ", "")
+
     # Validar la cadena cifrada con la expresión regular
     if re.fullmatch(XML_ENCRYPT_REGEXP, chain_encrypted) is None:
-        raise CitasBankResponseInvalidError("Error porque la respuesta del banco no pasa la validación por expresión regular.")
+        raise CitasBankResponseInvalidError(f"Error porque la respuesta del banco no pasa la validación por expresión regular: [{chain_encrypted}]")
 
     # Descifrar la cadena
     aes_encryptor = AES128Encryption()
@@ -217,7 +220,7 @@ def get_url_from_xml_encrypt(xml_encrypt: str):
     try:
         xml_str = decrypt_chain(xml_encrypt)
     except Exception as error:
-        raise CitasDesencryptError("No se puede desencriptar el XML del banco.") from error
+        raise CitasDesencryptError(f"No se puede desencriptar el XML del banco. {str(error)}") from error
 
     # Leer el contenido XML
     try:

@@ -220,11 +220,11 @@ def update_payment(
     # Actualizar el pago
     pag_pago.estado = estado
     pag_pago.folio = respuesta["folio"]
-    pag_pago.respuesta_tiempo = datetime.now(tz=LOCAL_HUSO_HORARIO)
-    pag_pago.respuesta_xml = respuesta_xml
+    pag_pago.resultado_tiempo = datetime.now(tz=LOCAL_HUSO_HORARIO)
+    pag_pago.resultado_xml = respuesta_xml
     db.add(pag_pago)
     db.commit()
-    db.refresh(pag_pago)
+    # db.refresh(pag_pago)
 
     # Entregar
     return PagResultadoOut(
@@ -235,6 +235,6 @@ def update_payment(
         email=pag_pago.email,
         estado=pag_pago.estado,
         folio=pag_pago.folio,
+        resultado_tiempo=pag_pago.resultado_tiempo,
         total=pag_pago.total,
-        respuesta_tiempo=pag_pago.respuesta_tiempo,
     )

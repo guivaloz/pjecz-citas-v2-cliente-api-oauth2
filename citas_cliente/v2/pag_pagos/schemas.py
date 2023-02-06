@@ -2,6 +2,7 @@
 Pagos Pagos v2, esquemas de pydantic
 """
 from datetime import datetime
+from typing import Optional
 from pydantic import BaseModel
 
 
@@ -17,6 +18,7 @@ class PagPagoOut(BaseModel):
     email: str
     estado: str
     folio: str
+    resultado_tiempo: Optional[datetime] = None
     total: float
     ya_se_envio_comprobante: bool
 
@@ -64,5 +66,5 @@ class PagResultadoOut(BaseModel):
     email: str
     estado: str
     folio: str
+    resultado_tiempo: Optional[datetime] = None
     total: float
-    respuesta_tiempo: datetime | None
