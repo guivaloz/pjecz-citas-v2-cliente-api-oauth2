@@ -24,7 +24,7 @@
       "${2:blueprint} = APIRouter(prefix=\"/v3/${2:blueprint}\", tags=[\"${5:categoria}\"])",
       "",
       "",
-      "@${2:blueprint}.get(\"\", response_model=LimitOffsetPage[${4:EsquemaOut}])",
+      "@${2:blueprint}.get(\"\", response_model=CustomPage[${4:EsquemaOut}])",
       "async def listado_${2:blueprint}(",
       "\tcurrent_user: CitClienteInDB = Depends(get_current_active_user),",
       "\tdb: Session = Depends(get_db),",

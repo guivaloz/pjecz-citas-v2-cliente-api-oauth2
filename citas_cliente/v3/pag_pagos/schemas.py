@@ -42,7 +42,9 @@ class PagCarroIn(BaseModel):
     curp: str | None
     email: str | None
     telefono: str | None
+    cantidad: int | None
     pag_tramite_servicio_clave: str | None
+    autoridad_clave: str | None
 
 
 class PagCarroOut(BaseModel):

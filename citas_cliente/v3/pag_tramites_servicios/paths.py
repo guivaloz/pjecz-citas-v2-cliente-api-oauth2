@@ -32,7 +32,7 @@ async def detalle_pag_tramite_servicio(
     clave: str,
     db: Session = Depends(get_db),
 ):
-    """Detalle de un tramite y servicio a partir de su id"""
+    """Detalle de un tramite y servicio a partir de su clave"""
     try:
         pag_tramite_servicio = get_pag_tramite_servicio_from_clave(
             db=db,
