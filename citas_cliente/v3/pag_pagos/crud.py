@@ -156,6 +156,13 @@ def create_payment(
         db.refresh(cit_cliente)
         si_existe = True
 
+    # Calcular el total que es el costo del tramite-servicio por la cantidad
+    total = pag_tramite_servicio.costo * cantidad
+
+    # Validar que el total sea mayor a cero
+    if total <= 0:
+        raise CitasNotValidParamError("El total no es valido")
+
     # Insertar pago
     pag_pago = PagPago(
         autoridad=autoridad,
@@ -165,7 +172,7 @@ def create_payment(
         estado="SOLICITADO",
         email=email,
         folio="",
-        total=pag_tramite_servicio.costo,
+        total=total,
         ya_se_envio_comprobante=False,
     )
     db.add(pag_pago)
@@ -193,7 +200,7 @@ def create_payment(
         cantidad=cantidad,
         descripcion=pag_tramite_servicio.descripcion,
         email=email,
-        monto=pag_pago.total,
+        monto=total,
         url=url,
     )
 
