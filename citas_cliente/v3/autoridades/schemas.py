@@ -12,6 +12,8 @@ class AutoridadOut(BaseModel):
     id: int | None
     clave: str | None
     descripcion: str | None
+    descripcion_corta: str | None
+    distrito_nombre: str | None
 
     class Config:
         """SQLAlchemy config"""
