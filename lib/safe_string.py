@@ -16,7 +16,7 @@ PASSWORD_REGEXP_MESSAGE = "La contrasena debe tener de 8 a 24 caracteres, comenz
 def safe_clave(input_str):
     """Safe clave"""
     if not isinstance(input_str, str):
-        raise ValueError("La clave esta vacia")
+        raise ValueError("La clave no es texto")
     new_string = input_str.strip().upper()
     regexp = re.compile("^[A-Z0-9-]{2,16}$")
     if regexp.match(new_string) is None:
@@ -64,11 +64,13 @@ def safe_expediente(input_str):
     return f"{str(numero)}/{str(ano)}"
 
 
-def safe_integer(input_str, default=1):
+def safe_integer(input_int_str, default=1):
     """Safe integer"""
-    if not isinstance(input_str, str):
+    if isinstance(input_int_str, int):
+        return input_int_str
+    if not isinstance(input_int_str, str):
         return default
-    final = input_str.strip()
+    final = input_int_str.strip()
     if re.match(r"^\d+$", final) is None:
         return default
     return int(final)

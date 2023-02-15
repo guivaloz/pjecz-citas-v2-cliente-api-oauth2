@@ -37,13 +37,28 @@ class PagPago(Base, UniversalMixin):
 
     # Columnas
     cantidad = Column(Integer, nullable=False, default=1)
-    estado = Column(Enum(*ESTADOS, name="estados", native_enum=False), nullable=False)
     email = Column(String(256), nullable=False, default="")  # Email opcional si el cliente desea que se le envie el comprobante a otra dirección
+    estado = Column(Enum(*ESTADOS, name="estados", native_enum=False), nullable=False)
     folio = Column(String(256), nullable=False, default="")
     resultado_tiempo = Column(DateTime, nullable=True)
     resultado_xml = Column(Text, nullable=True)
     total = Column(Numeric(precision=8, scale=2, decimal_return_scale=2), nullable=False)
     ya_se_envio_comprobante = Column(Boolean, nullable=False, default=False)
+
+    @property
+    def autoridad_clave(self):
+        """Autoridad clave"""
+        return self.autoridad.clave
+
+    @property
+    def autoridad_descripcion(self):
+        """Autoridad descripción"""
+        return self.autoridad.descripcion
+
+    @property
+    def autoridad_descripcion_corta(self):
+        """Autoridad descripción corta"""
+        return self.autoridad.descripcion_corta
 
     @property
     def cit_cliente_nombre(self):
