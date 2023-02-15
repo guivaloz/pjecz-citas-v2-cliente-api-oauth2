@@ -17,10 +17,10 @@ from ..autoridades.schemas import AutoridadOut
 from .crud import get_materias, get_materia
 from .schemas import MateriaOut
 
-materias = APIRouter(prefix="/v2/materias", tags=["materias"])
+materias_v2 = APIRouter(prefix="/v2/materias", tags=["materias"])
 
 
-@materias.get("", response_model=LimitOffsetPage[MateriaOut])
+@materias_v2.get("", response_model=LimitOffsetPage[MateriaOut])
 async def listado_materias(
     current_user: CitClienteInDB = Depends(get_current_active_user),
     db: Session = Depends(get_db),
@@ -31,7 +31,7 @@ async def listado_materias(
     return paginate(get_materias(db))
 
 
-@materias.get("/{materia_id}", response_model=MateriaOut)
+@materias_v2.get("/{materia_id}", response_model=MateriaOut)
 async def detalle_materia(
     materia_id: int,
     current_user: CitClienteInDB = Depends(get_current_active_user),
@@ -47,7 +47,7 @@ async def detalle_materia(
     return MateriaOut.from_orm(materia)
 
 
-@materias.get("/{materia_id}/autoridades", response_model=LimitOffsetPage[AutoridadOut])
+@materias_v2.get("/{materia_id}/autoridades", response_model=LimitOffsetPage[AutoridadOut])
 async def listado_autoridades_de_materia(
     materia_id: int,
     current_user: CitClienteInDB = Depends(get_current_active_user),

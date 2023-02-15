@@ -12,7 +12,7 @@ from lib.fastapi_pagination_custom_page import CustomPage, custom_page_success_f
 from .crud import get_pag_tramites_servicios, get_pag_tramite_servicio_from_clave
 from .schemas import PagTramiteServicioOut, OnePagTramiteServicioOut
 
-pag_tramites_servicios = APIRouter(prefix="/v3/pag_tramites_servicios", tags=["pagos v3"])
+pag_tramites_servicios = APIRouter(prefix="/v3/pag_tramites_servicios", tags=["pagos"])
 
 
 @pag_tramites_servicios.get("", response_model=CustomPage[PagTramiteServicioOut])
@@ -32,7 +32,7 @@ async def detalle_pag_tramite_servicio(
     clave: str,
     db: Session = Depends(get_db),
 ):
-    """Detalle de un tramite y servicio a partir de su id"""
+    """Detalle de un tramite y servicio a partir de su clave"""
     try:
         pag_tramite_servicio = get_pag_tramite_servicio_from_clave(
             db=db,

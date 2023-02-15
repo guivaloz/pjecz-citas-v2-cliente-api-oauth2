@@ -28,19 +28,37 @@ class PagPago(Base, UniversalMixin):
     id = Column(Integer, primary_key=True)
 
     # Clave foránea
+    autoridad_id = Column(Integer, ForeignKey("autoridades.id"), index=True, nullable=False)
+    autoridad = relationship("Autoridad", back_populates="pag_pagos")
     cit_cliente_id = Column(Integer, ForeignKey("cit_clientes.id"), index=True, nullable=False)
     cit_cliente = relationship("CitCliente", back_populates="pag_pagos")
     pag_tramite_servicio_id = Column(Integer, ForeignKey("pag_tramites_servicios.id"), index=True, nullable=False)
     pag_tramite_servicio = relationship("PagTramiteServicio", back_populates="pag_pagos")
 
     # Columnas
-    estado = Column(Enum(*ESTADOS, name="estados", native_enum=False), nullable=False)
+    cantidad = Column(Integer, nullable=False, default=1)
     email = Column(String(256), nullable=False, default="")  # Email opcional si el cliente desea que se le envie el comprobante a otra dirección
+    estado = Column(Enum(*ESTADOS, name="estados", native_enum=False), nullable=False)
     folio = Column(String(256), nullable=False, default="")
     resultado_tiempo = Column(DateTime, nullable=True)
     resultado_xml = Column(Text, nullable=True)
     total = Column(Numeric(precision=8, scale=2, decimal_return_scale=2), nullable=False)
     ya_se_envio_comprobante = Column(Boolean, nullable=False, default=False)
+
+    @property
+    def autoridad_clave(self):
+        """Autoridad clave"""
+        return self.autoridad.clave
+
+    @property
+    def autoridad_descripcion(self):
+        """Autoridad descripción"""
+        return self.autoridad.descripcion
+
+    @property
+    def autoridad_descripcion_corta(self):
+        """Autoridad descripción corta"""
+        return self.autoridad.descripcion_corta
 
     @property
     def cit_cliente_nombre(self):

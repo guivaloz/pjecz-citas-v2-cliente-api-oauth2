@@ -46,6 +46,9 @@ class Autoridad(Base, UniversalMixin):
         nullable=False,
     )
 
+    # Hijos
+    pag_pagos = relationship("PagPago", back_populates="autoridad", lazy="noload")
+
     @property
     def distrito_nombre(self):
         """Nombre del distrito"""

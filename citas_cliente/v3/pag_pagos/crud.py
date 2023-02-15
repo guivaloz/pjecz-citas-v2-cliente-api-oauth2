@@ -11,11 +11,12 @@ from sqlalchemy.orm import Session
 from config.settings import LIMITE_CITAS_PENDIENTES
 from lib.exceptions import CitasAnyError, CitasIsDeletedError, CitasNotExistsError, CitasNotValidParamError
 from lib.hashids import descifrar_id
-from lib.safe_string import safe_curp, safe_email, safe_string, safe_telefono
+from lib.safe_string import safe_curp, safe_email, safe_integer, safe_string, safe_telefono
 from lib.santander_web_pay_plus import create_pay_link, convert_xml_to_dict, decrypt_chain, RESPUESTA_EXITO
 
 from ...core.cit_clientes.models import CitCliente
 from ...core.pag_pagos.models import PagPago
+from ..autoridades.crud import get_autoridad_from_clave
 from ..cit_clientes.crud import get_cit_cliente, get_cit_cliente_from_curp, get_cit_cliente_from_email
 from ..pag_tramites_servicios.crud import get_pag_tramite_servicio_from_clave
 from .schemas import PagCarroIn, PagCarroOut, PagResultadoIn, PagResultadoOut
@@ -110,6 +111,15 @@ def create_payment(
     except ValueError as error:
         raise CitasNotValidParamError("El telefono no es valido") from error
 
+    # Validar cantidad
+    cantidad = safe_integer(datos.cantidad, default=1)
+
+    # Validar la clave de la autoridad
+    try:
+        autoridad = get_autoridad_from_clave(db, datos.autoridad_clave)
+    except (ValueError, CitasNotExistsError, CitasIsDeletedError) as error:
+        autoridad = get_autoridad_from_clave(db, "ND")  # Autoridad NO DEFINIDO
+
     # Validar pag_tramite_servicio_clave
     pag_tramite_servicio = get_pag_tramite_servicio_from_clave(db, datos.pag_tramite_servicio_clave)
 
@@ -146,14 +156,23 @@ def create_payment(
         db.refresh(cit_cliente)
         si_existe = True
 
+    # Calcular el total que es el costo del tramite-servicio por la cantidad
+    total = pag_tramite_servicio.costo * cantidad
+
+    # Validar que el total sea mayor a cero
+    if total <= 0:
+        raise CitasNotValidParamError("El total no es valido")
+
     # Insertar pago
     pag_pago = PagPago(
+        autoridad=autoridad,
+        cantidad=cantidad,
         cit_cliente=cit_cliente,
         pag_tramite_servicio=pag_tramite_servicio,
         estado="SOLICITADO",
         email=email,
         folio="",
-        total=pag_tramite_servicio.costo,
+        total=total,
         ya_se_envio_comprobante=False,
     )
     db.add(pag_pago)
@@ -175,10 +194,13 @@ def create_payment(
 
     # Entregar
     return PagCarroOut(
-        pag_pago_id=pag_pago.id,
+        autoridad_clave=autoridad.clave,
+        autoridad_descripcion=autoridad.descripcion,
+        autoridad_descripcion_corta=autoridad.descripcion_corta,
+        cantidad=cantidad,
         descripcion=pag_tramite_servicio.descripcion,
         email=email,
-        monto=pag_pago.total,
+        monto=total,
         url=url,
     )
 
@@ -229,6 +251,10 @@ def update_payment(
     # Entregar
     return PagResultadoOut(
         pag_pago_id=pag_pago.id,
+        autoridad_clave=pag_pago.autoridad.clave,
+        autoridad_descripcion=pag_pago.autoridad.descripcion,
+        autoridad_descripcion_corta=pag_pago.autoridad.descripcion_corta,
+        cantidad=pag_pago.cantidad,
         nombres=pag_pago.cit_cliente.nombres,
         apellido_primero=pag_pago.cit_cliente.apellido_primero,
         apellido_segundo=pag_pago.cit_cliente.apellido_segundo,

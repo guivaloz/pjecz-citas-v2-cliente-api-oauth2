@@ -15,10 +15,10 @@ from ..cit_clientes.schemas import CitClienteInDB
 from .crud import cancel_cit_cita, create_cit_cita, get_cit_cita, get_cit_citas, get_cit_citas_disponibles_cantidad
 from .schemas import CitCitaIn, CitCitaOut
 
-cit_citas = APIRouter(prefix="/v2/cit_citas", tags=["citas"])
+cit_citas_v2 = APIRouter(prefix="/v2/cit_citas", tags=["citas"])
 
 
-@cit_citas.get("", response_model=LimitOffsetPage[CitCitaOut])
+@cit_citas_v2.get("", response_model=LimitOffsetPage[CitCitaOut])
 async def listado_cit_citas(
     current_user: CitClienteInDB = Depends(get_current_active_user),
     db: Session = Depends(get_db),
@@ -35,7 +35,7 @@ async def listado_cit_citas(
     return paginate(listado)
 
 
-@cit_citas.get("/consultar", response_model=CitCitaOut)
+@cit_citas_v2.get("/consultar", response_model=CitCitaOut)
 async def detalle_cit_cita(
     cit_cita_id: int,
     current_user: CitClienteInDB = Depends(get_current_active_user),
@@ -53,7 +53,7 @@ async def detalle_cit_cita(
     return CitCitaOut.from_orm(cit_cita)
 
 
-@cit_citas.get("/disponibles", response_model=int)
+@cit_citas_v2.get("/disponibles", response_model=int)
 async def cantidad_cit_citas_disponibles(
     current_user: CitClienteInDB = Depends(get_current_active_user),
     db: Session = Depends(get_db),
@@ -70,7 +70,7 @@ async def cantidad_cit_citas_disponibles(
     return cantidad
 
 
-@cit_citas.post("/nueva", response_model=CitCitaOut)
+@cit_citas_v2.post("/nueva", response_model=CitCitaOut)
 async def crear_cit_cita(
     datos: CitCitaIn,
     current_user: CitClienteInDB = Depends(get_current_active_user),
@@ -96,7 +96,7 @@ async def crear_cit_cita(
     return CitCitaOut.from_orm(cit_cita)
 
 
-@cit_citas.get("/cancelar", response_model=CitCitaOut)
+@cit_citas_v2.get("/cancelar", response_model=CitCitaOut)
 async def cancelar_cit_citas(
     cit_cita_id: int,
     current_user: CitClienteInDB = Depends(get_current_active_user),

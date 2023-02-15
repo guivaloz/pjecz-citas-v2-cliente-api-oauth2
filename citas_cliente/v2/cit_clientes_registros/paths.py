@@ -9,10 +9,10 @@ from lib.database import get_db
 from .crud import request_new_account, validate_new_account, terminate_new_account
 from .schemas import CitClienteRegistroIn, CitClienteRegistroOut, CitClienteRegistroValidarOut, CitClienteRegistroConcluirIn, CitClienteRegistroConcluirOut
 
-cit_clientes_registros = APIRouter(prefix="/v2/nueva_cuenta", tags=["nueva cuenta"])
+cit_clientes_registros_v2 = APIRouter(prefix="/v2/nueva_cuenta", tags=["nueva cuenta"])
 
 
-@cit_clientes_registros.post("/solicitar", response_model=CitClienteRegistroOut)
+@cit_clientes_registros_v2.post("/solicitar", response_model=CitClienteRegistroOut)
 async def nueva_cuenta_solicitar(
     registro: CitClienteRegistroIn,
     db: Session = Depends(get_db),
@@ -27,7 +27,7 @@ async def nueva_cuenta_solicitar(
     return CitClienteRegistroOut.from_orm(cit_cliente_registro)
 
 
-@cit_clientes_registros.get("/validar", response_model=CitClienteRegistroValidarOut)
+@cit_clientes_registros_v2.get("/validar", response_model=CitClienteRegistroValidarOut)
 async def nueva_cuenta_validar(
     hashid: str = None,
     cadena_validar: str = None,
@@ -47,7 +47,7 @@ async def nueva_cuenta_validar(
     return CitClienteRegistroValidarOut.from_orm(cit_cliente_registro)
 
 
-@cit_clientes_registros.post("/concluir", response_model=CitClienteRegistroConcluirOut)
+@cit_clientes_registros_v2.post("/concluir", response_model=CitClienteRegistroConcluirOut)
 async def nueva_cuenta_concluir(
     registro: CitClienteRegistroConcluirIn,
     db: Session = Depends(get_db),

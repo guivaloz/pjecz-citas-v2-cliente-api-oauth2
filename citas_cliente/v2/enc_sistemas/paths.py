@@ -12,10 +12,10 @@ from ..cit_clientes.schemas import CitClienteInDB
 from .crud import validate_enc_sistema, update_enc_sistema, get_enc_sistema_url
 from .schemas import EncSistemaIn, EncSistemaOut, EncSistemaURLOut
 
-enc_sistemas = APIRouter(prefix="/v2/enc_sistemas", tags=["encuestas"])
+enc_sistemas_v2 = APIRouter(prefix="/v2/enc_sistemas", tags=["encuestas"])
 
 
-@enc_sistemas.get("/validar", response_model=EncSistemaOut)
+@enc_sistemas_v2.get("/validar", response_model=EncSistemaOut)
 async def encuesta_sistema_validar(
     hashid: str = None,
     db: Session = Depends(get_db),
@@ -32,7 +32,7 @@ async def encuesta_sistema_validar(
     return EncSistemaOut.from_orm(enc_servicio)
 
 
-@enc_sistemas.post("/contestar", response_model=EncSistemaOut)
+@enc_sistemas_v2.post("/contestar", response_model=EncSistemaOut)
 async def encuesta_sistema_contestar(
     encuesta: EncSistemaIn,
     db: Session = Depends(get_db),
@@ -47,7 +47,7 @@ async def encuesta_sistema_contestar(
     return EncSistemaOut.from_orm(enc_servicio)
 
 
-@enc_sistemas.get("/pendiente", response_model=EncSistemaURLOut)
+@enc_sistemas_v2.get("/pendiente", response_model=EncSistemaURLOut)
 async def encuesta_servicio_pendiente(
     current_user: CitClienteInDB = Depends(get_current_active_user),
     db: Session = Depends(get_db),

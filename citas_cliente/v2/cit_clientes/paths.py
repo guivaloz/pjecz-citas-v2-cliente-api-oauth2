@@ -13,10 +13,10 @@ from .authentications import get_current_active_user
 from .crud import get_cit_clientes, get_cit_cliente, update_cit_cliente_password
 from .schemas import CitClienteInDB, CitClienteOut, CitClienteActualizarContrasenaIn, CitClienteActualizarContrasenaOut
 
-cit_clientes = APIRouter(prefix="/v2/cit_clientes", tags=["clientes"])
+cit_clientes_v2 = APIRouter(prefix="/v2/cit_clientes", tags=["clientes"])
 
 
-@cit_clientes.get("", response_model=LimitOffsetPage[CitClienteOut])
+@cit_clientes_v2.get("", response_model=LimitOffsetPage[CitClienteOut])
 async def listado_cit_clientes(
     current_user: CitClienteInDB = Depends(get_current_active_user),
     db: Session = Depends(get_db),
@@ -27,7 +27,7 @@ async def listado_cit_clientes(
     return paginate(get_cit_clientes(db))
 
 
-@cit_clientes.post("/actualizar_contrasena", response_model=CitClienteActualizarContrasenaOut)
+@cit_clientes_v2.post("/actualizar_contrasena", response_model=CitClienteActualizarContrasenaOut)
 async def actualizar_contrasena(
     actualizacion: CitClienteActualizarContrasenaIn,
     db: Session = Depends(get_db),
@@ -42,7 +42,7 @@ async def actualizar_contrasena(
     return CitClienteActualizarContrasenaOut.from_orm(cit_cliente_actualizado)
 
 
-@cit_clientes.get("/{cit_cliente_id}", response_model=CitClienteOut)
+@cit_clientes_v2.get("/{cit_cliente_id}", response_model=CitClienteOut)
 async def detalle_cit_cliente(
     cit_cliente_id: int,
     current_user: CitClienteInDB = Depends(get_current_active_user),

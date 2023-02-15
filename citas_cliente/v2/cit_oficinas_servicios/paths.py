@@ -15,10 +15,10 @@ from ..cit_clientes.schemas import CitClienteInDB
 from .crud import get_cit_oficinas_servicios, get_cit_oficina_servicio
 from .schemas import CitOficinaServicioOut
 
-cit_oficinas_servicios = APIRouter(prefix="/v2/cit_oficinas_servicios", tags=["servicios"])
+cit_oficinas_servicios_v2 = APIRouter(prefix="/v2/cit_oficinas_servicios", tags=["servicios"])
 
 
-@cit_oficinas_servicios.get("", response_model=LimitOffsetPage[CitOficinaServicioOut])
+@cit_oficinas_servicios_v2.get("", response_model=LimitOffsetPage[CitOficinaServicioOut])
 async def listado_cit_oficinas_servicios(
     cit_servicio_id: int = None,
     oficina_id: int = None,
@@ -31,7 +31,7 @@ async def listado_cit_oficinas_servicios(
     return paginate(get_cit_oficinas_servicios(db, cit_servicio_id, oficina_id))
 
 
-@cit_oficinas_servicios.get("/{cit_oficina_servicio_id}", response_model=CitOficinaServicioOut)
+@cit_oficinas_servicios_v2.get("/{cit_oficina_servicio_id}", response_model=CitOficinaServicioOut)
 async def detalle_cit_oficina_servicio(
     cit_oficina_servicio_id: int,
     current_user: CitClienteInDB = Depends(get_current_active_user),

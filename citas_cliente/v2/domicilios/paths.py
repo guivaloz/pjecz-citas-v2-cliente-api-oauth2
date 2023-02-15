@@ -15,10 +15,10 @@ from ..cit_clientes.schemas import CitClienteInDB
 from .crud import get_domicilios, get_domicilio
 from .schemas import DomicilioOut
 
-domicilios = APIRouter(prefix="/v2/domicilios", tags=["oficinas"])
+domicilios_v2 = APIRouter(prefix="/v2/domicilios", tags=["oficinas"])
 
 
-@domicilios.get("", response_model=LimitOffsetPage[DomicilioOut])
+@domicilios_v2.get("", response_model=LimitOffsetPage[DomicilioOut])
 async def listado_domicilios(
     current_user: CitClienteInDB = Depends(get_current_active_user),
     db: Session = Depends(get_db),
@@ -29,7 +29,7 @@ async def listado_domicilios(
     return paginate(get_domicilios(db))
 
 
-@domicilios.get("/{domicilio_id}", response_model=DomicilioOut)
+@domicilios_v2.get("/{domicilio_id}", response_model=DomicilioOut)
 async def detalle_domicilio(
     domicilio_id: int,
     current_user: CitClienteInDB = Depends(get_current_active_user),
