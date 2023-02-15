@@ -14,10 +14,10 @@ from ..cit_clientes.schemas import CitClienteInDB
 from .crud import get_cit_dias_disponibles
 from .schemas import CitDiaDisponibleOut
 
-cit_dias_disponibles = APIRouter(prefix="/v2/cit_dias_disponibles", tags=["dias disponibles"])
+cit_dias_disponibles_v2 = APIRouter(prefix="/v2/cit_dias_disponibles", tags=["dias disponibles"])
 
 
-@cit_dias_disponibles.get("", response_model=Page[CitDiaDisponibleOut])
+@cit_dias_disponibles_v2.get("", response_model=Page[CitDiaDisponibleOut])
 async def listado_cit_dias_disponibles(
     oficina_id: int,
     current_user: CitClienteInDB = Depends(get_current_active_user),

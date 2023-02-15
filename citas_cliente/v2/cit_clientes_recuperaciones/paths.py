@@ -9,10 +9,10 @@ from lib.database import get_db
 from .crud import request_recover_password, validate_recover_password, terminate_recover_password
 from .schemas import CitClienteRecuperacionIn, CitClienteRecuperacionOut, CitClienteRecuperacionValidarOut, CitClienteRecuperacionConcluirIn, CitClienteRecuperacionConcluirOut
 
-cit_clientes_recuperaciones = APIRouter(prefix="/v2/recuperar_contrasena", tags=["recuperar contrasena"])
+cit_clientes_recuperaciones_v2 = APIRouter(prefix="/v2/recuperar_contrasena", tags=["recuperar contrasena"])
 
 
-@cit_clientes_recuperaciones.post("/solicitar", response_model=CitClienteRecuperacionOut)
+@cit_clientes_recuperaciones_v2.post("/solicitar", response_model=CitClienteRecuperacionOut)
 async def recuperar_contrasena_solicitar(
     recuperacion: CitClienteRecuperacionIn,
     db: Session = Depends(get_db),
@@ -27,7 +27,7 @@ async def recuperar_contrasena_solicitar(
     return CitClienteRecuperacionOut.from_orm(cit_cliente_recuperacion)
 
 
-@cit_clientes_recuperaciones.get("/validar", response_model=CitClienteRecuperacionValidarOut)
+@cit_clientes_recuperaciones_v2.get("/validar", response_model=CitClienteRecuperacionValidarOut)
 async def recuperar_contrasena_validar(
     hashid: str = None,
     cadena_validar: str = None,
@@ -47,7 +47,7 @@ async def recuperar_contrasena_validar(
     return CitClienteRecuperacionValidarOut.from_orm(cit_cliente_recuperacion)
 
 
-@cit_clientes_recuperaciones.post("/concluir", response_model=CitClienteRecuperacionConcluirOut)
+@cit_clientes_recuperaciones_v2.post("/concluir", response_model=CitClienteRecuperacionConcluirOut)
 async def recuperar_contrasena_concluir(
     recuperacion: CitClienteRecuperacionConcluirIn,
     db: Session = Depends(get_db),

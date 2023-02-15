@@ -64,6 +64,16 @@ def safe_expediente(input_str):
     return f"{str(numero)}/{str(ano)}"
 
 
+def safe_integer(input_str, default=1):
+    """Safe integer"""
+    if not isinstance(input_str, str):
+        return default
+    final = input_str.strip()
+    if re.match(r"^\d+$", final) is None:
+        return default
+    return int(final)
+
+
 def safe_string(input_str, max_len=250):
     """Safe string"""
     if not isinstance(input_str, str):

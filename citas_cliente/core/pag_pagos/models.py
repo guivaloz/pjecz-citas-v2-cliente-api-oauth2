@@ -28,12 +28,15 @@ class PagPago(Base, UniversalMixin):
     id = Column(Integer, primary_key=True)
 
     # Clave foránea
+    autoridad_id = Column(Integer, ForeignKey("autoridades.id"), index=True, nullable=False)
+    autoridad = relationship("Autoridad", back_populates="pag_pagos")
     cit_cliente_id = Column(Integer, ForeignKey("cit_clientes.id"), index=True, nullable=False)
     cit_cliente = relationship("CitCliente", back_populates="pag_pagos")
     pag_tramite_servicio_id = Column(Integer, ForeignKey("pag_tramites_servicios.id"), index=True, nullable=False)
     pag_tramite_servicio = relationship("PagTramiteServicio", back_populates="pag_pagos")
 
     # Columnas
+    cantidad = Column(Integer, nullable=False, default=1)
     estado = Column(Enum(*ESTADOS, name="estados", native_enum=False), nullable=False)
     email = Column(String(256), nullable=False, default="")  # Email opcional si el cliente desea que se le envie el comprobante a otra dirección
     folio = Column(String(256), nullable=False, default="")

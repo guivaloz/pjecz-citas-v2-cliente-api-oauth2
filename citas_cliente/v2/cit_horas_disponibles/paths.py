@@ -15,10 +15,10 @@ from ..cit_clientes.schemas import CitClienteInDB
 from .crud import get_cit_horas_disponibles
 from .schemas import CitHoraDisponibleOut
 
-cit_horas_disponibles = APIRouter(prefix="/v2/cit_horas_disponibles", tags=["horas disponibles"])
+cit_horas_disponibles_v2 = APIRouter(prefix="/v2/cit_horas_disponibles", tags=["horas disponibles"])
 
 
-@cit_horas_disponibles.get("", response_model=Page[CitHoraDisponibleOut])
+@cit_horas_disponibles_v2.get("", response_model=Page[CitHoraDisponibleOut])
 async def listado_cit_horas_disponibles(
     cit_servicio_id: int,
     fecha: date,

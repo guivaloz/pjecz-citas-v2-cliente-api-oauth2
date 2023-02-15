@@ -15,10 +15,10 @@ from ..cit_clientes.schemas import CitClienteInDB
 from .crud import get_cit_servicios, get_cit_servicio
 from .schemas import CitServicioOut
 
-cit_servicios = APIRouter(prefix="/v2/cit_servicios", tags=["servicios"])
+cit_servicios_v2 = APIRouter(prefix="/v2/cit_servicios", tags=["servicios"])
 
 
-@cit_servicios.get("", response_model=LimitOffsetPage[CitServicioOut])
+@cit_servicios_v2.get("", response_model=LimitOffsetPage[CitServicioOut])
 async def listado_cit_servicios(
     cit_categoria_id: int = None,
     current_user: CitClienteInDB = Depends(get_current_active_user),
@@ -30,7 +30,7 @@ async def listado_cit_servicios(
     return paginate(get_cit_servicios(db, cit_categoria_id))
 
 
-@cit_servicios.get("/{cit_servicio_id}", response_model=CitServicioOut)
+@cit_servicios_v2.get("/{cit_servicio_id}", response_model=CitServicioOut)
 async def detalle_cit_servicio(
     cit_servicio_id: int,
     current_user: CitClienteInDB = Depends(get_current_active_user),
