@@ -16,6 +16,7 @@ class PagPagoOut(BaseModel):
     autoridad_descripcion_corta: str | None
     cantidad: int | None
     cit_cliente_nombre: str | None
+    distrito_nombre: str | None
     pag_tramite_servicio_clave: str | None
     pag_tramite_servicio_descripcion: str | None
     email: str | None

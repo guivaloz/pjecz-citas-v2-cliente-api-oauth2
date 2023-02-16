@@ -66,6 +66,11 @@ class PagPago(Base, UniversalMixin):
         return self.cit_cliente.nombre
 
     @property
+    def distrito_nombre(self):
+        """Nombre del distrito"""
+        return self.autoridad.distrito.nombre
+
+    @property
     def pag_tramite_servicio_clave(self):
         """Clave"""
         return self.pag_tramite_servicio.clave
