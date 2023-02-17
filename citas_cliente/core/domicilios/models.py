@@ -28,7 +28,7 @@ class Domicilio(Base, UniversalMixin):
     completo = Column(String(1024), nullable=False)
 
     # Hijos
-    oficinas = relationship("Oficina", back_populates="domicilio", lazy="noload")
+    oficinas = relationship("Oficina", back_populates="domicilio")
 
     def __repr__(self):
         """Representación"""

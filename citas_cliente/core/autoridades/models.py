@@ -47,7 +47,8 @@ class Autoridad(Base, UniversalMixin):
     )
 
     # Hijos
-    pag_pagos = relationship("PagPago", back_populates="autoridad", lazy="noload")
+    ppa_solicitudes = relationship("PpaSolicitud", back_populates="autoridad")
+    pag_pagos = relationship("PagPago", back_populates="autoridad")
 
     @property
     def distrito_nombre(self):
