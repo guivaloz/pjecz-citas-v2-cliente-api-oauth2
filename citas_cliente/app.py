@@ -30,8 +30,12 @@ from citas_cliente.v2.oficinas.paths import oficinas_v2
 
 from citas_cliente.v3.autoridades.paths import autoridades as autoridades_v3
 from citas_cliente.v3.distritos.paths import distritos as distritos_v3
+from citas_cliente.v3.municipios.paths import municipios as municipios_v3
 from citas_cliente.v3.pag_pagos.paths import pag_pagos as pag_pagos_v3
 from citas_cliente.v3.pag_tramites_servicios.paths import pag_tramites_servicios as pag_tramites_servicios_v3
+from citas_cliente.v3.ppa_solicitudes.paths import ppa_solicitudes as ppa_solicitudes_v3
+from citas_cliente.v3.tdt_partidos.paths import tdt_partidos as tdt_partidos_v3
+from citas_cliente.v3.tdt_solicitudes.paths import tdt_solicitudes as tdt_solicitudes_v3
 
 from citas_cliente.v2.cit_clientes.authentications import authenticate_user, create_access_token, get_current_active_user
 from citas_cliente.v2.cit_clientes.schemas import Token, CitClienteInDB
@@ -71,8 +75,12 @@ app.include_router(oficinas_v2)
 # Parths V3
 app.include_router(autoridades_v3)
 app.include_router(distritos_v3)
+app.include_router(municipios_v3)
 app.include_router(pag_pagos_v3)
 app.include_router(pag_tramites_servicios_v3)
+app.include_router(ppa_solicitudes_v3)
+app.include_router(tdt_partidos_v3)
+app.include_router(tdt_solicitudes_v3)
 
 # Pagination
 add_pagination(app)

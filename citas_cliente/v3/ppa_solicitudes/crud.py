@@ -36,12 +36,12 @@ def get_ppa_solicitudes(
 
 def get_ppa_solicitud(
     db: Session,
-    ppa_solicitud_id_haseado: str,
+    ppa_solicitud_id_hasheado: str,
 ) -> PpaSolicitud:
     """Consultar una solicitud por su id hasheado"""
 
     # Descrifrar el ID hasheado
-    ppa_solicitud_id = descifrar_id(ppa_solicitud_id_haseado)
+    ppa_solicitud_id = descifrar_id(ppa_solicitud_id_hasheado)
     if ppa_solicitud_id is None:
         raise CitasNotExistsError("El ID de la solicitud no es válida")
 

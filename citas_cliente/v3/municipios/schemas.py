@@ -18,5 +18,5 @@ class MunicipioOut(BaseModel):
         orm_mode = True
 
 
-class OneMunicipioOut(EsquemaOut, OneBaseOut):
+class OneMunicipioOut(MunicipioOut, OneBaseOut):
     """Esquema para entregar un comentario"""
