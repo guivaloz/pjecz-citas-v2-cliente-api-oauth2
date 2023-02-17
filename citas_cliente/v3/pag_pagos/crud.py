@@ -5,10 +5,9 @@ from datetime import datetime, timedelta
 from typing import Any
 
 import nest_asyncio
-import pytz
 from sqlalchemy.orm import Session
 
-from config.settings import LIMITE_CITAS_PENDIENTES
+from config.settings import LOCAL_HUSO_HORARIO, LIMITE_CITAS_PENDIENTES
 from lib.exceptions import CitasAnyError, CitasIsDeletedError, CitasNotExistsError, CitasNotValidParamError
 from lib.hashids import descifrar_id
 from lib.safe_string import safe_curp, safe_email, safe_integer, safe_string, safe_telefono
@@ -20,8 +19,6 @@ from ..autoridades.crud import get_autoridad_from_clave
 from ..cit_clientes.crud import get_cit_cliente, get_cit_cliente_from_curp, get_cit_cliente_from_email
 from ..pag_tramites_servicios.crud import get_pag_tramite_servicio_from_clave
 from .schemas import PagCarroIn, PagCarroOut, PagResultadoIn, PagResultadoOut
-
-LOCAL_HUSO_HORARIO = pytz.timezone("America/Mexico_City")
 
 
 def get_pag_pagos(

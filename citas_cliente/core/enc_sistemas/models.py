@@ -1,5 +1,5 @@
 """
-Encuestas Sistemas V2, modelos
+Encuestas Sistemas, modelos
 """
 from collections import OrderedDict
 from sqlalchemy import Column, Enum, ForeignKey, Integer, String

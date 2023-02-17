@@ -7,8 +7,10 @@ from unidecode import unidecode
 
 CURP_REGEXP = r"^[A-Z]{4}\d{6}[A-Z]{6}[A-Z0-9]{2}$"
 EMAIL_REGEXP = r"^[\w.-]+@[\w.-]+\.\w+$"
+EXPEDIENTE_REGEXP = r"^\d+\/[12]\d\d\d(-[a-zA-Z0-9]+(-[a-zA-Z0-9]+)?)?$"
 PASSWORD_REGEXP = r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,24}$"
 TELEFONO_REGEXP = r"^[1-9]\d{9}$"
+URL_REGEXP = r"^(https?:\/\/)[0-9a-z-_]*(\.[0-9a-z-_]+)*(\.[a-z]+)+(\/[0-9a-z%-_]*)*?\/?$"
 
 PASSWORD_REGEXP_MESSAGE = "La contrasena debe tener de 8 a 24 caracteres, comenzando con una letra y contener por lo menos una mayuscula y un numero"
 
@@ -76,13 +78,34 @@ def safe_integer(input_int_str, default=1):
     return int(final)
 
 
-def safe_string(input_str, max_len=250):
+def safe_string(input_str, max_len=250, do_unidecode=True, save_enie=False, to_uppercase=True):
     """Safe string"""
     if not isinstance(input_str, str):
         return ""
-    new_string = re.sub(r"[^a-zA-Z0-9,/-]+", " ", unidecode(input_str))
+    if do_unidecode:
+        new_string = re.sub(r"[^a-zA-Z0-9.()/-]+", " ", input_str)
+        if save_enie:
+            new_string = ""
+            for char in input_str:
+                if char == "ñ":
+                    new_string += "ñ"
+                elif char == "Ñ":
+                    new_string += "Ñ"
+                else:
+                    new_string += unidecode(char)
+        else:
+            new_string = re.sub(r"[^a-zA-Z0-9.()/-]+", " ", unidecode(input_str))
+    else:
+        if save_enie is False:
+            new_string = re.sub(r"[^a-záéíóúüA-ZÁÉÍÓÚÜ0-9.()/-]+", " ", input_str)
+        else:
+            new_string = re.sub(r"[^a-záéíóúüñA-ZÁÉÍÓÚÜÑ0-9.()/-]+", " ", input_str)
     removed_multiple_spaces = re.sub(r"\s+", " ", new_string)
-    final = removed_multiple_spaces.strip().upper()
+    final = removed_multiple_spaces.strip()
+    if to_uppercase:
+        final = final.upper()
+    if max_len == 0:
+        return final
     return (final[:max_len] + "...") if len(final) > max_len else final
 
 
@@ -94,3 +117,13 @@ def safe_telefono(input_str):
     if re.match(TELEFONO_REGEXP, solo_numeros) is None:
         raise ValueError("Telefono está incompleto")
     return solo_numeros
+
+
+def safe_url(input_str):
+    """Safe URL"""
+    if not isinstance(input_str, str) or input_str.strip() == "":
+        return ""
+    input_str = input_str.strip()
+    if re.match(URL_REGEXP, input_str) is None:
+        return ""
+    return input_str

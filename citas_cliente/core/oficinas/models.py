@@ -1,5 +1,5 @@
 """
-Oficinas V2, modelos
+Oficinas, modelos
 """
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Time
 from sqlalchemy.orm import relationship

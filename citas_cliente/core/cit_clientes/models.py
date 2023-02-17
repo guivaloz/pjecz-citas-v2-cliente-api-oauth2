@@ -1,5 +1,5 @@
 """
-Cit Clientes V2, modelos
+Cit Clientes, modelos
 """
 from datetime import datetime
 from sqlalchemy import Boolean, Column, Date, Integer, String
@@ -45,6 +45,8 @@ class CitCliente(Base, UniversalMixin):
     enc_servicios = relationship("EncServicio", back_populates="cit_cliente")
     enc_sistemas = relationship("EncSistema", back_populates="cit_cliente")
     pag_pagos = relationship("PagPago", back_populates="cit_cliente")
+    ppa_solicitudes = relationship("PpaSolicitud", back_populates="cit_cliente")
+    tdt_solicitudes = relationship("TdtSolicitud", back_populates="cit_cliente")
 
     @property
     def nombre(self):

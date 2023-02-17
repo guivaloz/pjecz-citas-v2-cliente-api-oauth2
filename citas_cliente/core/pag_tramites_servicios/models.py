@@ -1,5 +1,5 @@
 """
-Pagos Tramites Servicios V2, modelos
+Pagos Tramites Servicios, modelos
 """
 from sqlalchemy import Column, Integer, Numeric, String
 from sqlalchemy.orm import relationship

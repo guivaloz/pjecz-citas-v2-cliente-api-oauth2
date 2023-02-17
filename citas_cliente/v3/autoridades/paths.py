@@ -16,9 +16,7 @@ autoridades = APIRouter(prefix="/v3/autoridades", tags=["autoridades"])
 
 
 @autoridades.get("", response_model=CustomPage[AutoridadOut])
-async def listado_autoridades(
-    db: Session = Depends(get_db),
-):
+async def listado_autoridades(db: Session = Depends(get_db)):
     """Listado de autoridades"""
     try:
         resultados = get_autoridades(db=db)
@@ -28,16 +26,10 @@ async def listado_autoridades(
 
 
 @autoridades.get("/{clave}", response_model=OneAutoridadOut)
-async def detalle_autoridad(
-    clave: str,
-    db: Session = Depends(get_db),
-):
+async def detalle_autoridad(clave: str, db: Session = Depends(get_db)):
     """Detalle de una autoridad a partir de su clave"""
     try:
-        autoridad = get_autoridad_from_clave(
-            db=db,
-            clave=clave,
-        )
+        autoridad = get_autoridad_from_clave(db=db, clave=clave)
     except CitasAnyError as error:
         return OneAutoridadOut(success=False, message=str(error))
     return OneAutoridadOut.from_orm(autoridad)

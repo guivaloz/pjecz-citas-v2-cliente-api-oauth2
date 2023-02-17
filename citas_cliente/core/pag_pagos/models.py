@@ -1,5 +1,5 @@
 """
-Pagos Pagos V2, modelos
+Pagos Pagos, modelos
 """
 from collections import OrderedDict
 from sqlalchemy import Boolean, Column, DateTime, Enum, ForeignKey, Integer, Numeric, String, Text
@@ -27,7 +27,7 @@ class PagPago(Base, UniversalMixin):
     # Clave primaria
     id = Column(Integer, primary_key=True)
 
-    # Clave foránea
+    # Claves foráneas
     autoridad_id = Column(Integer, ForeignKey("autoridades.id"), index=True, nullable=False)
     autoridad = relationship("Autoridad", back_populates="pag_pagos")
     cit_cliente_id = Column(Integer, ForeignKey("cit_clientes.id"), index=True, nullable=False)

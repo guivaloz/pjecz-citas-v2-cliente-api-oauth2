@@ -1,13 +1,13 @@
 """
-Cit Citas V2, modelos
+Cit Citas, modelos
 """
 from collections import OrderedDict
 from datetime import datetime
 
-import pytz
 from sqlalchemy import Boolean, Column, DateTime, Enum, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import relationship
 
+from config.settings import LOCAL_HUSO_HORARIO
 from lib.database import Base
 from lib.universal_mixin import UniversalMixin
 
@@ -67,7 +67,7 @@ class CitCita(Base, UniversalMixin):
         """Puede cancelarse esta cita?"""
         if self.estado != "PENDIENTE":
             return False
-        ahora = datetime.now(tz=pytz.timezone("America/Mexico_City"))
+        ahora = datetime.now(tz=LOCAL_HUSO_HORARIO)
         ahora_sin_tz = ahora.replace(tzinfo=None)
         if self.cancelar_antes is None:
             return ahora_sin_tz < self.inicio

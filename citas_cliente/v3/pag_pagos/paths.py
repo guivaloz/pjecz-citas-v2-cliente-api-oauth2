@@ -50,7 +50,7 @@ async def detalle_pag_pago(
     pag_pago_id_hasheado: str,
     db: Session = Depends(get_db),
 ):
-    """Detalle de un pago a partir de su id haseado"""
+    """Detalle de un pago a partir de su id hasheado"""
     try:
         pag_pago = get_pag_pago(
             db=db,

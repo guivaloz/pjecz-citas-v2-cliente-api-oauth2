@@ -1,5 +1,5 @@
 """
-Domicilios V2, modelos
+Domicilios, modelos
 """
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship
@@ -28,7 +28,7 @@ class Domicilio(Base, UniversalMixin):
     completo = Column(String(1024), nullable=False)
 
     # Hijos
-    oficinas = relationship("Oficina", back_populates="domicilio", lazy="noload")
+    oficinas = relationship("Oficina", back_populates="domicilio")
 
     def __repr__(self):
         """Representación"""
