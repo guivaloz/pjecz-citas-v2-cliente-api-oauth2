@@ -1,12 +1,14 @@
 """
 Cit Clientes V3, CRUD (create, read, update, and delete)
 """
+from datetime import datetime, timedelta
 from typing import Any
 
 from sqlalchemy.orm import Session
 
+from config.settings import LIMITE_CITAS_PENDIENTES
 from lib.exceptions import CitasIsDeletedError, CitasNotExistsError, CitasNotValidParamError
-from lib.safe_string import safe_curp, safe_email
+from lib.safe_string import safe_curp, safe_email, safe_string, safe_telefono
 
 from ...core.cit_clientes.models import CitCliente
 
@@ -52,4 +54,62 @@ def get_cit_cliente_from_email(db: Session, email: str) -> CitCliente:
         raise CitasNotExistsError("No existe ese cliente")
     if cit_cliente.estatus != "A":
         raise CitasIsDeletedError("No es activo ese cliente, está eliminado")
+    return cit_cliente
+
+
+def create_cit_cliente(db: Session, cit_cliente: CitCliente) -> CitCliente:
+    """Crear un cliente"""
+
+    # Validar nombres
+    nombres = safe_string(cit_cliente.nombres, save_enie=True)
+
+    # Validar apellido primero
+    apellido_primero = safe_string(cit_cliente.apellido_primero, save_enie=True)
+
+    # Validar apellido segundo
+    apellido_segundo = safe_string(cit_cliente.apellido_segundo, save_enie=True)
+
+    # Validar CURP
+    curp = safe_curp(cit_cliente.curp)
+
+    # Validar email
+    email = safe_email(cit_cliente.email)
+
+    # Validar teléfono
+    telefono = safe_telefono(cit_cliente.telefono)
+
+    # Buscar cliente por CURP
+    cit_cliente = None
+    si_existe = False
+    try:
+        cit_cliente = get_cit_cliente_from_curp(db, curp)
+        si_existe = True
+    except CitasNotExistsError:
+        try:
+            cit_cliente = get_cit_cliente_from_email(db, email)
+            si_existe = True
+        except CitasNotExistsError:
+            pass
+
+    # Si no se encontró, crear el cliente
+    if not si_existe:
+        renovacion_fecha = datetime.now() + timedelta(days=60)
+        cit_cliente = CitCliente(
+            nombres=nombres,
+            apellido_primero=apellido_primero,
+            apellido_segundo=apellido_segundo,
+            curp=curp,
+            telefono=telefono,
+            email=email,
+            contrasena_md5="",
+            contrasena_sha256="",
+            renovacion=renovacion_fecha.date(),
+            limite_citas_pendientes=LIMITE_CITAS_PENDIENTES,
+        )
+        db.add(cit_cliente)
+        db.commit()
+        db.refresh(cit_cliente)
+        si_existe = True
+
+    # Entregar
     return cit_cliente

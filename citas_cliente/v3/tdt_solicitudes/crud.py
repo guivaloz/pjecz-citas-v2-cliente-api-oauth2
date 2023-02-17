@@ -9,11 +9,11 @@ from sqlalchemy.orm import Session
 from config.settings import LOCAL_HUSO_HORARIO, LIMITE_CITAS_PENDIENTES
 from lib.exceptions import CitasAnyError, CitasIsDeletedError, CitasNotExistsError, CitasNotValidParamError
 from lib.hashids import descifrar_id
-from lib.safe_string import safe_curp, safe_email, safe_integer, safe_string, safe_telefono
+from lib.safe_string import safe_integer, safe_string, safe_url
 
 from ...core.cit_clientes.models import CitCliente
 from ...core.tdt_solicitudes.models import TdtSolicitud
-from ..cit_clientes.crud import get_cit_cliente, get_cit_cliente_from_curp, get_cit_cliente_from_email
+from ..cit_clientes.crud import get_cit_cliente, create_cit_cliente
 from ..municipios.crud import get_municipio
 from .schemas import TdtSolicitudIn, TdtSolicitudOut
 
