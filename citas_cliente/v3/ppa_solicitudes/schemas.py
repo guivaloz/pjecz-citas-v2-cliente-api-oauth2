@@ -1,6 +1,8 @@
 """
 Pago de Pensiones Alimenticias - Solicitudes V3, esquemas de pydantic
 """
+from datetime import datetime
+
 from pydantic import BaseModel
 
 from lib.schemas_base import OneBaseOut
@@ -29,6 +31,7 @@ class PpaSolicitudOut(BaseModel):
     autorizacion_archivo: str | None
     autorizacion_url: str | None
     ya_se_envio_acuse: bool | None
+    creado: datetime | None
 
     class Config:
         """SQLAlchemy config"""

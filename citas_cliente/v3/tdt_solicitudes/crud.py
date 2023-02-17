@@ -1,5 +1,5 @@
 """
-Pago de Pensiones Alimenticias - Solicitudes V3, CRUD (create, read, update, and delete)
+Tres de Tres - Solicitudes V3, CRUD (create, read, update, and delete)
 """
 from datetime import datetime, timedelta
 from typing import Any
@@ -12,47 +12,47 @@ from lib.hashids import descifrar_id
 from lib.safe_string import safe_curp, safe_email, safe_integer, safe_string, safe_telefono
 
 from ...core.cit_clientes.models import CitCliente
-from ...core.ppa_solicitudes.models import PpaSolicitud
-from ..autoridades.crud import get_autoridad_from_clave
+from ...core.tdt_solicitudes.models import TdtSolicitud
 from ..cit_clientes.crud import get_cit_cliente, get_cit_cliente_from_curp, get_cit_cliente_from_email
+from ..municipios.crud import get_municipio
 
 
-def get_ppa_solicitudes(
+def get_tdt_solicitudes(
     db: Session,
     cit_cliente_id: int,
 ) -> Any:
-    """Consultar las solicitudes activas"""
+    """Consultar las solicitudes activos"""
 
-    # Consulta
-    consulta = db.query(PpaSolicitud)
+    # Consultar
+    consulta = db.query(TdtSolicitud)
 
     # Filtrar por cliente
     cit_cliente = get_cit_cliente(db, cit_cliente_id)
-    consulta = consulta.filter(PpaSolicitud.cit_cliente == cit_cliente)
+    consulta = consulta.filter(TdtSolicitud.cit_cliente == cit_cliente)
 
     # Entregar
-    return consulta.filter_by(estatus="A").order_by(PpaSolicitud.id)
+    return consulta.filter_by(estatus="A").order_by(TdtSolicitud.id)
 
 
-def get_ppa_solicitud(
+def get_tdt_solicitud(
     db: Session,
-    ppa_solicitud_id_haseado: str,
-) -> PpaSolicitud:
+    tdt_solicitud_id_hasheado: str,
+) -> TdtSolicitud:
     """Consultar una solicitud por su id hasheado"""
 
     # Descrifrar el ID hasheado
-    ppa_solicitud_id = descifrar_id(ppa_solicitud_id_haseado)
-    if ppa_solicitud_id is None:
+    tdt_solicitud_id = descifrar_id(tdt_solicitud_id_hasheado)
+    if tdt_solicitud_id is None:
         raise CitasNotExistsError("El ID de la solicitud no es válida")
 
     # Consultar
-    ppa_solicitud = db.query(PpaSolicitud).get(ppa_solicitud_id)
+    tdt_solicitud = db.query(TdtSolicitud).get(tdt_solicitud_id)
 
     # Validar
-    if ppa_solicitud is None:
+    if tdt_solicitud is None:
         raise CitasNotExistsError("No existe ese solicitud")
-    if ppa_solicitud.estatus != "A":
+    if tdt_solicitud.estatus != "A":
         raise CitasIsDeletedError("No es activo ese solicitud, está eliminado")
 
     # Entregar
-    return ppa_solicitud
+    return tdt_solicitud
