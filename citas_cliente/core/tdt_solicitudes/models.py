@@ -1,5 +1,5 @@
 """
-Tres de Tres solicitudes V2, modelos
+Tres de Tres - Solicitudes, modelos
 """
 from collections import OrderedDict
 from sqlalchemy import Boolean, Column, Enum, ForeignKey, Integer, String
@@ -66,6 +66,31 @@ class TdtSolicitud(Base, UniversalMixin):
 
     # Columnas mensajes
     ya_se_envio_acuse = Column(Boolean, nullable=False, default=False)
+
+    @property
+    def cit_cliente_email(self):
+        """e-mail del cliente"""
+        return self.cit_cliente.email
+
+    @property
+    def cit_cliente_nombre(self):
+        """Nombre del cliente"""
+        return self.cit_cliente.nombre
+
+    @property
+    def municipio_nombre(self):
+        """Nombre del municipio"""
+        return self.municipio.nombre
+
+    @property
+    def tdt_partido_nombre(self):
+        """Nombre del partido"""
+        return self.tdt_partido.nombre
+
+    @property
+    def tdt_partido_siglas(self):
+        """Siglas del partido"""
+        return self.tdt_partido.siglas
 
     def __repr__(self):
         """Representación"""

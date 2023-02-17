@@ -1,5 +1,5 @@
 """
-Pagos Pagos V2, modelos
+Pagos Pagos, modelos
 """
 from collections import OrderedDict
 from sqlalchemy import Boolean, Column, DateTime, Enum, ForeignKey, Integer, Numeric, String, Text

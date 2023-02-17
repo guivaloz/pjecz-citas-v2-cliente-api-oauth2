@@ -1,5 +1,5 @@
 """
-Cit Clientes Recuperaciones V2, modelos
+Cit Clientes Recuperaciones, modelos
 """
 from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship

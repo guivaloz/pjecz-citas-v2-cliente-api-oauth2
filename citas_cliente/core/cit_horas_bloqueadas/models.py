@@ -1,5 +1,5 @@
 """
-Cit Horas Bloquedas V2, modelos
+Cit Horas Bloquedas, modelos
 """
 from sqlalchemy import Column, Date, ForeignKey, Integer, String, Time
 from sqlalchemy.orm import relationship

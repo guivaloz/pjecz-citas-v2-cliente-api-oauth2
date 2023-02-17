@@ -1,5 +1,5 @@
 """
-Cit Clientes Registros V2, modelos
+Cit Clientes Registros, modelos
 """
 from sqlalchemy import Boolean, Column, DateTime, Integer, String
 

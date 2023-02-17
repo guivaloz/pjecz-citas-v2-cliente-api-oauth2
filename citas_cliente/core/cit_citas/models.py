@@ -1,5 +1,5 @@
 """
-Cit Citas V2, modelos
+Cit Citas, modelos
 """
 from collections import OrderedDict
 from datetime import datetime

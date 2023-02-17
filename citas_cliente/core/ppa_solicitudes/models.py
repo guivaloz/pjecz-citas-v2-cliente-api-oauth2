@@ -1,5 +1,5 @@
 """
-Pago de Pensiones Alimenticias - Solicitudes V2, modelos
+Pago de Pensiones Alimenticias - Solicitudes, modelos
 """
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
@@ -49,6 +49,36 @@ class PpaSolicitud(Base, UniversalMixin):
 
     # Columnas mensajes
     ya_se_envio_acuse = Column(Boolean, nullable=False, default=False)
+
+    @property
+    def autoridad_clave(self):
+        """Autoridad clave"""
+        return self.autoridad.clave
+
+    @property
+    def autoridad_descripcion(self):
+        """Autoridad descripción"""
+        return self.autoridad.descripcion
+
+    @property
+    def autoridad_descripcion_corta(self):
+        """Autoridad descripción corta"""
+        return self.autoridad.descripcion_corta
+
+    @property
+    def cit_cliente_email(self):
+        """e-mail del cliente"""
+        return self.cit_cliente.email
+
+    @property
+    def cit_cliente_nombre(self):
+        """Nombre del cliente"""
+        return self.cit_cliente.nombre
+
+    @property
+    def distrito_nombre(self):
+        """Nombre del distrito"""
+        return self.autoridad.distrito.nombre
 
     def __repr__(self):
         """Representación"""

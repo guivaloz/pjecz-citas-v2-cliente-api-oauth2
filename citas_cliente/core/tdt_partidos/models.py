@@ -1,5 +1,5 @@
 """
-Tres de Tres - Partidos V2, modelos
+Tres de Tres - Partidos, modelos
 """
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship

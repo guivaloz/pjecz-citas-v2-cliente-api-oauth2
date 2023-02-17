@@ -1,5 +1,5 @@
 """
-Cit Servicios V2, modelos
+Cit Servicios, modelos
 """
 from sqlalchemy import Column, ForeignKey, Integer, String, Time
 from sqlalchemy.orm import relationship
