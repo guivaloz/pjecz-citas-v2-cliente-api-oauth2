@@ -6,7 +6,7 @@ from pydantic import BaseModel
 from lib.schemas_base import OneBaseOut
 
 
-class EsquemaOut(BaseModel):
+class MunicipioOut(BaseModel):
     """Esquema para entregar comentario"""
 
     id: int | None
@@ -18,5 +18,5 @@ class EsquemaOut(BaseModel):
         orm_mode = True
 
 
-class OneEsquemaOut(EsquemaOut, OneBaseOut):
+class OneMunicipioOut(EsquemaOut, OneBaseOut):
     """Esquema para entregar un comentario"""
