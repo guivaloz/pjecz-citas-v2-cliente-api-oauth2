@@ -66,19 +66,6 @@ def create_ppa_solicitud(
     # Validar autoridad
     autoridad = get_autoridad_from_clave(db, datos.autoridad_clave)
 
-    # Validar cliente
-    cit_cliente = create_cit_cliente(
-        db,
-        CitCliente(
-            nombres=datos.nombres,
-            apellido_primero=datos.apellido_primero,
-            apellido_segundo=datos.apellido_segundo,
-            curp=datos.curp,
-            email=datos.email,
-            telefono=datos.telefono,
-        ),
-    )
-
     # Validar domicilio calle
     domicilio_calle = safe_string(datos.domicilio_calle, save_enie=True)
     if domicilio_calle == "":
@@ -138,6 +125,19 @@ def create_ppa_solicitud(
     autorizacion_url = safe_url(datos.autorizacion_url)
     if autorizacion_url == "":
         raise CitasNotValidParamError("El URL de la autorización no es válido")
+
+    # Validar y crear cliente de no existir
+    cit_cliente = create_cit_cliente(
+        db,
+        CitCliente(
+            nombres=datos.nombres,
+            apellido_primero=datos.apellido_primero,
+            apellido_segundo=datos.apellido_segundo,
+            curp=datos.curp,
+            email=datos.email,
+            telefono=datos.telefono,
+        ),
+    )
 
     # Crear solicitud
     ppa_solicitud = PpaSolicitud(

@@ -11,7 +11,7 @@ from lib.schemas_base import OneBaseOut
 class PpaSolicitudIn(BaseModel):
     """Esquema para crear una solicitud"""
 
-    autoridad_clave: int | None
+    autoridad_clave: str | None
     cit_cliente_curp: str | None
     cit_cliente_email: str | None
     cit_cliente_nombres: str | None
