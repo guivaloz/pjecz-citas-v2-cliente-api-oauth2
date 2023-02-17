@@ -66,14 +66,29 @@ class PpaSolicitud(Base, UniversalMixin):
         return self.autoridad.descripcion_corta
 
     @property
+    def cit_cliente_curp(self):
+        """CURP del cliente"""
+        return self.cit_cliente.curp
+
+    @property
     def cit_cliente_email(self):
         """e-mail del cliente"""
         return self.cit_cliente.email
 
     @property
-    def cit_cliente_nombre(self):
-        """Nombre del cliente"""
-        return self.cit_cliente.nombre
+    def cit_cliente_nombres(self):
+        """Nombres del cliente"""
+        return self.cit_cliente.nombres
+
+    @property
+    def cit_cliente_apellido_primero(self):
+        """Apellido primero del cliente"""
+        return self.cit_cliente.apellido_primero
+
+    @property
+    def cit_cliente_apellido_segundo(self):
+        """Apellido segundo del cliente"""
+        return self.cit_cliente.apellido_segundo
 
     @property
     def distrito_nombre(self):

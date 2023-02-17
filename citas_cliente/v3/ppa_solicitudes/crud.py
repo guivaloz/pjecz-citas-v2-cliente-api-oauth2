@@ -15,6 +15,7 @@ from ...core.cit_clientes.models import CitCliente
 from ...core.ppa_solicitudes.models import PpaSolicitud
 from ..autoridades.crud import get_autoridad_from_clave
 from ..cit_clientes.crud import get_cit_cliente, get_cit_cliente_from_curp, get_cit_cliente_from_email
+from .schemas import PpaSolicitudIn, PpaSolicitudOut
 
 
 def get_ppa_solicitudes(
@@ -56,3 +57,10 @@ def get_ppa_solicitud(
 
     # Entregar
     return ppa_solicitud
+
+
+def create_ppa_solicitud(
+    db: Session,
+    datos: PpaSolicitudIn,
+) -> PpaSolicitudOut:
+    """Crear una solicitud"""

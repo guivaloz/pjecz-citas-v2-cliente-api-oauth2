@@ -8,15 +8,17 @@ from pydantic import BaseModel
 from lib.schemas_base import OneBaseOut
 
 
-class TdtSolicitudOut(BaseModel):
-    """Esquema para entregar solicitudes"""
+class TdtSolicitudIn(BaseModel):
+    """Esquema para crear una solicitud"""
 
-    id: int | None
+    cit_cliente_curp: str | None
     cit_cliente_email: str | None
-    cit_cliente_nombre: str | None
-    municipio_nombre: str | None
+    cit_cliente_nombres: str | None
+    cit_cliente_apellido_primero: str | None
+    cit_cliente_apellido_segundo: str | None
+    cit_cliente_telefono: str | None
     tdt_partido_siglas: str | None
-    tdt_partido_nombre: str | None
+    municipio_id: int | None
     cargo: str | None
     principio: str | None
     domicilio_calle: str | None
@@ -29,6 +31,14 @@ class TdtSolicitudOut(BaseModel):
     comprobante_domicilio_url: str | None
     autorizacion_archivo: str | None
     autorizacion_url: str | None
+
+
+class TdtSolicitudOut(TdtSolicitudIn):
+    """Esquema para entregar solicitudes"""
+
+    id: int | None
+    municipio_nombre: str | None
+    tdt_partido_nombre: str | None
     ya_se_envio_acuse: bool | None
     creado: datetime | None
 

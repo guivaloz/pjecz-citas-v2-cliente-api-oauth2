@@ -15,6 +15,7 @@ from ...core.cit_clientes.models import CitCliente
 from ...core.tdt_solicitudes.models import TdtSolicitud
 from ..cit_clientes.crud import get_cit_cliente, get_cit_cliente_from_curp, get_cit_cliente_from_email
 from ..municipios.crud import get_municipio
+from .schemas import TdtSolicitudIn, TdtSolicitudOut
 
 
 def get_tdt_solicitudes(
@@ -56,3 +57,10 @@ def get_tdt_solicitud(
 
     # Entregar
     return tdt_solicitud
+
+
+def create_tdt_solicitud(
+    db: Session,
+    datos: TdtSolicitudIn,
+) -> TdtSolicitudOut:
+    """Crear una solicitud"""
