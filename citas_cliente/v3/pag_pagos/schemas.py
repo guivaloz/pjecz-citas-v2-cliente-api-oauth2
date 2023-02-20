@@ -10,7 +10,7 @@ from lib.schemas_base import OneBaseOut
 class PagPagoOut(BaseModel):
     """Esquema para entregar pagos"""
 
-    id: int | None
+    id_hasheado: str | None
     autoridad_clave: str | None
     autoridad_descripcion: str | None
     autoridad_descripcion_corta: str | None
@@ -53,6 +53,7 @@ class PagCarroIn(BaseModel):
 class PagCarroOut(BaseModel):
     """Esquema para entregar al carro de pagos"""
 
+    id_hasheado: str | None
     autoridad_clave: str | None
     autoridad_descripcion: str | None
     autoridad_descripcion_corta: str | None
@@ -76,7 +77,7 @@ class PagResultadoIn(BaseModel):
 class PagResultadoOut(BaseModel):
     """Esquema para entregar al carro de pagos"""
 
-    pag_pago_id: int | None
+    id_hasheado: str | None
     autoridad_clave: str | None
     autoridad_descripcion: str | None
     autoridad_descripcion_corta: str | None

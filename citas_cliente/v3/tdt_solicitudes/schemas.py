@@ -18,7 +18,7 @@ class TdtSolicitudIn(BaseModel):
     cit_cliente_apellido_segundo: str | None
     cit_cliente_telefono: str | None
     tdt_partido_siglas: str | None
-    municipio_id: int | None
+    municipio_id_hasheado: str | None
     cargo: str | None
     principio: str | None
     domicilio_calle: str | None
@@ -36,7 +36,7 @@ class TdtSolicitudIn(BaseModel):
 class TdtSolicitudOut(TdtSolicitudIn):
     """Esquema para entregar solicitudes"""
 
-    id: int | None
+    id_hasheado: str | None
     municipio_nombre: str | None
     tdt_partido_nombre: str | None
     ya_se_envio_acuse: bool | None

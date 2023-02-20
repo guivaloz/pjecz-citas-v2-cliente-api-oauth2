@@ -5,6 +5,7 @@ from typing import Any
 from sqlalchemy.orm import Session
 
 from lib.exceptions import CitasIsDeletedError, CitasNotExistsError
+from lib.hashids import descifrar_id
 from lib.safe_string import safe_clave
 
 from ...core.pag_tramites_servicios.models import PagTramiteServicio
@@ -12,7 +13,7 @@ from ...core.pag_tramites_servicios.models import PagTramiteServicio
 
 def get_pag_tramites_servicios(db: Session) -> Any:
     """Consultar los tramites y servicios activos"""
-    return db.query(PagTramiteServicio).filter_by(estatus="A").order_by(PagTramiteServicio.id)
+    return db.query(PagTramiteServicio).filter_by(estatus="A").order_by(PagTramiteServicio.clave)
 
 
 def get_pag_tramite_servicio(db: Session, pag_tramite_servicio_id: int) -> PagTramiteServicio:
@@ -23,6 +24,14 @@ def get_pag_tramite_servicio(db: Session, pag_tramite_servicio_id: int) -> PagTr
     if pag_tramite_servicio.estatus != "A":
         raise CitasIsDeletedError("No es activo ese tramite y servicio, está eliminado")
     return pag_tramite_servicio
+
+
+def get_pag_tramite_servicio_from_id_hasheado(db: Session, pag_tramite_servicio_id_hasheado: str) -> PagTramiteServicio:
+    """Consultar un tramite y servicio por su id hasheado"""
+    pag_tramite_servicio_id = descifrar_id(pag_tramite_servicio_id_hasheado)
+    if pag_tramite_servicio_id is None:
+        raise CitasNotExistsError("El ID del tramite y servicio no es válido")
+    return get_pag_tramite_servicio(db, pag_tramite_servicio_id)
 
 
 def get_pag_tramite_servicio_from_clave(db: Session, clave: str) -> PagTramiteServicio:

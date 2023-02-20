@@ -9,7 +9,7 @@ from lib.schemas_base import OneBaseOut
 class MunicipioOut(BaseModel):
     """Esquema para entregar comentario"""
 
-    id: int | None
+    id_hasheado: str | None
     nombre: str | None
 
     class Config:

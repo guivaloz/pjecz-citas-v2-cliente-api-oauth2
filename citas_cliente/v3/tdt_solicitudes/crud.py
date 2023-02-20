@@ -12,50 +12,38 @@ from lib.safe_string import safe_integer, safe_string, safe_url
 from ...core.cit_clientes.models import CitCliente
 from ...core.tdt_solicitudes.models import TdtSolicitud
 from ..cit_clientes.crud import get_cit_cliente, create_cit_cliente
-from ..municipios.crud import get_municipio
+from ..municipios.crud import get_municipio_from_id_hasheado
 from ..tdt_partidos.crud import get_tdt_partido_from_siglas
 from .schemas import TdtSolicitudIn, TdtSolicitudOut
 
 
-def get_tdt_solicitudes(
-    db: Session,
-    cit_cliente_id: int,
-) -> Any:
+def get_tdt_solicitudes(db: Session, cit_cliente_id: int) -> Any:
     """Consultar las solicitudes activos"""
-
     # Consultar
     consulta = db.query(TdtSolicitud)
-
     # Filtrar por cliente
     cit_cliente = get_cit_cliente(db, cit_cliente_id)
     consulta = consulta.filter(TdtSolicitud.cit_cliente == cit_cliente)
-
     # Entregar
-    return consulta.filter_by(estatus="A").order_by(TdtSolicitud.id)
+    return consulta.filter_by(estatus="A").order_by(TdtSolicitud.id.desc())
 
 
-def get_tdt_solicitud(
-    db: Session,
-    tdt_solicitud_id_hasheado: str,
-) -> TdtSolicitud:
+def get_tdt_solicitud(db: Session, tdt_solicitud_id: int) -> TdtSolicitud:
     """Consultar una solicitud por su id hasheado"""
-
-    # Descrifrar el ID hasheado
-    tdt_solicitud_id = descifrar_id(tdt_solicitud_id_hasheado)
-    if tdt_solicitud_id is None:
-        raise CitasNotExistsError("El ID de la solicitud no es válida")
-
-    # Consultar
     tdt_solicitud = db.query(TdtSolicitud).get(tdt_solicitud_id)
-
-    # Validar
     if tdt_solicitud is None:
         raise CitasNotExistsError("No existe ese solicitud")
     if tdt_solicitud.estatus != "A":
         raise CitasIsDeletedError("No es activo ese solicitud, está eliminado")
-
-    # Entregar
     return tdt_solicitud
+
+
+def get_tdt_solicitud_from_id_hasheado(db: Session, tdt_solicitud_id_hasheado: str) -> TdtSolicitud:
+    """Consultar un solicitud por su id hasheado"""
+    tdt_solicitud_id = descifrar_id(tdt_solicitud_id_hasheado)
+    if tdt_solicitud_id is None:
+        raise CitasNotExistsError("El ID del solicitud no es válido")
+    return get_tdt_solicitud(db, tdt_solicitud_id)
 
 
 def create_tdt_solicitud(
@@ -65,7 +53,7 @@ def create_tdt_solicitud(
     """Crear una solicitud"""
 
     # Validar municipio
-    municipio = get_municipio(db, datos.municipio_id)
+    municipio = get_municipio_from_id_hasheado(db, datos.municipio_id_hasheado)
 
     # Validar partido
     tdt_partido = get_tdt_partido_from_siglas(db, datos.tdt_partido_siglas)

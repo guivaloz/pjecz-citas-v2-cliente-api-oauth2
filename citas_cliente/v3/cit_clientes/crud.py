@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 
 from config.settings import LIMITE_CITAS_PENDIENTES
 from lib.exceptions import CitasIsDeletedError, CitasNotExistsError, CitasNotValidParamError
+from lib.hashids import descifrar_id
 from lib.safe_string import safe_curp, safe_email, safe_string, safe_telefono
 
 from ...core.cit_clientes.models import CitCliente
@@ -27,6 +28,14 @@ def get_cit_cliente(db: Session, cit_cliente_id: int) -> Any:
     if cit_cliente.estatus != "A":
         raise CitasIsDeletedError("No es activo ese cliente, está eliminado")
     return cit_cliente
+
+
+def get_cit_cliente_from_id_hasheado(db: Session, cit_cliente_id_hasheado: str) -> CitCliente:
+    """Consultar un cliente por su id hasheado"""
+    cit_cliente_id = descifrar_id(cit_cliente_id_hasheado)
+    if cit_cliente_id is None:
+        raise CitasNotExistsError("El ID del cliente no es válido")
+    return get_cit_cliente(db, cit_cliente_id)
 
 
 def get_cit_cliente_from_curp(db: Session, curp: str) -> CitCliente:

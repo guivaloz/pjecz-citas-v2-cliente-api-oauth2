@@ -11,7 +11,8 @@
       "from sqlalchemy.orm import Session",
       "",
       "from lib.exceptions import CitasIsDeletedError, CitasNotExistsError",
-      "from lib.safe_string import safe_string",
+      "from lib.hashids import descifrar_id",
+      "from lib.safe_string import safe_clave, safe_string",
       "",
       "from ...core.${2:plural}.models import ${3:Clase}",
       "",
@@ -42,6 +43,51 @@
       "\tif ${5:singular}.estatus != \"A\":",
       "\t\traise CitasIsDeletedError(\"No es activo ese ${6:comentario}, está eliminado\")",
       "\treturn ${5:singular}",
+      "",
+      "",
+      "def get_${5:singular}_from_id_hasheado(db: Session, ${5:singular}_id_hasheado: str) -> ${3:Clase}:",
+      "\t\"\"\" Consultar un ${6:comentario} por su id hasheado \"\"\"",
+      "\t${5:singular}_id = descifrar_id(${5:singular}_id_hasheado)",
+      "\tif ${5:singular}_id is None:",
+      "\t\traise CitasNotExistsError(\"El ID del ${6:comentario} no es válido\")",
+      "\treturn get_${5:singular}(db, ${5:singular}_id)",
+      "",
+      ""
+    ],
+    "description": "Contenido para crud.py"
+  },
+  "FastAPI crud get from id hasheado": {
+    "scope": "python",
+    "prefix": "fcrud3_get_from_id_hasheado",
+    "body": [
+      "def get_${1:singular}_from_id_hasheado(db: Session, ${1:singular}_id_hasheado: str) -> ${2:Clase}:",
+      "\t\"\"\" Consultar un ${3:comentario} por su id hasheado \"\"\"",
+      "\t${1:singular}_id = descifrar_id(${1:singular}_id_hasheado)",
+      "\tif ${1:singular}_id is None:",
+      "\t\traise CitasNotExistsError(\"El ID del ${3:comentario} no es válido\")",
+      "\treturn get_${1:singular}(db, ${1:singular}_id)",
+      "",
+      ""
+    ],
+    "description": "Contenido para crud.py"
+  },
+  "FastAPI crud get from clave": {
+    "scope": "python",
+    "prefix": "fcrud3_get_from_clave",
+    "body": [
+      "def get_${1:singular}_from_clave(db: Session, clave: str) -> ${2:Clase}:",
+      "\t\"\"\" Consultar un ${3:comentario} por su clave \"\"\"",
+      "\ttry:",
+      "\t\tclave = safe_clave(clave)",
+      "\texcept ValueError as error:",
+      "\t\traise ValueError(\"Es incorrecta la clave del ${3:comentario}\") from error",
+      "\t${1:singular} = db.query(${2:Clase}).filter_by(clave=clave).first()",
+      "\tif ${1:singular} is None:",
+      "\t\traise CitasNotExistsError(\"No existe ese ${3:comentario}\")",
+      "\tif ${1:singular}.estatus != \"A\":",
+      "\t\traise CitasIsDeletedError(\"No es activo ese ${3:comentario}, está eliminado\")",
+      "\treturn ${1:singular}",
+      "",
       ""
     ],
     "description": "Contenido para crud.py"
