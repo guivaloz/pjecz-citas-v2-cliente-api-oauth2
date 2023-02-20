@@ -16,45 +16,33 @@ from ..cit_clientes.crud import get_cit_cliente, create_cit_cliente
 from .schemas import PpaSolicitudIn, PpaSolicitudOut
 
 
-def get_ppa_solicitudes(
-    db: Session,
-    cit_cliente_id: int,
-) -> Any:
+def get_ppa_solicitudes(db: Session, cit_cliente_id: int) -> Any:
     """Consultar las solicitudes activas"""
-
     # Consulta
     consulta = db.query(PpaSolicitud)
-
     # Filtrar por cliente
     cit_cliente = get_cit_cliente(db, cit_cliente_id)
     consulta = consulta.filter(PpaSolicitud.cit_cliente == cit_cliente)
-
     # Entregar
-    return consulta.filter_by(estatus="A").order_by(PpaSolicitud.id)
+    return consulta.filter_by(estatus="A").order_by(PpaSolicitud.id.desc())
 
 
-def get_ppa_solicitud(
-    db: Session,
-    ppa_solicitud_id_hasheado: str,
-) -> PpaSolicitud:
+def get_ppa_solicitud(db: Session, ppa_solicitud_id: int) -> PpaSolicitud:
     """Consultar una solicitud por su id hasheado"""
-
-    # Descrifrar el ID hasheado
-    ppa_solicitud_id = descifrar_id(ppa_solicitud_id_hasheado)
-    if ppa_solicitud_id is None:
-        raise CitasNotExistsError("El ID de la solicitud no es válida")
-
-    # Consultar
     ppa_solicitud = db.query(PpaSolicitud).get(ppa_solicitud_id)
-
-    # Validar
     if ppa_solicitud is None:
         raise CitasNotExistsError("No existe ese solicitud")
     if ppa_solicitud.estatus != "A":
         raise CitasIsDeletedError("No es activo ese solicitud, está eliminado")
-
-    # Entregar
     return ppa_solicitud
+
+
+def get_ppa_solicitud_from_id_hasheado(db: Session, ppa_solicitud_id_hasheado: str) -> PpaSolicitud:
+    """Consultar una solicitud por su id hasheado"""
+    ppa_solicitud_id = descifrar_id(ppa_solicitud_id_hasheado)
+    if ppa_solicitud_id is None:
+        raise CitasNotExistsError("El ID del solicitud no es válido")
+    return get_ppa_solicitud(db, ppa_solicitud_id)
 
 
 def create_ppa_solicitud(

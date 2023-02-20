@@ -9,7 +9,7 @@ from lib.schemas_base import OneBaseOut
 class PagTramiteServicioOut(BaseModel):
     """Esquema para entregar tramites y servicios"""
 
-    id: int | None
+    id_hasheado: str | None
     clave: str | None
     descripcion: str | None
     costo: float | None

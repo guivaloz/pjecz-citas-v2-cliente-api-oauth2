@@ -34,3 +34,8 @@ class UniversalMixin:
             return descifrado[0]
         except IndexError:
             return None
+
+    @property
+    def id_hasheado(self):
+        """Entregar el ID hasheado"""
+        return self.encode_id()

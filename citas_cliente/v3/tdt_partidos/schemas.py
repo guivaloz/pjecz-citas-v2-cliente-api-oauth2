@@ -9,7 +9,7 @@ from lib.schemas_base import OneBaseOut
 class TdtPartidoOut(BaseModel):
     """Esquema para entregar partidos"""
 
-    id: int | None
+    id_hasheado: str | None
     nombre: str | None
     siglas: str | None
 

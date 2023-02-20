@@ -35,7 +35,7 @@ class PpaSolicitudIn(BaseModel):
 class PpaSolicitudOut(PpaSolicitudIn):
     """Esquema para entregar solicitudes"""
 
-    id: int | None
+    id_hasheado: str | None
     autoridad_descripcion: str | None
     autoridad_descripcion_corta: str | None
     distrito_nombre: str | None

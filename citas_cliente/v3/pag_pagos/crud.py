@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 
 from config.settings import LOCAL_HUSO_HORARIO, LIMITE_CITAS_PENDIENTES
 from lib.exceptions import CitasAnyError, CitasIsDeletedError, CitasNotExistsError, CitasNotValidParamError
-from lib.hashids import descifrar_id
+from lib.hashids import cifrar_id, descifrar_id
 from lib.safe_string import safe_curp, safe_email, safe_integer, safe_string, safe_telefono
 from lib.santander_web_pay_plus import create_pay_link, convert_xml_to_dict, decrypt_chain, RESPUESTA_EXITO
 
@@ -21,52 +21,38 @@ from ..pag_tramites_servicios.crud import get_pag_tramite_servicio_from_clave
 from .schemas import PagCarroIn, PagCarroOut, PagResultadoIn, PagResultadoOut
 
 
-def get_pag_pagos(
-    db: Session,
-    cit_cliente_id: int,
-    estado: str = None,
-) -> Any:
+def get_pag_pagos(db: Session, cit_cliente_id: int, estado: str = None) -> Any:
     """Consultar los pagos activos"""
-
     # Consulta
     consulta = db.query(PagPago)
-
     # Filtrar por cliente
     cit_cliente = get_cit_cliente(db, cit_cliente_id)
     consulta = consulta.filter(PagPago.cit_cliente == cit_cliente)
-
     # Filtrar por estado
     if estado is not None:
         estado = safe_string(estado)
         if estado in PagPago.ESTADOS:
             consulta = consulta.filter_by(estado=estado)
-
     # Entregar
-    return consulta.filter_by(estatus="A").order_by(PagPago.id)
+    return consulta.filter_by(estatus="A").order_by(PagPago.id.desc())
 
 
-def get_pag_pago(
-    db: Session,
-    pag_pago_id_hasheado: str,
-) -> PagPago:
-    """Consultar un pago por su id hasheado"""
-
-    # Descrifrar el ID hasheado
-    pag_pago_id = descifrar_id(pag_pago_id_hasheado)
-    if pag_pago_id is None:
-        raise CitasNotExistsError("El ID del pago no es válido")
-
-    # Consultar
+def get_pag_pago(db: Session, pag_pago_id: int) -> PagPago:
+    """Consultar un pago por su id"""
     pag_pago = db.query(PagPago).get(pag_pago_id)
-
-    # Validar
     if pag_pago is None:
         raise CitasNotExistsError("No existe ese pago")
     if pag_pago.estatus != "A":
         raise CitasIsDeletedError("No es activo ese pago, está eliminado")
-
-    # Entregar
     return pag_pago
+
+
+def get_pag_pago_from_id_hasheado(db: Session, pag_pago_id_hasheado: str) -> PagPago:
+    """Consultar un pago por su id hasheado"""
+    pag_pago_id = descifrar_id(pag_pago_id_hasheado)
+    if pag_pago_id is None:
+        raise CitasNotExistsError("El ID del pago no es válido")
+    return get_pag_pago(db, pag_pago_id)
 
 
 def create_payment(
@@ -191,6 +177,7 @@ def create_payment(
 
     # Entregar
     return PagCarroOut(
+        id_hasheado=cifrar_id(pag_pago.id),
         autoridad_clave=autoridad.clave,
         autoridad_descripcion=autoridad.descripcion,
         autoridad_descripcion_corta=autoridad.descripcion_corta,
@@ -247,7 +234,7 @@ def update_payment(
 
     # Entregar
     return PagResultadoOut(
-        pag_pago_id=pag_pago.id,
+        id_hasheado=cifrar_id(pag_pago.id),
         autoridad_clave=pag_pago.autoridad.clave,
         autoridad_descripcion=pag_pago.autoridad.descripcion,
         autoridad_descripcion_corta=pag_pago.autoridad.descripcion_corta,

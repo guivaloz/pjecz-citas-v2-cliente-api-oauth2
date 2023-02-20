@@ -16,9 +16,7 @@ pag_tramites_servicios = APIRouter(prefix="/v3/pag_tramites_servicios", tags=["p
 
 
 @pag_tramites_servicios.get("", response_model=CustomPage[PagTramiteServicioOut])
-async def listado_pag_tramites_servicios(
-    db: Session = Depends(get_db),
-):
+async def listado_pag_tramites_servicios(db: Session = Depends(get_db)):
     """Listado de tramites y servicios"""
     try:
         resultados = get_pag_tramites_servicios(db=db)
@@ -28,10 +26,7 @@ async def listado_pag_tramites_servicios(
 
 
 @pag_tramites_servicios.get("/{clave}", response_model=OnePagTramiteServicioOut)
-async def detalle_pag_tramite_servicio(
-    clave: str,
-    db: Session = Depends(get_db),
-):
+async def detalle_pag_tramite_servicio(clave: str, db: Session = Depends(get_db)):
     """Detalle de un tramite y servicio a partir de su clave"""
     try:
         pag_tramite_servicio = get_pag_tramite_servicio_from_clave(
