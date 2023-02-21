@@ -30,5 +30,5 @@ def get_municipio_from_id_hasheado(db: Session, municipio_id_hasheado: str) -> M
     """Consultar un municipio por su id_hasheado"""
     municipio_id = descifrar_id(municipio_id_hasheado)
     if municipio_id is None:
-        raise CitasNotExistsError("El ID del pago no es válido")
+        raise CitasNotExistsError("El ID del municipio no es válido")
     return get_municipio(db, municipio_id)

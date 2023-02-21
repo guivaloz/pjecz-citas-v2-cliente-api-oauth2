@@ -20,9 +20,9 @@ def get_pag_tramite_servicio(db: Session, pag_tramite_servicio_id: int) -> PagTr
     """Consultar un tramite y servicio por su id"""
     pag_tramite_servicio = db.query(PagTramiteServicio).get(pag_tramite_servicio_id)
     if pag_tramite_servicio is None:
-        raise CitasNotExistsError("No existe ese tramite y servicio")
+        raise CitasNotExistsError("No existe ese trámite o servicio")
     if pag_tramite_servicio.estatus != "A":
-        raise CitasIsDeletedError("No es activo ese tramite y servicio, está eliminado")
+        raise CitasIsDeletedError("No es activo ese trámite o servicio, está eliminado")
     return pag_tramite_servicio
 
 
@@ -30,7 +30,7 @@ def get_pag_tramite_servicio_from_id_hasheado(db: Session, pag_tramite_servicio_
     """Consultar un tramite y servicio por su id hasheado"""
     pag_tramite_servicio_id = descifrar_id(pag_tramite_servicio_id_hasheado)
     if pag_tramite_servicio_id is None:
-        raise CitasNotExistsError("El ID del tramite y servicio no es válido")
+        raise CitasNotExistsError("El ID del trámite o servicio no es válido")
     return get_pag_tramite_servicio(db, pag_tramite_servicio_id)
 
 
@@ -42,7 +42,7 @@ def get_pag_tramite_servicio_from_clave(db: Session, clave: str) -> PagTramiteSe
         raise ValueError("Es incorrecta la clave del tramite o servicio") from error
     pag_tramite_servicio = db.query(PagTramiteServicio).filter_by(clave=clave).first()
     if pag_tramite_servicio is None:
-        raise CitasNotExistsError("No existe el tramite o servicio")
+        raise CitasNotExistsError("No existe ese trámite o servicio")
     if pag_tramite_servicio.estatus != "A":
-        raise CitasIsDeletedError("No es activo el tramite o servicio, está eliminado")
+        raise CitasIsDeletedError("No es activo ese trámite o servicio, está eliminado")
     return pag_tramite_servicio

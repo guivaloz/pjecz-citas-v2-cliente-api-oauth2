@@ -31,9 +31,9 @@ def get_ppa_solicitud(db: Session, ppa_solicitud_id: int) -> PpaSolicitud:
     """Consultar una solicitud por su id hasheado"""
     ppa_solicitud = db.query(PpaSolicitud).get(ppa_solicitud_id)
     if ppa_solicitud is None:
-        raise CitasNotExistsError("No existe ese solicitud")
+        raise CitasNotExistsError("No existe esa solicitud")
     if ppa_solicitud.estatus != "A":
-        raise CitasIsDeletedError("No es activo ese solicitud, está eliminado")
+        raise CitasIsDeletedError("No es activa esa solicitud, está eliminada")
     return ppa_solicitud
 
 
@@ -41,7 +41,7 @@ def get_ppa_solicitud_from_id_hasheado(db: Session, ppa_solicitud_id_hasheado: s
     """Consultar una solicitud por su id hasheado"""
     ppa_solicitud_id = descifrar_id(ppa_solicitud_id_hasheado)
     if ppa_solicitud_id is None:
-        raise CitasNotExistsError("El ID del solicitud no es válido")
+        raise CitasNotExistsError("El ID de la solicitud no es válida")
     return get_ppa_solicitud(db, ppa_solicitud_id)
 
 
