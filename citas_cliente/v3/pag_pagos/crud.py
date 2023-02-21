@@ -170,7 +170,7 @@ def create_payment(
             email=email,
             service_detail=pag_tramite_servicio.descripcion,
             cit_client_id=cit_cliente.id,
-            amount=float(pag_tramite_servicio.costo),
+            amount=float(total),
         )
     except CitasAnyError as error:
         raise error
