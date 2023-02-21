@@ -32,9 +32,9 @@ def get_tdt_solicitud(db: Session, tdt_solicitud_id: int) -> TdtSolicitud:
     """Consultar una solicitud por su id hasheado"""
     tdt_solicitud = db.query(TdtSolicitud).get(tdt_solicitud_id)
     if tdt_solicitud is None:
-        raise CitasNotExistsError("No existe ese solicitud")
+        raise CitasNotExistsError("No existe esa solicitud")
     if tdt_solicitud.estatus != "A":
-        raise CitasIsDeletedError("No es activo ese solicitud, está eliminado")
+        raise CitasIsDeletedError("No es activa esa solicitud, está eliminada")
     return tdt_solicitud
 
 
@@ -42,7 +42,7 @@ def get_tdt_solicitud_from_id_hasheado(db: Session, tdt_solicitud_id_hasheado: s
     """Consultar un solicitud por su id hasheado"""
     tdt_solicitud_id = descifrar_id(tdt_solicitud_id_hasheado)
     if tdt_solicitud_id is None:
-        raise CitasNotExistsError("El ID del solicitud no es válido")
+        raise CitasNotExistsError("El ID de la solicitud no es válida")
     return get_tdt_solicitud(db, tdt_solicitud_id)
 
 

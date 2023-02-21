@@ -31,7 +31,7 @@ def get_autoridad_from_id_hasheado(db: Session, autoridad_id_hasheado: str) -> A
     """Consultar un autoridad por su id hasheado"""
     autoridad_id = descifrar_id(autoridad_id_hasheado)
     if autoridad_id is None:
-        raise CitasNotExistsError("El ID del autoridad no es válido")
+        raise CitasNotExistsError("El ID de la autoridad no es válido")
     return get_autoridad(db, autoridad_id)
 
 
