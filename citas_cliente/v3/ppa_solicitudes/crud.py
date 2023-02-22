@@ -118,12 +118,12 @@ def create_ppa_solicitud(
     cit_cliente = create_cit_cliente(
         db,
         CitCliente(
-            nombres=datos.nombres,
-            apellido_primero=datos.apellido_primero,
-            apellido_segundo=datos.apellido_segundo,
-            curp=datos.curp,
-            email=datos.email,
-            telefono=datos.telefono,
+            nombres=datos.cit_cliente_nombres,
+            apellido_primero=datos.cit_cliente_apellido_primero,
+            apellido_segundo=datos.cit_cliente_apellido_segundo,
+            curp=datos.cit_cliente_curp,
+            email=datos.cit_cliente_email,
+            telefono=datos.cit_cliente_telefono,
         ),
     )
 
