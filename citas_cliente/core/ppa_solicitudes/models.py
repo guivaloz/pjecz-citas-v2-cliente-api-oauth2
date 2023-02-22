@@ -12,7 +12,7 @@ class PpaSolicitud(Base, UniversalMixin):
     """PpaSolicitud"""
 
     # Nombre de la tabla
-    __tablename__ = "ppa_slicitudes"
+    __tablename__ = "ppa_solicitudes"
 
     # Clave primaria
     id = Column(Integer, primary_key=True)
