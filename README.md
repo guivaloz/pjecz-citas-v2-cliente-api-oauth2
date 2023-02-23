@@ -89,6 +89,9 @@ Cree un archivo para las variables de entorno `.env`
     POLL_SERVICE_URL=http://127.0.0.1:3000/poll_service
     POLL_SYSTEM_URL=http://127.0.0.1:3000/poll_system
 
+    # Directorio donde se guardan los archivos subidos
+    UPLOADS_DIR=
+
     # Arrancar con gunicorn o uvicorn
     ARRANCAR=uvicorn
 
@@ -120,6 +123,7 @@ Para Bash Shell cree un archivo `.bashrc` con este contenido
     echo "   SALT: ${SALT}"
     echo "   SECRET_KEY: ${SECRET_KEY}"
     echo "   TASK_QUEUE: ${TASK_QUEUE}"
+    echo "   UPLOADS_DIR: ${UPLOADS_DIR}"
     echo "   WPP_COMMERCE_ID: ${WPP_COMMERCE_ID}"
     echo "   WPP_COMPANY_ID: ${WPP_COMPANY_ID}"
     echo "   WPP_BRANCH_ID: ${WPP_BRANCH_ID}"

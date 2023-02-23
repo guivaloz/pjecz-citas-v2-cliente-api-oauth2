@@ -1,7 +1,7 @@
 """
 Pago de Pensiones Alimenticias - Solicitudes V3, rutas (paths)
 """
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, File, UploadFile
 from sqlalchemy.orm import Session
 
 from lib.database import get_db
@@ -14,12 +14,21 @@ ppa_solicitudes = APIRouter(prefix="/v3/ppa_solicitudes", tags=["pago de pension
 
 
 @ppa_solicitudes.post("/solicitar", response_model=OnePpaSolicitudOut)
-async def solicitar(datos: PpaSolicitudIn, db: Session = Depends(get_db)):
+async def solicitar(
+    datos: PpaSolicitudIn,
+    identificacion_oficial: UploadFile = File(...),
+    comprobante_domicilio: UploadFile = File(...),
+    autorizacion: UploadFile = File(...),
+    db: Session = Depends(get_db),
+):
     """Recibir, crear y entregar la solicitud de pago de pensiones alimenticias"""
     try:
         ppa_solicitud_out = create_ppa_solicitud(
             db=db,
             datos=datos,
+            identificacion_oficial=identificacion_oficial.file.read(),
+            comprobante_domicilio=comprobante_domicilio.file.read(),
+            autorizacion=autorizacion.file.read(),
         )
     except CitasAnyError as error:
         return OnePpaSolicitudOut(success=False, message=str(error))

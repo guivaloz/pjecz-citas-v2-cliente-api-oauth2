@@ -47,3 +47,6 @@ SALT = os.environ.get("SALT", "Esta es una muy mala cadena aleatoria")
 # URLs de las encuestas
 POLL_SERVICE_URL = os.environ.get("POLL_SERVICE_URL", "")
 POLL_SYSTEM_URL = os.environ.get("POLL_SYSTEM_URL", "")
+
+# Directorio donde se guardan los archivos subidos
+UPLOADS_DIR = os.environ.get("UPLOADS_DIR", "")

@@ -6,6 +6,7 @@ from typing import Any
 
 from sqlalchemy.orm import Session
 
+from config.settings import UPLOADS_DIR
 from lib.exceptions import CitasIsDeletedError, CitasNotExistsError, CitasNotValidParamError
 from lib.hashids import descifrar_id
 from lib.safe_string import safe_expediente, safe_integer, safe_filename_image, safe_string, safe_url
@@ -15,6 +16,8 @@ from ...core.ppa_solicitudes.models import PpaSolicitud
 from ..autoridades.crud import get_autoridad_from_clave
 from ..cit_clientes.crud import get_cit_cliente, create_cit_cliente
 from .schemas import PpaSolicitudIn, PpaSolicitudOut
+
+CLOUD_STORAGE_URL = "https://noexiste.com"
 
 
 def get_ppa_solicitudes(db: Session, cit_cliente_id: int) -> Any:
@@ -49,6 +52,9 @@ def get_ppa_solicitud_from_id_hasheado(db: Session, ppa_solicitud_id_hasheado: s
 def create_ppa_solicitud(
     db: Session,
     datos: PpaSolicitudIn,
+    identificacion_oficial: bytes,
+    comprobante_domicilio: bytes,
+    autorizacion: bytes,
 ) -> PpaSolicitudOut:
     """Crear una solicitud"""
 
@@ -127,6 +133,30 @@ def create_ppa_solicitud(
             telefono=datos.cit_cliente_telefono,
         ),
     )
+
+    # Guardar la identificación oficial
+    identificacion_oficial_tipo = identificacion_oficial_archivo.split(".")[-1]
+    identificacion_oficial_archivo = f"{ppa_solicitud.encode_id()}-io.{identificacion_oficial_tipo}"
+    if UPLOADS_DIR != "":
+        with open(f"{UPLOADS_DIR}/{identificacion_oficial_archivo}", "wb") as f:
+            f.write(identificacion_oficial)
+    identificacion_oficial_url = f"{CLOUD_STORAGE_URL}/{identificacion_oficial_archivo}"
+
+    # Guardar el comprobante de domicilio
+    comprobante_domicilio_tipo = comprobante_domicilio_archivo.split(".")[-1]
+    comprobante_domicilio_archivo = f"{ppa_solicitud.encode_id()}-io.{comprobante_domicilio_tipo}"
+    if UPLOADS_DIR != "":
+        with open(f"{UPLOADS_DIR}/{comprobante_domicilio_archivo}", "wb") as f:
+            f.write(comprobante_domicilio)
+    comprobante_domicilio_url = f"{CLOUD_STORAGE_URL}/{comprobante_domicilio_archivo}"
+
+    # Guardar la autorizacion
+    autorizacion_tipo = autorizacion_archivo.split(".")[-1]
+    autorizacion_archivo = f"{ppa_solicitud.encode_id()}-io.{autorizacion_tipo}"
+    if UPLOADS_DIR != "":
+        with open(f"{UPLOADS_DIR}/{autorizacion_archivo}", "wb") as f:
+            f.write(autorizacion)
+    autorizacion_url = f"{CLOUD_STORAGE_URL}/{autorizacion_archivo}"
 
     # Definir la fecha de caducidad que sea dentro de 30 días
     caducidad = datetime.now() + timedelta(days=30)
