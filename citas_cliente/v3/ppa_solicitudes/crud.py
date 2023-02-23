@@ -1,13 +1,14 @@
 """
 Pago de Pensiones Alimenticias - Solicitudes V3, CRUD (create, read, update, and delete)
 """
+from datetime import datetime, timedelta
 from typing import Any
 
 from sqlalchemy.orm import Session
 
 from lib.exceptions import CitasIsDeletedError, CitasNotExistsError, CitasNotValidParamError
 from lib.hashids import descifrar_id
-from lib.safe_string import safe_integer, safe_string, safe_url
+from lib.safe_string import safe_expediente, safe_integer, safe_filename_image, safe_string, safe_url
 
 from ...core.cit_clientes.models import CitCliente
 from ...core.ppa_solicitudes.models import PpaSolicitud
@@ -80,12 +81,12 @@ def create_ppa_solicitud(
         raise CitasNotValidParamError("La compañía telefónica no es válida")
 
     # Validar número de expediente
-    numero_expediente = safe_string(datos.numero_expediente)
+    numero_expediente = safe_expediente(datos.numero_expediente)
     if numero_expediente == "":
         raise CitasNotValidParamError("El número de expediente no es válido")
 
     # Validar identificación oficial archivo
-    identificacion_oficial_archivo = safe_string(datos.identificacion_oficial_archivo, do_unidecode=False, to_uppercase=False)
+    identificacion_oficial_archivo = safe_filename_image(datos.identificacion_oficial_archivo)
     if identificacion_oficial_archivo == "":
         raise CitasNotValidParamError("El archivo de la identificación oficial no es válido")
 
@@ -95,7 +96,7 @@ def create_ppa_solicitud(
         raise CitasNotValidParamError("El URL de la identificación oficial no es válido")
 
     # Validar comprobante de domicilio archivo
-    comprobante_domicilio_archivo = safe_string(datos.comprobante_domicilio_archivo, do_unidecode=False, to_uppercase=False)
+    comprobante_domicilio_archivo = safe_filename_image(datos.comprobante_domicilio_archivo)
     if comprobante_domicilio_archivo == "":
         raise CitasNotValidParamError("El archivo del comprobante de domicilio no es válido")
 
@@ -105,7 +106,7 @@ def create_ppa_solicitud(
         raise CitasNotValidParamError("El URL del comprobante de domicilio no es válido")
 
     # Validar autorización archivo
-    autorizacion_archivo = safe_string(datos.autorizacion_archivo, do_unidecode=False, to_uppercase=False)
+    autorizacion_archivo = safe_filename_image(datos.autorizacion_archivo)
     if autorizacion_archivo == "":
         raise CitasNotValidParamError("El archivo de la autorización no es válido")
 
@@ -127,6 +128,9 @@ def create_ppa_solicitud(
         ),
     )
 
+    # Definir la fecha de caducidad que sea dentro de 30 días
+    caducidad = datetime.now() + timedelta(days=30)
+
     # Crear solicitud
     ppa_solicitud = PpaSolicitud(
         autoridad=autoridad,
@@ -143,6 +147,7 @@ def create_ppa_solicitud(
         comprobante_domicilio_url=comprobante_domicilio_url,
         autorizacion_archivo=autorizacion_archivo,
         autorizacion_url=autorizacion_url,
+        caducidad=caducidad.date(),
     )
     db.add(ppa_solicitud)
     db.commit()

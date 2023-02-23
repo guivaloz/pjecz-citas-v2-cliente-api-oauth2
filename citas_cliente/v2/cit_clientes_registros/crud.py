@@ -22,9 +22,9 @@ def request_new_account(db: Session, registro: CitClienteRegistroIn) -> CitClien
     """Solicitar la creacion de una nueva cuenta"""
 
     # Procesar datos de entrada con las funciones 'safe'
-    nombres = safe_string(registro.nombres)
-    apellido_primero = safe_string(registro.apellido_primero)
-    apellido_segundo = safe_string(registro.apellido_segundo)
+    nombres = safe_string(registro.nombres, save_enie=True)
+    apellido_primero = safe_string(registro.apellido_primero, save_enie=True)
+    apellido_segundo = safe_string(registro.apellido_segundo, save_enie=True)
     curp = safe_string(registro.curp)
     email = registro.email.strip().lower()
     telefono = registro.telefono.strip()
