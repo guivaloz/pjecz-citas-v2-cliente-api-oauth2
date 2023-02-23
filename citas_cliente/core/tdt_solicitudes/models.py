@@ -2,7 +2,7 @@
 Tres de Tres - Solicitudes, modelos
 """
 from collections import OrderedDict
-from sqlalchemy import Boolean, Column, Enum, ForeignKey, Integer, String
+from sqlalchemy import Boolean, Column, Date, Enum, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
 from lib.database import Base
@@ -66,6 +66,9 @@ class TdtSolicitud(Base, UniversalMixin):
 
     # Columnas mensajes
     ya_se_envio_acuse = Column(Boolean, nullable=False, default=False)
+
+    # Columna caducidad
+    caducidad = Column(Date, nullable=False)
 
     @property
     def cit_cliente_curp(self):

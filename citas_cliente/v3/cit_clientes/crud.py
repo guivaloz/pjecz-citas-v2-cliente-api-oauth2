@@ -69,23 +69,16 @@ def get_cit_cliente_from_email(db: Session, email: str) -> CitCliente:
 def create_cit_cliente(db: Session, cit_cliente: CitCliente) -> CitCliente:
     """Crear un cliente"""
 
-    # Validar nombres
-    nombres = safe_string(cit_cliente.nombres, save_enie=True)
-
-    # Validar apellido primero
-    apellido_primero = safe_string(cit_cliente.apellido_primero, save_enie=True)
-
-    # Validar apellido segundo
-    apellido_segundo = safe_string(cit_cliente.apellido_segundo, save_enie=True)
-
-    # Validar CURP
-    curp = safe_curp(cit_cliente.curp)
-
-    # Validar email
-    email = safe_email(cit_cliente.email)
-
-    # Validar teléfono
-    telefono = safe_telefono(cit_cliente.telefono)
+    # Validar nombres, apellido primero, apellido segundo, CURP, email y teléfono
+    try:
+        nombres = safe_string(cit_cliente.nombres, save_enie=True)
+        apellido_primero = safe_string(cit_cliente.apellido_primero, save_enie=True)
+        apellido_segundo = safe_string(cit_cliente.apellido_segundo, save_enie=True)
+        curp = safe_curp(cit_cliente.curp)
+        email = safe_email(cit_cliente.email)
+        telefono = safe_telefono(cit_cliente.telefono)
+    except ValueError as error:
+        raise CitasNotValidParamError(f"Los datos no son válidos: {str(error)}") from error
 
     # Buscar cliente por CURP
     cit_cliente = None

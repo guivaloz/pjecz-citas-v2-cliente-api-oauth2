@@ -2,7 +2,7 @@
 Pagos Pagos, modelos
 """
 from collections import OrderedDict
-from sqlalchemy import Boolean, Column, DateTime, Enum, ForeignKey, Integer, Numeric, String, Text
+from sqlalchemy import Boolean, Column, Date, DateTime, Enum, ForeignKey, Integer, Numeric, String, Text
 from sqlalchemy.orm import relationship
 
 from lib.database import Base
@@ -18,6 +18,7 @@ class PagPago(Base, UniversalMixin):
             ("CANCELADO", "Cancelado"),  # Cuando pasa mucho tiempo y no hay respuesta del banco, se cancela
             ("PAGADO", "Pagado"),  # Cuando el banco procesa el pago con exito
             ("FALLIDO", "Fallido"),  # Cuando el banco reporta que falla el pago
+            ("ENTREGADO", "Entregado"),  # Cuando el usuario entrega el trámite o servicio
         ]
     )
 
@@ -36,7 +37,9 @@ class PagPago(Base, UniversalMixin):
     pag_tramite_servicio = relationship("PagTramiteServicio", back_populates="pag_pagos")
 
     # Columnas
+    caducidad = Column(Date, nullable=False)
     cantidad = Column(Integer, nullable=False, default=1)
+    descripcion = Column(String(256), nullable=False, default="")
     email = Column(String(256), nullable=False, default="")  # Email opcional si el cliente desea que se le envie el comprobante a otra dirección
     estado = Column(Enum(*ESTADOS, name="estados", native_enum=False), nullable=False)
     folio = Column(String(256), nullable=False, default="")

@@ -14,6 +14,9 @@ URL_REGEXP = r"^(https?:\/\/)[0-9a-z-_]*(\.[0-9a-z-_]+)*(\.[a-z]+)+(\/[0-9a-z%-_
 
 PASSWORD_REGEXP_MESSAGE = "La contrasena debe tener de 8 a 24 caracteres, comenzando con una letra y contener por lo menos una mayuscula y un numero"
 
+FILENAME_PDF_REGEXP = r"^[a-zA-Z0-9-_.]+\.pdf$"
+FILENAME_IMAGE_REGEXP = r"^[a-zA-Z0-9-_.]+\.(jpg|jpeg|png)$"
+
 
 def safe_clave(input_str):
     """Safe clave"""
@@ -125,5 +128,25 @@ def safe_url(input_str):
         return ""
     input_str = input_str.strip()
     if re.match(URL_REGEXP, input_str) is None:
+        return ""
+    return input_str
+
+
+def safe_filename_pdf(input_str):
+    """Safe filename pdf"""
+    if not isinstance(input_str, str) or input_str.strip() == "":
+        return ""
+    input_str = input_str.strip()
+    if re.match(FILENAME_PDF_REGEXP, input_str) is None:
+        return ""
+    return input_str
+
+
+def safe_filename_image(input_str):
+    """Safe filename jpg, jpeg or png"""
+    if not isinstance(input_str, str) or input_str.strip() == "":
+        return ""
+    input_str = input_str.strip()
+    if re.match(FILENAME_IMAGE_REGEXP, input_str) is None:
         return ""
     return input_str

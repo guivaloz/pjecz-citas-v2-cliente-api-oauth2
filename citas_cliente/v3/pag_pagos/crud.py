@@ -62,17 +62,17 @@ def create_payment(
     """Crear un pago"""
 
     # Validar nombres
-    nombres = safe_string(datos.nombres)
+    nombres = safe_string(datos.nombres, save_enie=True)
     if nombres == "":
         raise CitasNotValidParamError("El nombre no es valido")
 
     # Validar apellido_primero
-    apellido_primero = safe_string(datos.apellido_primero)
+    apellido_primero = safe_string(datos.apellido_primero, save_enie=True)
     if apellido_primero == "":
         raise CitasNotValidParamError("El apellido primero no es valido")
 
     # Validar apellido_segundo
-    apellido_segundo = safe_string(datos.apellido_segundo)
+    apellido_segundo = safe_string(datos.apellido_segundo, save_enie=True)
     if apellido_segundo == "":
         raise CitasNotValidParamError("El apellido segundo no es valido")
 
@@ -146,6 +146,9 @@ def create_payment(
     if total <= 0:
         raise CitasNotValidParamError("El total no es valido")
 
+    # Definir la fecha de caducidad que sea dentro de 30 días
+    caducidad = datetime.now() + timedelta(days=30)
+
     # Insertar pago
     pag_pago = PagPago(
         autoridad=autoridad,
@@ -157,6 +160,8 @@ def create_payment(
         folio="",
         total=total,
         ya_se_envio_comprobante=False,
+        caducidad=caducidad.date(),
+        descripcion="",
     )
     db.add(pag_pago)
     db.commit()

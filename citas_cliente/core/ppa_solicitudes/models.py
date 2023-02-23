@@ -1,7 +1,7 @@
 """
 Pago de Pensiones Alimenticias - Solicitudes, modelos
 """
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
+from sqlalchemy import Boolean, Column, Date, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
 from lib.database import Base
@@ -49,6 +49,9 @@ class PpaSolicitud(Base, UniversalMixin):
 
     # Columnas mensajes
     ya_se_envio_acuse = Column(Boolean, nullable=False, default=False)
+
+    # Columna caducidad
+    caducidad = Column(Date, nullable=False)
 
     @property
     def autoridad_clave(self):
