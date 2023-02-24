@@ -3,7 +3,8 @@ Prueba de PPA Solicitud
 """
 import requests
 
-API_PPA_SOLICITUD_URL = "http://127.0.0.1:8005/v3/ppa_solicitudes"
+# API_PPA_SOLICITUD_URL = "http://127.0.0.1:8005/v3/ppa_solicitudes"
+API_PPA_SOLICITUD_URL = "http://justicia:7086/v3/ppa_solicitudes"
 API_TIMEOUT = 12
 
 BANCO_FOTOGRAFIAS_RUTA = "/home/guivaloz/Pictures/PJECZ Tres de Tres"
