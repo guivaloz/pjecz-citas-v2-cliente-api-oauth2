@@ -2,19 +2,24 @@
 Pago de Pensiones Alimenticias - Solicitudes V3, CRUD (create, read, update, and delete)
 """
 from datetime import datetime, timedelta
+import pathlib
 from typing import Any
+import uuid
 
 from sqlalchemy.orm import Session
 
+from config.settings import UPLOADS_DIR
 from lib.exceptions import CitasIsDeletedError, CitasNotExistsError, CitasNotValidParamError
 from lib.hashids import descifrar_id
-from lib.safe_string import safe_expediente, safe_integer, safe_filename_image, safe_string, safe_url
+from lib.safe_string import safe_expediente, safe_integer, safe_string
 
 from ...core.cit_clientes.models import CitCliente
 from ...core.ppa_solicitudes.models import PpaSolicitud
 from ..autoridades.crud import get_autoridad_from_clave
 from ..cit_clientes.crud import get_cit_cliente, create_cit_cliente
 from .schemas import PpaSolicitudIn, PpaSolicitudOut
+
+CLOUD_STORAGE_URL = "https://noexiste.com"
 
 
 def get_ppa_solicitudes(db: Session, cit_cliente_id: int) -> Any:
@@ -46,10 +51,7 @@ def get_ppa_solicitud_from_id_hasheado(db: Session, ppa_solicitud_id_hasheado: s
     return get_ppa_solicitud(db, ppa_solicitud_id)
 
 
-def create_ppa_solicitud(
-    db: Session,
-    datos: PpaSolicitudIn,
-) -> PpaSolicitudOut:
+def create_ppa_solicitud(db: Session, datos: PpaSolicitudIn) -> PpaSolicitudOut:
     """Crear una solicitud"""
 
     # Validar autoridad
@@ -85,36 +87,6 @@ def create_ppa_solicitud(
     if numero_expediente == "":
         raise CitasNotValidParamError("El número de expediente no es válido")
 
-    # Validar identificación oficial archivo
-    identificacion_oficial_archivo = safe_filename_image(datos.identificacion_oficial_archivo)
-    if identificacion_oficial_archivo == "":
-        raise CitasNotValidParamError("El archivo de la identificación oficial no es válido")
-
-    # Validar identificación oficial URL
-    identificacion_oficial_url = safe_url(datos.identificacion_oficial_url)
-    if identificacion_oficial_url == "":
-        raise CitasNotValidParamError("El URL de la identificación oficial no es válido")
-
-    # Validar comprobante de domicilio archivo
-    comprobante_domicilio_archivo = safe_filename_image(datos.comprobante_domicilio_archivo)
-    if comprobante_domicilio_archivo == "":
-        raise CitasNotValidParamError("El archivo del comprobante de domicilio no es válido")
-
-    # Validar comprobante de domicilio URL
-    comprobante_domicilio_url = safe_url(datos.comprobante_domicilio_url)
-    if comprobante_domicilio_url == "":
-        raise CitasNotValidParamError("El URL del comprobante de domicilio no es válido")
-
-    # Validar autorización archivo
-    autorizacion_archivo = safe_filename_image(datos.autorizacion_archivo)
-    if autorizacion_archivo == "":
-        raise CitasNotValidParamError("El archivo de la autorización no es válido")
-
-    # Validar autorización URL
-    autorizacion_url = safe_url(datos.autorizacion_url)
-    if autorizacion_url == "":
-        raise CitasNotValidParamError("El URL de la autorización no es válido")
-
     # Validar y crear cliente de no existir
     cit_cliente = create_cit_cliente(
         db,
@@ -141,14 +113,131 @@ def create_ppa_solicitud(
         domicilio_cp=domicilio_cp,
         compania_telefonica=compania_telefonica,
         numero_expediente=numero_expediente,
-        identificacion_oficial_archivo=identificacion_oficial_archivo,
-        identificacion_oficial_url=identificacion_oficial_url,
-        comprobante_domicilio_archivo=comprobante_domicilio_archivo,
-        comprobante_domicilio_url=comprobante_domicilio_url,
-        autorizacion_archivo=autorizacion_archivo,
-        autorizacion_url=autorizacion_url,
+        identificacion_oficial_archivo="",
+        identificacion_oficial_url="",
+        comprobante_domicilio_archivo="",
+        comprobante_domicilio_url="",
+        autorizacion_archivo="",
+        autorizacion_url="",
         caducidad=caducidad.date(),
     )
+    db.add(ppa_solicitud)
+    db.commit()
+    db.refresh(ppa_solicitud)
+
+    # Entregar
+    return ppa_solicitud
+
+
+def upload_identificacion_oficial(
+    db: Session,
+    id_hasheado: str,
+    identificacion_oficial: bytes,
+) -> PpaSolicitudOut:
+    """Subir identificación oficial"""
+
+    # Validar ID hasheado
+    ppa_solicitud_id = descifrar_id(id_hasheado)
+    if ppa_solicitud_id is None:
+        raise CitasNotExistsError("El ID de la solicitud no es válida")
+    ppa_solicitud = get_ppa_solicitud(db, ppa_solicitud_id)
+
+    # Definir el nombre del archivo con el ID de seis dígitos y una cadena aleatoria de seis caracteres
+    archivo = f"{ppa_solicitud.id:06d}-{uuid.uuid4().hex[:6]}.pdf"
+
+    # Crear el directorio con path si este no existe
+    directorio = pathlib.Path(f"{UPLOADS_DIR}/ppa_solicitudes/identificaciones_oficiales")
+    directorio.mkdir(parents=True, exist_ok=True)
+
+    # Guardar el archivo
+    if UPLOADS_DIR != "":
+        with open(f"{directorio}/{archivo}", "wb") as f:
+            f.write(identificacion_oficial)
+
+    # Definir el URL
+    url = f"{CLOUD_STORAGE_URL}/ppa_solicitudes/identificaciones_oficiales/{archivo}"
+
+    # Actualizar
+    ppa_solicitud.identificacion_oficial_archivo = archivo
+    ppa_solicitud.identificacion_oficial_url = url
+    db.add(ppa_solicitud)
+    db.commit()
+    db.refresh(ppa_solicitud)
+
+    # Entregar
+    return ppa_solicitud
+
+
+def upload_comprobante_domicilio(
+    db: Session,
+    id_hasheado: str,
+    comprobante_domicilio: bytes,
+) -> PpaSolicitudOut:
+    """Subir identificación oficial"""
+
+    # Validar ID hasheado
+    ppa_solicitud_id = descifrar_id(id_hasheado)
+    if ppa_solicitud_id is None:
+        raise CitasNotExistsError("El ID de la solicitud no es válida")
+    ppa_solicitud = get_ppa_solicitud(db, ppa_solicitud_id)
+
+    # Definir el nombre del archivo con el ID de seis dígitos y una cadena aleatoria de seis caracteres
+    archivo = f"{ppa_solicitud.id:06d}-{uuid.uuid4().hex[:6]}.pdf"
+
+    # Crear el directorio con path si este no existe
+    directorio = pathlib.Path(f"{UPLOADS_DIR}/ppa_solicitudes/comprobantes_domicilios")
+    directorio.mkdir(parents=True, exist_ok=True)
+
+    # Guardar el archivo
+    if UPLOADS_DIR != "":
+        with open(f"{directorio}/{archivo}", "wb") as f:
+            f.write(comprobante_domicilio)
+
+    # Definir el URL
+    url = f"{CLOUD_STORAGE_URL}/ppa_solicitudes/comprobantes_domicilios/{archivo}"
+
+    # Actualizar
+    ppa_solicitud.comprobante_domicilio_archivo = archivo
+    ppa_solicitud.comprobante_domicilio_url = url
+    db.add(ppa_solicitud)
+    db.commit()
+    db.refresh(ppa_solicitud)
+
+    # Entregar
+    return ppa_solicitud
+
+
+def upload_autorizacion(
+    db: Session,
+    id_hasheado: str,
+    autorizacion: bytes,
+) -> PpaSolicitudOut:
+    """Subir identificación oficial"""
+
+    # Validar ID hasheado
+    ppa_solicitud_id = descifrar_id(id_hasheado)
+    if ppa_solicitud_id is None:
+        raise CitasNotExistsError("El ID de la solicitud no es válida")
+    ppa_solicitud = get_ppa_solicitud(db, ppa_solicitud_id)
+
+    # Definir el nombre del archivo con el ID de seis dígitos y una cadena aleatoria de seis caracteres
+    archivo = f"{ppa_solicitud.id:06d}-{uuid.uuid4().hex[:16]}.pdf"
+
+    # Crear el directorio con path si este no existe
+    directorio = pathlib.Path(f"{UPLOADS_DIR}/ppa_solicitudes/autorizaciones")
+    directorio.mkdir(parents=True, exist_ok=True)
+
+    # Guardar el archivo
+    if UPLOADS_DIR != "":
+        with open(f"{directorio}/{archivo}", "wb") as f:
+            f.write(autorizacion)
+
+    # Definir el URL
+    autorizacion_url = f"{CLOUD_STORAGE_URL}/ppa_solicitudes/autorizaciones/{archivo}"
+
+    # Actualizar
+    ppa_solicitud.autorizacion_archivo = archivo
+    ppa_solicitud.autorizacion_url = autorizacion_url
     db.add(ppa_solicitud)
     db.commit()
     db.refresh(ppa_solicitud)

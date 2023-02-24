@@ -24,12 +24,6 @@ class PpaSolicitudIn(BaseModel):
     domicilio_cp: int | None
     compania_telefonica: str | None
     numero_expediente: str | None
-    identificacion_oficial_archivo: str | None
-    identificacion_oficial_url: str | None
-    comprobante_domicilio_archivo: str | None
-    comprobante_domicilio_url: str | None
-    autorizacion_archivo: str | None
-    autorizacion_url: str | None
 
 
 class PpaSolicitudOut(PpaSolicitudIn):
@@ -41,6 +35,12 @@ class PpaSolicitudOut(PpaSolicitudIn):
     distrito_nombre: str | None
     creado: datetime | None
     caducidad: date | None
+    identificacion_oficial_archivo: str | None
+    identificacion_oficial_url: str | None
+    comprobante_domicilio_archivo: str | None
+    comprobante_domicilio_url: str | None
+    autorizacion_archivo: str | None
+    autorizacion_url: str | None
 
     class Config:
         """SQLAlchemy config"""
