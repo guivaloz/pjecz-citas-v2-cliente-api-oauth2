@@ -26,7 +26,6 @@ def get_cit_dias_disponibles(db: Session, oficina_id: int) -> Any:
 
     # Agregar cada dia hasta el limite a partir de manana
     for fecha in (date.today() + timedelta(n) for n in range(1, LIMITE_DIAS)):
-
         # Quitar los sabados y domingos
         if fecha.weekday() in (5, 6):
             continue
