@@ -1,12 +1,15 @@
 """
 Prueba de PPA Solicitud
 """
-import json
 import requests
 
 API_PPA_SOLICITUD_URL = "http://127.0.0.1:8005/v3/ppa_solicitudes"
 API_TIMEOUT = 12
-BANCO_FOTOGRAFIAS_RUTA = "/home/guivaloz/Pictures"
+
+BANCO_FOTOGRAFIAS_RUTA = "/home/guivaloz/Pictures/PJECZ Tres de Tres"
+IDENTIFICACION_OFICIAL_ARCHIVO = "ine.pdf"
+COMPROBANTE_DOMICILIO_ARCHIVO = "cfe.pdf"
+AUTORIZACION_ARCHIVO = "carta.pdf"
 
 
 def test_ppa_solicitud():
@@ -29,12 +32,6 @@ def test_ppa_solicitud():
         "domicilio_cp": 24000,
         "compania_telefonica": "ATT",
         "numero_expediente": "1/2022",
-        "identificacion_oficial_archivo": "ine.jpg",
-        "identificacion_oficial_url": "https://noexiste.com/ine.jpg",
-        "comprobante_domicilio_archivo": "domicilio.jpg",
-        "comprobante_domicilio_url": "https://noexiste.com/domicilio.jpg",
-        "autorizacion_archivo": "carta.jpg",
-        "autorizacion_url": "https://noexiste.com/carta.jpg",
     }
 
     # Enviar los datos
@@ -62,17 +59,21 @@ def test_ppa_solicitud():
         if "message" in resultado:
             assert False, resultado["message"]
         assert False, "La respuesta dice que la operacion fallo"
+
+    # Obtenemos el id_hasheado que se usará para subir los archivos
     id_hasheado = resultado["id_hasheado"]
 
     # Archivo con la identificación oficial
-    identificacion_oficial_archivo = "ine.jpg"
-    identificacion_oficial = open(f"{BANCO_FOTOGRAFIAS_RUTA}/{identificacion_oficial_archivo}", "rb")
+    try:
+        identificacion_oficial = open(f"{BANCO_FOTOGRAFIAS_RUTA}/{IDENTIFICACION_OFICIAL_ARCHIVO}", "rb")
+    except FileNotFoundError as error:
+        assert False, "No se pudo abrir el archivo de identificación oficial. " + str(error)
 
     # Enviar la identificación oficial
     try:
         respuesta = requests.post(
             f"{API_PPA_SOLICITUD_URL}/subir/identificacion_oficial",
-            params={"id_hasheado": id_hasheado}
+            params={"id_hasheado": id_hasheado},
             files={"archivo": identificacion_oficial},
             timeout=API_TIMEOUT,
         )
@@ -99,14 +100,16 @@ def test_ppa_solicitud():
     identificacion_oficial.close()
 
     # Archivo con el comprobante de domicilio
-    comprobante_domicilio_archivo = "cfe.jpg"
-    comprobante_domicilio = open(f"{BANCO_FOTOGRAFIAS_RUTA}/{comprobante_domicilio_archivo}", "rb")
+    try:
+        comprobante_domicilio = open(f"{BANCO_FOTOGRAFIAS_RUTA}/{COMPROBANTE_DOMICILIO_ARCHIVO}", "rb")
+    except FileNotFoundError as error:
+        assert False, "No se pudo abrir el archivo de comprobante de domicilio. " + str(error)
 
     # Enviar el comprobante de domicilio
     try:
         respuesta = requests.post(
             f"{API_PPA_SOLICITUD_URL}/subir/comprobante_domicilio",
-            params={"id_hasheado": id_hasheado}
+            params={"id_hasheado": id_hasheado},
             files={"archivo": comprobante_domicilio},
             timeout=API_TIMEOUT,
         )
@@ -133,14 +136,16 @@ def test_ppa_solicitud():
     comprobante_domicilio.close()
 
     # Archivo con la autorización
-    autorizacion_archivo = "autorizacion.png"
-    autorizacion = open(f"{BANCO_FOTOGRAFIAS_RUTA}/{autorizacion_archivo}", "rb")
+    try:
+        autorizacion = open(f"{BANCO_FOTOGRAFIAS_RUTA}/{AUTORIZACION_ARCHIVO}", "rb")
+    except FileNotFoundError as error:
+        assert False, "No se pudo abrir el archivo de autorización. " + str(error)
 
     # Enviar el comprobante de domicilio
     try:
         respuesta = requests.post(
             f"{API_PPA_SOLICITUD_URL}/subir/autorizacion",
-            params={"id_hasheado": id_hasheado}
+            params={"id_hasheado": id_hasheado},
             files={"archivo": autorizacion},
             timeout=API_TIMEOUT,
         )

@@ -2,13 +2,16 @@
 Tres de Tres - Solicitudes V3, CRUD (create, read, update, and delete)
 """
 from datetime import datetime, timedelta
+import pathlib
 from typing import Any
+import uuid
 
 from sqlalchemy.orm import Session
 
+from config.settings import UPLOADS_DIR
 from lib.exceptions import CitasIsDeletedError, CitasNotExistsError, CitasNotValidParamError
 from lib.hashids import descifrar_id
-from lib.safe_string import safe_integer, safe_filename_image, safe_string, safe_url
+from lib.safe_string import safe_integer, safe_string
 
 from ...core.cit_clientes.models import CitCliente
 from ...core.tdt_solicitudes.models import TdtSolicitud
@@ -16,6 +19,8 @@ from ..cit_clientes.crud import get_cit_cliente, create_cit_cliente
 from ..municipios.crud import get_municipio_from_id_hasheado
 from ..tdt_partidos.crud import get_tdt_partido_from_siglas
 from .schemas import TdtSolicitudIn, TdtSolicitudOut
+
+CLOUD_STORAGE_URL = "https://noexiste.com"
 
 
 def get_tdt_solicitudes(db: Session, cit_cliente_id: int) -> Any:
@@ -89,36 +94,6 @@ def create_tdt_solicitud(
     if domicilio_cp == 0:
         raise CitasNotValidParamError("El código postal del domicilio no es válido")
 
-    # Validar identificación oficial archivo
-    identificacion_oficial_archivo = safe_filename_image(datos.identificacion_oficial_archivo)
-    if identificacion_oficial_archivo == "":
-        raise CitasNotValidParamError("El archivo de la identificación oficial no es válido")
-
-    # Validar identificación oficial URL
-    identificacion_oficial_url = safe_url(datos.identificacion_oficial_url)
-    if identificacion_oficial_url == "":
-        raise CitasNotValidParamError("El URL de la identificación oficial no es válido")
-
-    # Validar comprobante de domicilio archivo
-    comprobante_domicilio_archivo = safe_filename_image(datos.comprobante_domicilio_archivo)
-    if comprobante_domicilio_archivo == "":
-        raise CitasNotValidParamError("El archivo del comprobante de domicilio no es válido")
-
-    # Validar comprobante de domicilio URL
-    comprobante_domicilio_url = safe_url(datos.comprobante_domicilio_url)
-    if comprobante_domicilio_url == "":
-        raise CitasNotValidParamError("El URL del comprobante de domicilio no es válido")
-
-    # Validar autorización archivo
-    autorizacion_archivo = safe_filename_image(datos.autorizacion_archivo)
-    if autorizacion_archivo == "":
-        raise CitasNotValidParamError("El archivo de la autorización no es válido")
-
-    # Validar autorización URL
-    autorizacion_url = safe_url(datos.autorizacion_url)
-    if autorizacion_url == "":
-        raise CitasNotValidParamError("El URL de la autorización no es válido")
-
     # Validar y crear cliente de no existir
     cit_cliente = create_cit_cliente(
         db,
@@ -146,14 +121,131 @@ def create_tdt_solicitud(
         domicilio_numero=domicilio_numero,
         domicilio_colonia=domicilio_colonia,
         domicilio_cp=domicilio_cp,
-        identificacion_oficial_archivo=identificacion_oficial_archivo,
-        identificacion_oficial_url=identificacion_oficial_url,
-        comprobante_domicilio_archivo=comprobante_domicilio_archivo,
-        comprobante_domicilio_url=comprobante_domicilio_url,
-        autorizacion_archivo=autorizacion_archivo,
-        autorizacion_url=autorizacion_url,
+        identificacion_oficial_archivo="",
+        identificacion_oficial_url="",
+        comprobante_domicilio_archivo="",
+        comprobante_domicilio_url="",
+        autorizacion_archivo="",
+        autorizacion_url="",
         caducidad=caducidad.date(),
     )
+    db.add(tdt_solicitud)
+    db.commit()
+    db.refresh(tdt_solicitud)
+
+    # Entregar
+    return tdt_solicitud
+
+
+def upload_identificacion_oficial(
+    db: Session,
+    id_hasheado: str,
+    identificacion_oficial: bytes,
+) -> TdtSolicitudOut:
+    """Subir identificación oficial"""
+
+    # Validar ID hasheado
+    tdt_solicitud_id = descifrar_id(id_hasheado)
+    if tdt_solicitud_id is None:
+        raise CitasNotExistsError("El ID de la solicitud no es válida")
+    tdt_solicitud = get_tdt_solicitud(db, tdt_solicitud_id)
+
+    # Definir el nombre del archivo con el ID de seis dígitos y una cadena aleatoria de seis caracteres
+    archivo = f"{tdt_solicitud.id:06d}-{uuid.uuid4().hex[:6]}.pdf"
+
+    # Crear el directorio con path si este no existe
+    directorio = pathlib.Path(f"{UPLOADS_DIR}/tdt_solicitudes/identificaciones_oficiales")
+    directorio.mkdir(parents=True, exist_ok=True)
+
+    # Guardar el archivo
+    if UPLOADS_DIR != "":
+        with open(f"{directorio}/{archivo}", "wb") as f:
+            f.write(identificacion_oficial)
+
+    # Definir el URL
+    url = f"{CLOUD_STORAGE_URL}/tdt_solicitudes/identificaciones_oficiales/{archivo}"
+
+    # Actualizar
+    tdt_solicitud.identificacion_oficial_archivo = archivo
+    tdt_solicitud.identificacion_oficial_url = url
+    db.add(tdt_solicitud)
+    db.commit()
+    db.refresh(tdt_solicitud)
+
+    # Entregar
+    return tdt_solicitud
+
+
+def upload_comprobante_domicilio(
+    db: Session,
+    id_hasheado: str,
+    comprobante_domicilio: bytes,
+) -> TdtSolicitudOut:
+    """Subir identificación oficial"""
+
+    # Validar ID hasheado
+    tdt_solicitud_id = descifrar_id(id_hasheado)
+    if tdt_solicitud_id is None:
+        raise CitasNotExistsError("El ID de la solicitud no es válida")
+    tdt_solicitud = get_tdt_solicitud(db, tdt_solicitud_id)
+
+    # Definir el nombre del archivo con el ID de seis dígitos y una cadena aleatoria de seis caracteres
+    archivo = f"{tdt_solicitud.id:06d}-{uuid.uuid4().hex[:6]}.pdf"
+
+    # Crear el directorio con path si este no existe
+    directorio = pathlib.Path(f"{UPLOADS_DIR}/tdt_solicitudes/comprobantes_domicilios")
+    directorio.mkdir(parents=True, exist_ok=True)
+
+    # Guardar el archivo
+    if UPLOADS_DIR != "":
+        with open(f"{directorio}/{archivo}", "wb") as f:
+            f.write(comprobante_domicilio)
+
+    # Definir el URL
+    url = f"{CLOUD_STORAGE_URL}/tdt_solicitudes/comprobantes_domicilios/{archivo}"
+
+    # Actualizar
+    tdt_solicitud.comprobante_domicilio_archivo = archivo
+    tdt_solicitud.comprobante_domicilio_url = url
+    db.add(tdt_solicitud)
+    db.commit()
+    db.refresh(tdt_solicitud)
+
+    # Entregar
+    return tdt_solicitud
+
+
+def upload_autorizacion(
+    db: Session,
+    id_hasheado: str,
+    autorizacion: bytes,
+) -> TdtSolicitudOut:
+    """Subir identificación oficial"""
+
+    # Validar ID hasheado
+    tdt_solicitud_id = descifrar_id(id_hasheado)
+    if tdt_solicitud_id is None:
+        raise CitasNotExistsError("El ID de la solicitud no es válida")
+    tdt_solicitud = get_tdt_solicitud(db, tdt_solicitud_id)
+
+    # Definir el nombre del archivo con el ID de seis dígitos y una cadena aleatoria de seis caracteres
+    archivo = f"{tdt_solicitud.id:06d}-{uuid.uuid4().hex[:16]}.pdf"
+
+    # Crear el directorio con path si este no existe
+    directorio = pathlib.Path(f"{UPLOADS_DIR}/tdt_solicitudes/autorizaciones")
+    directorio.mkdir(parents=True, exist_ok=True)
+
+    # Guardar el archivo
+    if UPLOADS_DIR != "":
+        with open(f"{directorio}/{archivo}", "wb") as f:
+            f.write(autorizacion)
+
+    # Definir el URL
+    autorizacion_url = f"{CLOUD_STORAGE_URL}/tdt_solicitudes/autorizaciones/{archivo}"
+
+    # Actualizar
+    tdt_solicitud.autorizacion_archivo = archivo
+    tdt_solicitud.autorizacion_url = autorizacion_url
     db.add(tdt_solicitud)
     db.commit()
     db.refresh(tdt_solicitud)

@@ -25,12 +25,6 @@ class TdtSolicitudIn(BaseModel):
     domicilio_numero: str | None
     domicilio_colonia: str | None
     domicilio_cp: int | None
-    identificacion_oficial_archivo: str | None
-    identificacion_oficial_url: str | None
-    comprobante_domicilio_archivo: str | None
-    comprobante_domicilio_url: str | None
-    autorizacion_archivo: str | None
-    autorizacion_url: str | None
 
 
 class TdtSolicitudOut(TdtSolicitudIn):
@@ -41,6 +35,12 @@ class TdtSolicitudOut(TdtSolicitudIn):
     tdt_partido_nombre: str | None
     creado: datetime | None
     caducidad: date | None
+    identificacion_oficial_archivo: str | None
+    identificacion_oficial_url: str | None
+    comprobante_domicilio_archivo: str | None
+    comprobante_domicilio_url: str | None
+    autorizacion_archivo: str | None
+    autorizacion_url: str | None
 
     class Config:
         """SQLAlchemy config"""
