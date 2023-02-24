@@ -143,7 +143,7 @@ def upload_identificacion_oficial(
     ppa_solicitud = get_ppa_solicitud(db, ppa_solicitud_id)
 
     # Definir el nombre del archivo con el ID de seis dígitos y una cadena aleatoria de seis caracteres
-    archivo = f"{ppa_solicitud.id:06d}-{uuid.uuid4().hex[:6]}.pdf"
+    archivo = f"{ppa_solicitud.id:06d}-{uuid.uuid4().hex[:16]}.pdf"
 
     # Crear el directorio con path si este no existe
     directorio = pathlib.Path(f"{UPLOADS_DIR}/ppa_solicitudes/identificaciones_oficiales")
@@ -182,7 +182,7 @@ def upload_comprobante_domicilio(
     ppa_solicitud = get_ppa_solicitud(db, ppa_solicitud_id)
 
     # Definir el nombre del archivo con el ID de seis dígitos y una cadena aleatoria de seis caracteres
-    archivo = f"{ppa_solicitud.id:06d}-{uuid.uuid4().hex[:6]}.pdf"
+    archivo = f"{ppa_solicitud.id:06d}-{uuid.uuid4().hex[:16]}.pdf"
 
     # Crear el directorio con path si este no existe
     directorio = pathlib.Path(f"{UPLOADS_DIR}/ppa_solicitudes/comprobantes_domicilios")
