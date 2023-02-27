@@ -15,6 +15,7 @@ class TdtSolicitud(Base, UniversalMixin):
     CARGOS = OrderedDict(
         [
             ("GOBERNATURA", "Gobernatura"),
+            ("DIPUTACION", "Diputación"),
             ("PRESIDENCIA MUNICIPAL", "Presidencia Municipal"),
             ("REGIDURIA", "Regiduría"),
             ("SINDICATURA", "Sindicatura"),
