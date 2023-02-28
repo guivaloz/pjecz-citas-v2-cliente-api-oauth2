@@ -5,7 +5,7 @@ from typing import Any
 
 from sqlalchemy.orm import Session
 
-from lib.exceptions import CitasIsDeletedError, CitasNotExistsError
+from lib.exceptions import CitasIsDeletedError, CitasNotExistsError, CitasNotValidParamError
 from lib.hashids import descifrar_id
 from lib.safe_string import safe_clave
 
@@ -31,7 +31,7 @@ def get_autoridad_from_id_hasheado(db: Session, autoridad_id_hasheado: str) -> A
     """Consultar un autoridad por su id hasheado"""
     autoridad_id = descifrar_id(autoridad_id_hasheado)
     if autoridad_id is None:
-        raise CitasNotExistsError("El ID de la autoridad no es válido")
+        raise CitasNotValidParamError("El ID de la autoridad no es válido")
     return get_autoridad(db, autoridad_id)
 
 
@@ -40,7 +40,7 @@ def get_autoridad_from_clave(db: Session, clave: str) -> Autoridad:
     try:
         clave = safe_clave(clave)
     except ValueError as error:
-        raise ValueError("Es incorrecta la clave del autoridad") from error
+        raise CitasNotValidParamError("Es incorrecta la clave del autoridad") from error
     autoridad = db.query(Autoridad).filter_by(clave=clave).first()
     if autoridad is None:
         raise CitasNotExistsError("No existe la autoridad")

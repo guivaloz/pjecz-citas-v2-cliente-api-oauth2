@@ -47,7 +47,7 @@ def get_ppa_solicitud_from_id_hasheado(db: Session, ppa_solicitud_id_hasheado: s
     """Consultar una solicitud por su id hasheado"""
     ppa_solicitud_id = descifrar_id(ppa_solicitud_id_hasheado)
     if ppa_solicitud_id is None:
-        raise CitasNotExistsError("El ID de la solicitud no es válida")
+        raise CitasNotValidParamError("El ID de la solicitud no es válida")
     return get_ppa_solicitud(db, ppa_solicitud_id)
 
 
@@ -139,7 +139,7 @@ def upload_identificacion_oficial(
     # Validar ID hasheado
     ppa_solicitud_id = descifrar_id(id_hasheado)
     if ppa_solicitud_id is None:
-        raise CitasNotExistsError("El ID de la solicitud no es válida")
+        raise CitasNotValidParamError("El ID de la solicitud no es válida")
     ppa_solicitud = get_ppa_solicitud(db, ppa_solicitud_id)
 
     # Definir el nombre del archivo con el ID de seis dígitos y una cadena aleatoria de seis caracteres
@@ -178,7 +178,7 @@ def upload_comprobante_domicilio(
     # Validar ID hasheado
     ppa_solicitud_id = descifrar_id(id_hasheado)
     if ppa_solicitud_id is None:
-        raise CitasNotExistsError("El ID de la solicitud no es válida")
+        raise CitasNotValidParamError("El ID de la solicitud no es válida")
     ppa_solicitud = get_ppa_solicitud(db, ppa_solicitud_id)
 
     # Definir el nombre del archivo con el ID de seis dígitos y una cadena aleatoria de seis caracteres
@@ -217,7 +217,7 @@ def upload_autorizacion(
     # Validar ID hasheado
     ppa_solicitud_id = descifrar_id(id_hasheado)
     if ppa_solicitud_id is None:
-        raise CitasNotExistsError("El ID de la solicitud no es válida")
+        raise CitasNotValidParamError("El ID de la solicitud no es válida")
     ppa_solicitud = get_ppa_solicitud(db, ppa_solicitud_id)
 
     # Definir el nombre del archivo con el ID de seis dígitos y una cadena aleatoria de seis caracteres

@@ -34,7 +34,7 @@ def get_cit_cliente_from_id_hasheado(db: Session, cit_cliente_id_hasheado: str) 
     """Consultar un cliente por su id hasheado"""
     cit_cliente_id = descifrar_id(cit_cliente_id_hasheado)
     if cit_cliente_id is None:
-        raise CitasNotExistsError("El ID del cliente no es válido")
+        raise CitasNotValidParamError("El ID del cliente no es válido")
     return get_cit_cliente(db, cit_cliente_id)
 
 

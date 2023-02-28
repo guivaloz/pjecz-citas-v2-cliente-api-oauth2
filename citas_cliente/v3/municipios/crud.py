@@ -5,7 +5,7 @@ from typing import Any
 
 from sqlalchemy.orm import Session
 
-from lib.exceptions import CitasIsDeletedError, CitasNotExistsError
+from lib.exceptions import CitasIsDeletedError, CitasNotExistsError, CitasNotValidParamError
 from lib.hashids import descifrar_id
 
 from ...core.municipios.models import Municipio
@@ -30,5 +30,5 @@ def get_municipio_from_id_hasheado(db: Session, municipio_id_hasheado: str) -> M
     """Consultar un municipio por su id_hasheado"""
     municipio_id = descifrar_id(municipio_id_hasheado)
     if municipio_id is None:
-        raise CitasNotExistsError("El ID del municipio no es válido")
+        raise CitasNotValidParamError("El ID del municipio no es válido")
     return get_municipio(db, municipio_id)

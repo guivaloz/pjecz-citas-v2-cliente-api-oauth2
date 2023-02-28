@@ -4,7 +4,7 @@ Pagos Tramites y Servicios V3, CRUD (create, read, update, and delete)
 from typing import Any
 from sqlalchemy.orm import Session
 
-from lib.exceptions import CitasIsDeletedError, CitasNotExistsError
+from lib.exceptions import CitasIsDeletedError, CitasNotExistsError, CitasNotValidParamError
 from lib.hashids import descifrar_id
 from lib.safe_string import safe_clave
 
@@ -30,7 +30,7 @@ def get_pag_tramite_servicio_from_id_hasheado(db: Session, pag_tramite_servicio_
     """Consultar un tramite y servicio por su id hasheado"""
     pag_tramite_servicio_id = descifrar_id(pag_tramite_servicio_id_hasheado)
     if pag_tramite_servicio_id is None:
-        raise CitasNotExistsError("El ID del trámite o servicio no es válido")
+        raise CitasNotValidParamError("El ID del trámite o servicio no es válido")
     return get_pag_tramite_servicio(db, pag_tramite_servicio_id)
 
 
@@ -39,7 +39,7 @@ def get_pag_tramite_servicio_from_clave(db: Session, clave: str) -> PagTramiteSe
     try:
         clave = safe_clave(clave)
     except ValueError as error:
-        raise ValueError("Es incorrecta la clave del tramite o servicio") from error
+        raise CitasNotValidParamError("Es incorrecta la clave del tramite o servicio") from error
     pag_tramite_servicio = db.query(PagTramiteServicio).filter_by(clave=clave).first()
     if pag_tramite_servicio is None:
         raise CitasNotExistsError("No existe ese trámite o servicio")

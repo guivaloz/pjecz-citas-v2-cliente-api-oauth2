@@ -48,7 +48,7 @@ def get_tdt_solicitud_from_id_hasheado(db: Session, tdt_solicitud_id_hasheado: s
     """Consultar un solicitud por su id hasheado"""
     tdt_solicitud_id = descifrar_id(tdt_solicitud_id_hasheado)
     if tdt_solicitud_id is None:
-        raise CitasNotExistsError("El ID de la solicitud no es válida")
+        raise CitasNotValidParamError("El ID de la solicitud no es válida")
     return get_tdt_solicitud(db, tdt_solicitud_id)
 
 
@@ -147,7 +147,7 @@ def upload_identificacion_oficial(
     # Validar ID hasheado
     tdt_solicitud_id = descifrar_id(id_hasheado)
     if tdt_solicitud_id is None:
-        raise CitasNotExistsError("El ID de la solicitud no es válida")
+        raise CitasNotValidParamError("El ID de la solicitud no es válida")
     tdt_solicitud = get_tdt_solicitud(db, tdt_solicitud_id)
 
     # Definir el nombre del archivo con el ID de seis dígitos y una cadena aleatoria de seis caracteres
@@ -186,7 +186,7 @@ def upload_comprobante_domicilio(
     # Validar ID hasheado
     tdt_solicitud_id = descifrar_id(id_hasheado)
     if tdt_solicitud_id is None:
-        raise CitasNotExistsError("El ID de la solicitud no es válida")
+        raise CitasNotValidParamError("El ID de la solicitud no es válida")
     tdt_solicitud = get_tdt_solicitud(db, tdt_solicitud_id)
 
     # Definir el nombre del archivo con el ID de seis dígitos y una cadena aleatoria de seis caracteres
@@ -225,7 +225,7 @@ def upload_autorizacion(
     # Validar ID hasheado
     tdt_solicitud_id = descifrar_id(id_hasheado)
     if tdt_solicitud_id is None:
-        raise CitasNotExistsError("El ID de la solicitud no es válida")
+        raise CitasNotValidParamError("El ID de la solicitud no es válida")
     tdt_solicitud = get_tdt_solicitud(db, tdt_solicitud_id)
 
     # Definir el nombre del archivo con el ID de seis dígitos y una cadena aleatoria de seis caracteres
