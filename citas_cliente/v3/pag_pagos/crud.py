@@ -51,7 +51,7 @@ def get_pag_pago_from_id_hasheado(db: Session, pag_pago_id_hasheado: str) -> Pag
     """Consultar un pago por su id hasheado"""
     pag_pago_id = descifrar_id(pag_pago_id_hasheado)
     if pag_pago_id is None:
-        raise CitasNotExistsError("El ID del pago no es válido")
+        raise CitasNotValidParamError("El ID del pago no es válido")
     return get_pag_pago(db, pag_pago_id)
 
 
