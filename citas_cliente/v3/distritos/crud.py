@@ -31,4 +31,14 @@ def get_distrito_from_id_hasheado(db: Session, distrito_id_hasheado: str) -> Dis
     distrito_id = descifrar_id(distrito_id_hasheado)
     if distrito_id is None:
         raise CitasNotValidParamError("El ID del distrito no es válido")
-    return get_distrito(db, distrito_id_hasheado)
+    return get_distrito(db, distrito_id)
+
+
+def get_distrito_from_nombre(db: Session, nombre: str) -> Distrito:
+    """Consultar un distrito por su nombre"""
+    distrito = db.query(Distrito).filter_by(nombre=nombre).first()
+    if distrito is None:
+        raise CitasNotExistsError("No existe el distrito")
+    if distrito.estatus != "A":
+        raise CitasIsDeletedError("No es activo ese distrito, está eliminado")
+    return distrito

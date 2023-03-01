@@ -17,6 +17,7 @@ from ...core.cit_clientes.models import CitCliente
 from ...core.pag_pagos.models import PagPago
 from ..autoridades.crud import get_autoridad_from_clave
 from ..cit_clientes.crud import get_cit_cliente, get_cit_cliente_from_curp, get_cit_cliente_from_email
+from ..distritos.crud import get_distrito_from_id_hasheado, get_distrito_from_nombre
 from ..pag_tramites_servicios.crud import get_pag_tramite_servicio_from_clave
 from .schemas import PagCarroIn, PagCarroOut, PagResultadoIn, PagResultadoOut
 
@@ -94,17 +95,38 @@ def create_payment(
     except ValueError as error:
         raise CitasNotValidParamError("El telefono no es valido") from error
 
-    # Validar cantidad
-    cantidad = safe_integer(datos.cantidad, default=1)
+    # Validar pag_tramite_servicio_clave
+    pag_tramite_servicio = get_pag_tramite_servicio_from_clave(db, datos.pag_tramite_servicio_clave)
 
     # Validar la clave de la autoridad
     try:
         autoridad = get_autoridad_from_clave(db, datos.autoridad_clave)
-    except (ValueError, CitasNotExistsError, CitasIsDeletedError) as error:
+    except CitasAnyError as error:
         autoridad = get_autoridad_from_clave(db, "ND")  # Autoridad NO DEFINIDO
 
-    # Validar pag_tramite_servicio_clave
-    pag_tramite_servicio = get_pag_tramite_servicio_from_clave(db, datos.pag_tramite_servicio_clave)
+    # Puede venir la cantidad, por defecto es 1
+    cantidad = safe_integer(datos.cantidad, default=1)
+
+    # Puede venir la descripcion, por defecto es la descripcion del tramite-servicio
+    descripcion = pag_tramite_servicio.descripcion
+    descripcion_adicional = safe_string(datos.descripcion, save_enie=True)
+    if descripcion_adicional != "":
+        descripcion = f"{descripcion} - {descripcion_adicional}"
+
+    # Puede venir el distrito_id_hasheado
+    distrito = autoridad.distrito  # Por defecto es el distrito de la autoridad
+    if datos.distrito_id_hasheado is not None:
+        try:
+            distrito = get_distrito_from_id_hasheado(db, datos.distrito_id_hasheado)
+        except CitasAnyError as error:
+            distrito = get_distrito_from_nombre(db, "NO DEFINIDO")  # Distrito NO DEFINIDO
+
+    # Calcular el total que es el costo del tramite-servicio por la cantidad
+    total = pag_tramite_servicio.costo * cantidad
+
+    # Validar que el total sea mayor a cero
+    if total <= 0:
+        raise CitasNotValidParamError("El total no es valido")
 
     # Buscar cliente
     cit_cliente = None
@@ -139,29 +161,22 @@ def create_payment(
         db.refresh(cit_cliente)
         si_existe = True
 
-    # Calcular el total que es el costo del tramite-servicio por la cantidad
-    total = pag_tramite_servicio.costo * cantidad
-
-    # Validar que el total sea mayor a cero
-    if total <= 0:
-        raise CitasNotValidParamError("El total no es valido")
-
     # Definir la fecha de caducidad que sea dentro de 30 días
     caducidad = datetime.now() + timedelta(days=30)
 
     # Insertar pago
     pag_pago = PagPago(
         autoridad=autoridad,
-        cantidad=cantidad,
+        distrito=distrito,
         cit_cliente=cit_cliente,
         pag_tramite_servicio=pag_tramite_servicio,
-        estado="SOLICITADO",
+        caducidad=caducidad.date(),
+        cantidad=cantidad,
+        descripcion=descripcion,
         email=email,
-        folio="",
+        estado="SOLICITADO",
         total=total,
         ya_se_envio_comprobante=False,
-        caducidad=caducidad.date(),
-        descripcion="",
     )
     db.add(pag_pago)
     db.commit()
@@ -187,9 +202,11 @@ def create_payment(
         autoridad_descripcion=autoridad.descripcion,
         autoridad_descripcion_corta=autoridad.descripcion_corta,
         cantidad=cantidad,
-        descripcion=pag_tramite_servicio.descripcion,
+        descripcion=descripcion,
+        distrito_nombre=distrito.nombre,
+        distrito_nombre_corto=distrito.nombre_corto,
         email=email,
-        monto=total,
+        total=total,
         url=url,
     )
 

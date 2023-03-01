@@ -11,20 +11,17 @@ class PagPagoOut(BaseModel):
     """Esquema para entregar pagos"""
 
     id_hasheado: str | None
-    autoridad_clave: str | None
     autoridad_descripcion: str | None
-    autoridad_descripcion_corta: str | None
     cantidad: int | None
     cit_cliente_nombre: str | None
+    descripcion: str | None
     distrito_nombre: str | None
-    pag_tramite_servicio_clave: str | None
-    pag_tramite_servicio_descripcion: str | None
     email: str | None
     estado: str | None
     folio: str | None
+    pag_tramite_servicio_descripcion: str | None
     resultado_tiempo: datetime | None
     total: float | None
-    ya_se_envio_comprobante: bool | None
 
     class Config:
         """SQLAlchemy config"""
@@ -39,15 +36,17 @@ class OnePagPagoOut(PagPagoOut, OneBaseOut):
 class PagCarroIn(BaseModel):
     """Esquema para recibir del carro de pagos"""
 
-    nombres: str | None
     apellido_primero: str | None
     apellido_segundo: str | None
-    curp: str | None
-    email: str | None
-    telefono: str | None
-    cantidad: int | None
-    pag_tramite_servicio_clave: str | None
     autoridad_clave: str | None
+    cantidad: int | None
+    curp: str | None
+    descripcion: str | None
+    distrito_id_hasheado: str | None
+    email: str | None
+    nombres: str | None
+    pag_tramite_servicio_clave: str | None
+    telefono: str | None
 
 
 class PagCarroOut(BaseModel):
@@ -59,8 +58,10 @@ class PagCarroOut(BaseModel):
     autoridad_descripcion_corta: str | None
     cantidad: int | None
     descripcion: str | None
+    distrito_nombre: str | None
+    distrito_nombre_corto: str | None
     email: str | None
-    monto: float | None
+    total: float | None
     url: str | None
 
 
