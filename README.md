@@ -56,6 +56,7 @@ Cree un archivo para las variables de entorno `.env`
 
     # Database
     DB_HOST=127.0.0.1
+    DB_PORT=8432
     DB_NAME=pjecz_citas_v2
     DB_PASS=****************
     DB_USER=adminpjeczcitasv2
@@ -113,6 +114,7 @@ Para Bash Shell cree un archivo `.bashrc` con este contenido
     echo "   ACCESS_TOKEN_EXPIRE_MINUTES: ${ACCESS_TOKEN_EXPIRE_MINUTES}"
     echo "   ALGORITHM: ${ALGORITHM}"
     echo "   DB_HOST: ${DB_HOST}"
+    echo "   DB_PORT: ${DB_PORT}"
     echo "   DB_NAME: ${DB_NAME}"
     echo "   DB_USER: ${DB_USER}"
     echo "   DB_PASS: ${DB_PASS}"
