@@ -17,7 +17,7 @@ from ...core.cit_clientes.models import CitCliente
 from ...core.pag_pagos.models import PagPago
 from ..autoridades.crud import get_autoridad_from_clave
 from ..cit_clientes.crud import get_cit_cliente, get_cit_cliente_from_curp, get_cit_cliente_from_email
-from ..distritos.crud import get_distrito_from_id_hasheado, get_distrito_from_nombre
+from ..distritos.crud import get_distrito_from_clave, get_distrito_from_nombre
 from ..pag_tramites_servicios.crud import get_pag_tramite_servicio_from_clave
 from .schemas import PagCarroIn, PagCarroOut, PagResultadoIn, PagResultadoOut
 
@@ -98,28 +98,28 @@ def create_payment(
     # Validar pag_tramite_servicio_clave
     pag_tramite_servicio = get_pag_tramite_servicio_from_clave(db, datos.pag_tramite_servicio_clave)
 
-    # Validar la clave de la autoridad
+    # Puede venir la clave de la autoridad
     try:
         autoridad = get_autoridad_from_clave(db, datos.autoridad_clave)
     except CitasAnyError as error:
         autoridad = get_autoridad_from_clave(db, "ND")  # Autoridad NO DEFINIDO
 
-    # Puede venir la cantidad, por defecto es 1
-    cantidad = safe_integer(datos.cantidad, default=1)
+    # Puede venir la cantidad
+    cantidad = safe_integer(datos.cantidad, default=1)  # Por defecto es 1
 
-    # Puede venir la descripcion, por defecto es la descripcion del tramite-servicio
-    descripcion = pag_tramite_servicio.descripcion
+    # Puede venir la descripcion
+    descripcion = pag_tramite_servicio.descripcion  # Por defecto es la descripcion del tramite-servicio
     descripcion_adicional = safe_string(datos.descripcion, save_enie=True)
     if descripcion_adicional != "":
-        descripcion = f"{descripcion} - {descripcion_adicional}"
+        descripcion = safe_string(f"{descripcion} - {descripcion_adicional}", save_enie=True)
 
-    # Puede venir el distrito_id_hasheado
+    # Puede venir la clave del distrito
     distrito = autoridad.distrito  # Por defecto es el distrito de la autoridad
-    if datos.distrito_id_hasheado is not None:
+    if datos.distrito_clave is not None:
         try:
-            distrito = get_distrito_from_id_hasheado(db, datos.distrito_id_hasheado)
+            distrito = get_distrito_from_clave(db, datos.distrito_clave)
         except CitasAnyError as error:
-            distrito = get_distrito_from_nombre(db, "NO DEFINIDO")  # Distrito NO DEFINIDO
+            distrito = get_distrito_from_clave(db, "ND")  # Distrito NO DEFINIDO
 
     # Calcular el total que es el costo del tramite-servicio por la cantidad
     total = pag_tramite_servicio.costo * cantidad
@@ -203,6 +203,7 @@ def create_payment(
         autoridad_descripcion_corta=autoridad.descripcion_corta,
         cantidad=cantidad,
         descripcion=descripcion,
+        distrito_clave=distrito.clave,
         distrito_nombre=distrito.nombre,
         distrito_nombre_corto=distrito.nombre_corto,
         email=email,

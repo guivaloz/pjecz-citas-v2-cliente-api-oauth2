@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 
 from lib.exceptions import CitasIsDeletedError, CitasNotExistsError, CitasNotValidParamError
 from lib.hashids import descifrar_id
+from lib.safe_string import safe_clave, safe_string
 
 from ...core.distritos.models import Distrito
 
@@ -34,11 +35,30 @@ def get_distrito_from_id_hasheado(db: Session, distrito_id_hasheado: str) -> Dis
     return get_distrito(db, distrito_id)
 
 
-def get_distrito_from_nombre(db: Session, nombre: str) -> Distrito:
+def get_distrito_from_clave(db: Session, distrito_clave: str) -> Distrito:
+    """Consultar un distrito por su clave"""
+    try:
+        clave = safe_clave(distrito_clave)
+    except ValueError as error:
+        raise CitasNotValidParamError("No es válida la clave del distrito") from error
+    if clave == "":
+        raise CitasNotValidParamError("No es válida la clave del distrito")
+    distrito = db.query(Distrito).filter_by(clave=clave).first()
+    if distrito is None:
+        raise CitasNotExistsError("No existe ese distrito")
+    if distrito.estatus != "A":
+        raise CitasIsDeletedError("No es activo ese distrito, está eliminado")
+    return distrito
+
+
+def get_distrito_from_nombre(db: Session, distrito_nombre: str) -> Distrito:
     """Consultar un distrito por su nombre"""
+    nombre = safe_string(distrito_nombre, save_enie=True, to_uppercase=True)
+    if nombre == "":
+        raise CitasNotValidParamError("No es válido el nombre del distrito")
     distrito = db.query(Distrito).filter_by(nombre=nombre).first()
     if distrito is None:
-        raise CitasNotExistsError("No existe el distrito")
+        raise CitasNotExistsError("No existe ese distrito")
     if distrito.estatus != "A":
         raise CitasIsDeletedError("No es activo ese distrito, está eliminado")
     return distrito

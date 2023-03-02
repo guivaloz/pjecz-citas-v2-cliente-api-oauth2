@@ -10,7 +10,9 @@ class DistritoOut(BaseModel):
     """Esquema para entregar distritos"""
 
     id_hasheado: str | None
+    clave: str | None
     nombre: str | None
+    nombre_corto: str | None
 
     class Config:
         """SQLAlchemy config"""
