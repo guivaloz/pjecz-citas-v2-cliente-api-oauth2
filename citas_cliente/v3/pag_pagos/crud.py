@@ -115,11 +115,11 @@ def create_payment(
 
     # Puede venir la clave del distrito
     distrito = autoridad.distrito  # Por defecto es el distrito de la autoridad
-    if datos.distrito_clave is not None:
+    if datos.distrito_clave is not None and datos.distrito_clave != "":
         try:
             distrito = get_distrito_from_clave(db, datos.distrito_clave)
         except CitasAnyError as error:
-            distrito = get_distrito_from_clave(db, "ND")  # Distrito NO DEFINIDO
+            distrito = autoridad.distrito  # Por defecto es el distrito de la autoridad
 
     # Calcular el total que es el costo del tramite-servicio por la cantidad
     total = pag_tramite_servicio.costo * cantidad
