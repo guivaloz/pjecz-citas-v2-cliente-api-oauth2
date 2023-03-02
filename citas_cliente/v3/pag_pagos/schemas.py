@@ -42,7 +42,7 @@ class PagCarroIn(BaseModel):
     cantidad: int | None
     curp: str | None
     descripcion: str | None
-    distrito_id_hasheado: str | None
+    distrito_clave: str | None
     email: str | None
     nombres: str | None
     pag_tramite_servicio_clave: str | None
@@ -58,6 +58,7 @@ class PagCarroOut(BaseModel):
     autoridad_descripcion_corta: str | None
     cantidad: int | None
     descripcion: str | None
+    distrito_clave: str | None
     distrito_nombre: str | None
     distrito_nombre_corto: str | None
     email: str | None
