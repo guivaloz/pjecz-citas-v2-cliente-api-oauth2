@@ -6,9 +6,11 @@ import pathlib
 from typing import Any
 import uuid
 
+from dotenv import load_dotenv
+from google.cloud import storage
 from sqlalchemy.orm import Session
 
-from config.settings import UPLOADS_DIR
+from config.settings import CLOUD_STORAGE_DEPOSITO
 from lib.exceptions import CitasIsDeletedError, CitasNotExistsError, CitasNotValidParamError
 from lib.hashids import descifrar_id
 from lib.safe_string import safe_expediente, safe_integer, safe_string
@@ -19,7 +21,9 @@ from ..autoridades.crud import get_autoridad_from_clave
 from ..cit_clientes.crud import get_cit_cliente, create_cit_cliente
 from .schemas import PpaSolicitudIn, PpaSolicitudOut
 
-CLOUD_STORAGE_URL = "https://noexiste.com"
+load_dotenv()  # Take environment variables from .env
+
+SUBDIRECTORIO = "pensiones-alimenticias"
 
 
 def get_ppa_solicitudes(db: Session, cit_cliente_id: int) -> Any:
@@ -142,20 +146,32 @@ def upload_identificacion_oficial(
         raise CitasNotValidParamError("El ID de la solicitud no es válida")
     ppa_solicitud = get_ppa_solicitud(db, ppa_solicitud_id)
 
+    # Definir el directorio
+    upload_date = datetime.now()
+    year_str = upload_date.strftime("%Y")
+    month_str = upload_date.strftime("%m")
+    directorio = pathlib.Path(SUBDIRECTORIO, year_str, month_str)
+
     # Definir el nombre del archivo con el ID de seis dígitos y una cadena aleatoria de seis caracteres
-    archivo = f"{ppa_solicitud.id:06d}-{uuid.uuid4().hex[:16]}.pdf"
+    archivo = f"{ppa_solicitud.id:06d}-identificacion-oficial-{uuid.uuid4().hex[:16]}.pdf"
 
-    # Crear el directorio con path si este no existe
-    directorio = pathlib.Path(f"{UPLOADS_DIR}/ppa_solicitudes/identificaciones_oficiales")
-    directorio.mkdir(parents=True, exist_ok=True)
+    # Definir la ruta
+    ruta = pathlib.Path(directorio, archivo)
 
-    # Guardar el archivo
-    if UPLOADS_DIR != "":
-        with open(f"{directorio}/{archivo}", "wb") as f:
-            f.write(identificacion_oficial)
+    # Si no se ha definido CLOUD_STORAGE_DEPOSITO, se guarda si existe el directorio
+    if CLOUD_STORAGE_DEPOSITO == "":
+        if not directorio.exists():
+            with open(ruta, "wb") as puntero:
+                puntero.write(identificacion_oficial)
+        url = f"http://noexiste.com/{ruta}"
 
-    # Definir el URL
-    url = f"{CLOUD_STORAGE_URL}/ppa_solicitudes/identificaciones_oficiales/{archivo}"
+    # Subir el archivo a Google Storage
+    if CLOUD_STORAGE_DEPOSITO != "":
+        storage_client = storage.Client()
+        bucket = storage_client.bucket(CLOUD_STORAGE_DEPOSITO)
+        blob = bucket.blob(ruta)
+        blob.upload_from_string(identificacion_oficial, content_type="application/pdf")
+        url = blob.public_url
 
     # Actualizar
     ppa_solicitud.identificacion_oficial_archivo = archivo
@@ -181,20 +197,32 @@ def upload_comprobante_domicilio(
         raise CitasNotValidParamError("El ID de la solicitud no es válida")
     ppa_solicitud = get_ppa_solicitud(db, ppa_solicitud_id)
 
+    # Definir el directorio
+    upload_date = datetime.now()
+    year_str = upload_date.strftime("%Y")
+    month_str = upload_date.strftime("%m")
+    directorio = pathlib.Path(SUBDIRECTORIO, year_str, month_str)
+
     # Definir el nombre del archivo con el ID de seis dígitos y una cadena aleatoria de seis caracteres
-    archivo = f"{ppa_solicitud.id:06d}-{uuid.uuid4().hex[:16]}.pdf"
+    archivo = f"{ppa_solicitud.id:06d}-comprobante-domicilio-{uuid.uuid4().hex[:16]}.pdf"
 
-    # Crear el directorio con path si este no existe
-    directorio = pathlib.Path(f"{UPLOADS_DIR}/ppa_solicitudes/comprobantes_domicilios")
-    directorio.mkdir(parents=True, exist_ok=True)
+    # Definir la ruta
+    ruta = pathlib.Path(directorio, archivo)
 
-    # Guardar el archivo
-    if UPLOADS_DIR != "":
-        with open(f"{directorio}/{archivo}", "wb") as f:
-            f.write(comprobante_domicilio)
+    # Si no se ha definido CLOUD_STORAGE_DEPOSITO, se guarda si existe el directorio
+    if CLOUD_STORAGE_DEPOSITO == "":
+        if not directorio.exists():
+            with open(ruta, "wb") as puntero:
+                puntero.write(comprobante_domicilio)
+        url = f"http://noexiste.com/{ruta}"
 
-    # Definir el URL
-    url = f"{CLOUD_STORAGE_URL}/ppa_solicitudes/comprobantes_domicilios/{archivo}"
+    # Subir el archivo a Google Storage
+    if CLOUD_STORAGE_DEPOSITO != "":
+        storage_client = storage.Client()
+        bucket = storage_client.bucket(CLOUD_STORAGE_DEPOSITO)
+        blob = bucket.blob(ruta)
+        blob.upload_from_string(comprobante_domicilio, content_type="application/pdf")
+        url = blob.public_url
 
     # Actualizar
     ppa_solicitud.comprobante_domicilio_archivo = archivo
@@ -220,24 +248,36 @@ def upload_autorizacion(
         raise CitasNotValidParamError("El ID de la solicitud no es válida")
     ppa_solicitud = get_ppa_solicitud(db, ppa_solicitud_id)
 
+    # Definir el directorio
+    upload_date = datetime.now()
+    year_str = upload_date.strftime("%Y")
+    month_str = upload_date.strftime("%m")
+    directorio = pathlib.Path(SUBDIRECTORIO, year_str, month_str)
+
     # Definir el nombre del archivo con el ID de seis dígitos y una cadena aleatoria de seis caracteres
-    archivo = f"{ppa_solicitud.id:06d}-{uuid.uuid4().hex[:16]}.pdf"
+    archivo = f"{ppa_solicitud.id:06d}-autorizacion-{uuid.uuid4().hex[:16]}.pdf"
 
-    # Crear el directorio con path si este no existe
-    directorio = pathlib.Path(f"{UPLOADS_DIR}/ppa_solicitudes/autorizaciones")
-    directorio.mkdir(parents=True, exist_ok=True)
+    # Definir la ruta
+    ruta = pathlib.Path(directorio, archivo)
 
-    # Guardar el archivo
-    if UPLOADS_DIR != "":
-        with open(f"{directorio}/{archivo}", "wb") as f:
-            f.write(autorizacion)
+    # Si no se ha definido CLOUD_STORAGE_DEPOSITO, se guarda si existe el directorio
+    if CLOUD_STORAGE_DEPOSITO == "":
+        if not directorio.exists():
+            with open(ruta, "wb") as puntero:
+                puntero.write(autorizacion)
+        url = f"http://noexiste.com/{ruta}"
 
-    # Definir el URL
-    autorizacion_url = f"{CLOUD_STORAGE_URL}/ppa_solicitudes/autorizaciones/{archivo}"
+    # Subir el archivo a Google Storage
+    if CLOUD_STORAGE_DEPOSITO != "":
+        storage_client = storage.Client()
+        bucket = storage_client.bucket(CLOUD_STORAGE_DEPOSITO)
+        blob = bucket.blob(ruta)
+        blob.upload_from_string(autorizacion, content_type="application/pdf")
+        url = blob.public_url
 
     # Actualizar
     ppa_solicitud.autorizacion_archivo = archivo
-    ppa_solicitud.autorizacion_url = autorizacion_url
+    ppa_solicitud.autorizacion_url = url
     db.add(ppa_solicitud)
     db.commit()
     db.refresh(ppa_solicitud)
