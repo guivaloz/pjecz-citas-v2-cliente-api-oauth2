@@ -2,7 +2,7 @@
 Tres de Tres - Solicitudes V3, CRUD (create, read, update, and delete)
 """
 from datetime import datetime, timedelta
-import pathlib
+from pathlib import Path
 from typing import Any
 import uuid
 
@@ -158,26 +158,26 @@ def upload_identificacion_oficial(
     upload_date = datetime.now()
     year_str = upload_date.strftime("%Y")
     month_str = upload_date.strftime("%m")
-    directorio = pathlib.Path(SUBDIRECTORIO, year_str, month_str)
+    directorio = Path(SUBDIRECTORIO, year_str, month_str)
 
     # Definir el nombre del archivo con el ID de seis dígitos y una cadena aleatoria de seis caracteres
     archivo = f"{tdt_solicitud.id:06d}-identificacion-oficial-{uuid.uuid4().hex[:16]}.pdf"
 
     # Definir la ruta
-    ruta = pathlib.Path(directorio, archivo)
+    ruta = Path(directorio, archivo)
 
     # Si no se ha definido CLOUD_STORAGE_DEPOSITO, se guarda si existe el directorio
     if CLOUD_STORAGE_DEPOSITO == "":
         if not directorio.exists():
             with open(ruta, "wb") as puntero:
                 puntero.write(identificacion_oficial)
-        url = f"http://noexiste.com/{ruta}"
+        url = f"http://noexiste.com/{str(ruta)}"
 
     # Subir el archivo a Google Storage
     if CLOUD_STORAGE_DEPOSITO != "":
         storage_client = storage.Client()
         bucket = storage_client.bucket(CLOUD_STORAGE_DEPOSITO)
-        blob = bucket.blob(ruta)
+        blob = bucket.blob(str(ruta))
         blob.upload_from_string(identificacion_oficial, content_type="application/pdf")
         url = blob.public_url
 
@@ -209,26 +209,26 @@ def upload_comprobante_domicilio(
     upload_date = datetime.now()
     year_str = upload_date.strftime("%Y")
     month_str = upload_date.strftime("%m")
-    directorio = pathlib.Path(SUBDIRECTORIO, year_str, month_str)
+    directorio = Path(SUBDIRECTORIO, year_str, month_str)
 
     # Definir el nombre del archivo con el ID de seis dígitos y una cadena aleatoria de seis caracteres
     archivo = f"{tdt_solicitud.id:06d}-comprobante-domicilio-{uuid.uuid4().hex[:16]}.pdf"
 
     # Definir la ruta
-    ruta = pathlib.Path(directorio, archivo)
+    ruta = Path(directorio, archivo)
 
     # Si no se ha definido CLOUD_STORAGE_DEPOSITO, se guarda si existe el directorio
     if CLOUD_STORAGE_DEPOSITO == "":
         if not directorio.exists():
             with open(ruta, "wb") as puntero:
                 puntero.write(comprobante_domicilio)
-        url = f"http://noexiste.com/{ruta}"
+        url = f"http://noexiste.com/{str(ruta)}"
 
     # Subir el archivo a Google Storage
     if CLOUD_STORAGE_DEPOSITO != "":
         storage_client = storage.Client()
         bucket = storage_client.bucket(CLOUD_STORAGE_DEPOSITO)
-        blob = bucket.blob(ruta)
+        blob = bucket.blob(str(ruta))
         blob.upload_from_string(comprobante_domicilio, content_type="application/pdf")
         url = blob.public_url
 
@@ -260,26 +260,26 @@ def upload_autorizacion(
     upload_date = datetime.now()
     year_str = upload_date.strftime("%Y")
     month_str = upload_date.strftime("%m")
-    directorio = pathlib.Path(SUBDIRECTORIO, year_str, month_str)
+    directorio = Path(SUBDIRECTORIO, year_str, month_str)
 
     # Definir el nombre del archivo con el ID de seis dígitos y una cadena aleatoria de seis caracteres
     archivo = f"{tdt_solicitud.id:06d}-autorizacion-{uuid.uuid4().hex[:16]}.pdf"
 
     # Definir la ruta
-    ruta = pathlib.Path(directorio, archivo)
+    ruta = Path(directorio, archivo)
 
     # Si no se ha definido CLOUD_STORAGE_DEPOSITO, se guarda si existe el directorio
     if CLOUD_STORAGE_DEPOSITO == "":
         if not directorio.exists():
             with open(ruta, "wb") as puntero:
                 puntero.write(autorizacion)
-        url = f"http://noexiste.com/{ruta}"
+        url = f"http://noexiste.com/{str(ruta)}"
 
     # Subir el archivo a Google Storage
     if CLOUD_STORAGE_DEPOSITO != "":
         storage_client = storage.Client()
         bucket = storage_client.bucket(CLOUD_STORAGE_DEPOSITO)
-        blob = bucket.blob(ruta)
+        blob = bucket.blob(str(ruta))
         blob.upload_from_string(autorizacion, content_type="application/pdf")
         url = blob.public_url
 

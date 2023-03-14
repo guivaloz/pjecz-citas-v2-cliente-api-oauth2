@@ -16,9 +16,6 @@ class TdtSolicitud(Base, UniversalMixin):
         [
             ("GOBERNATURA", "Gobernatura"),
             ("DIPUTACION", "Diputación"),
-            ("PRESIDENCIA MUNICIPAL", "Presidencia Municipal"),
-            ("REGIDURIA", "Regiduría"),
-            ("SINDICATURA", "Sindicatura"),
         ]
     )
 
