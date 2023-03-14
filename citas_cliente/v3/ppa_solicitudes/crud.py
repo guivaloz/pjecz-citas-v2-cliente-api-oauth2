@@ -163,13 +163,13 @@ def upload_identificacion_oficial(
         if not directorio.exists():
             with open(ruta, "wb") as puntero:
                 puntero.write(identificacion_oficial)
-        url = f"http://noexiste.com/{ruta}"
+        url = f"http://noexiste.com/{str(ruta)}"
 
     # Subir el archivo a Google Storage
     if CLOUD_STORAGE_DEPOSITO != "":
         storage_client = storage.Client()
         bucket = storage_client.bucket(CLOUD_STORAGE_DEPOSITO)
-        blob = bucket.blob(ruta)
+        blob = bucket.blob(str(ruta))
         blob.upload_from_string(identificacion_oficial, content_type="application/pdf")
         url = blob.public_url
 
@@ -214,13 +214,13 @@ def upload_comprobante_domicilio(
         if not directorio.exists():
             with open(ruta, "wb") as puntero:
                 puntero.write(comprobante_domicilio)
-        url = f"http://noexiste.com/{ruta}"
+        url = f"http://noexiste.com/{str(ruta)}"
 
     # Subir el archivo a Google Storage
     if CLOUD_STORAGE_DEPOSITO != "":
         storage_client = storage.Client()
         bucket = storage_client.bucket(CLOUD_STORAGE_DEPOSITO)
-        blob = bucket.blob(ruta)
+        blob = bucket.blob(str(ruta))
         blob.upload_from_string(comprobante_domicilio, content_type="application/pdf")
         url = blob.public_url
 
@@ -265,13 +265,13 @@ def upload_autorizacion(
         if not directorio.exists():
             with open(ruta, "wb") as puntero:
                 puntero.write(autorizacion)
-        url = f"http://noexiste.com/{ruta}"
+        url = f"http://noexiste.com/{str(ruta)}"
 
     # Subir el archivo a Google Storage
     if CLOUD_STORAGE_DEPOSITO != "":
         storage_client = storage.Client()
         bucket = storage_client.bucket(CLOUD_STORAGE_DEPOSITO)
-        blob = bucket.blob(ruta)
+        blob = bucket.blob(str(ruta))
         blob.upload_from_string(autorizacion, content_type="application/pdf")
         url = blob.public_url
 
