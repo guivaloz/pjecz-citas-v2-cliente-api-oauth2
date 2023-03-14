@@ -49,5 +49,5 @@ SALT = os.environ.get("SALT", "Esta es una muy mala cadena aleatoria")
 POLL_SERVICE_URL = os.environ.get("POLL_SERVICE_URL", "")
 POLL_SYSTEM_URL = os.environ.get("POLL_SYSTEM_URL", "")
 
-# Directorio donde se guardan los archivos subidos
-UPLOADS_DIR = os.environ.get("UPLOADS_DIR", "")
+# Google Cloud Storage
+CLOUD_STORAGE_DEPOSITO = os.environ.get("CLOUD_STORAGE_DEPOSITO", "")

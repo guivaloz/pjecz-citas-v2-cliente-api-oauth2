@@ -2,13 +2,15 @@
 Tres de Tres - Solicitudes V3, CRUD (create, read, update, and delete)
 """
 from datetime import datetime, timedelta
-import pathlib
+from pathlib import Path
 from typing import Any
 import uuid
 
+from dotenv import load_dotenv
+from google.cloud import storage
 from sqlalchemy.orm import Session
 
-from config.settings import UPLOADS_DIR
+from config.settings import CLOUD_STORAGE_DEPOSITO
 from lib.exceptions import CitasIsDeletedError, CitasNotExistsError, CitasNotValidParamError
 from lib.hashids import descifrar_id
 from lib.safe_string import safe_integer, safe_string
@@ -20,7 +22,9 @@ from ..municipios.crud import get_municipio_from_id_hasheado
 from ..tdt_partidos.crud import get_tdt_partido_from_siglas
 from .schemas import TdtSolicitudIn, TdtSolicitudOut
 
-CLOUD_STORAGE_URL = "https://noexiste.com"
+load_dotenv()  # Take environment variables from .env
+
+SUBDIRECTORIO = "tres-de-tres"
 
 
 def get_tdt_solicitudes(db: Session, cit_cliente_id: int) -> Any:
@@ -150,20 +154,32 @@ def upload_identificacion_oficial(
         raise CitasNotValidParamError("El ID de la solicitud no es válida")
     tdt_solicitud = get_tdt_solicitud(db, tdt_solicitud_id)
 
+    # Definir el directorio
+    upload_date = datetime.now()
+    year_str = upload_date.strftime("%Y")
+    month_str = upload_date.strftime("%m")
+    directorio = Path(SUBDIRECTORIO, year_str, month_str)
+
     # Definir el nombre del archivo con el ID de seis dígitos y una cadena aleatoria de seis caracteres
-    archivo = f"{tdt_solicitud.id:06d}-{uuid.uuid4().hex[:16]}.pdf"
+    archivo = f"{tdt_solicitud.id:06d}-identificacion-oficial-{uuid.uuid4().hex[:16]}.pdf"
 
-    # Crear el directorio con path si este no existe
-    directorio = pathlib.Path(f"{UPLOADS_DIR}/tdt_solicitudes/identificaciones_oficiales")
-    directorio.mkdir(parents=True, exist_ok=True)
+    # Definir la ruta
+    ruta = Path(directorio, archivo)
 
-    # Guardar el archivo
-    if UPLOADS_DIR != "":
-        with open(f"{directorio}/{archivo}", "wb") as f:
-            f.write(identificacion_oficial)
+    # Si no se ha definido CLOUD_STORAGE_DEPOSITO, se guarda si existe el directorio
+    if CLOUD_STORAGE_DEPOSITO == "":
+        if not directorio.exists():
+            with open(ruta, "wb") as puntero:
+                puntero.write(identificacion_oficial)
+        url = f"http://noexiste.com/{str(ruta)}"
 
-    # Definir el URL
-    url = f"{CLOUD_STORAGE_URL}/tdt_solicitudes/identificaciones_oficiales/{archivo}"
+    # Subir el archivo a Google Storage
+    if CLOUD_STORAGE_DEPOSITO != "":
+        storage_client = storage.Client()
+        bucket = storage_client.bucket(CLOUD_STORAGE_DEPOSITO)
+        blob = bucket.blob(str(ruta))
+        blob.upload_from_string(identificacion_oficial, content_type="application/pdf")
+        url = blob.public_url
 
     # Actualizar
     tdt_solicitud.identificacion_oficial_archivo = archivo
@@ -189,20 +205,32 @@ def upload_comprobante_domicilio(
         raise CitasNotValidParamError("El ID de la solicitud no es válida")
     tdt_solicitud = get_tdt_solicitud(db, tdt_solicitud_id)
 
+    # Definir el directorio
+    upload_date = datetime.now()
+    year_str = upload_date.strftime("%Y")
+    month_str = upload_date.strftime("%m")
+    directorio = Path(SUBDIRECTORIO, year_str, month_str)
+
     # Definir el nombre del archivo con el ID de seis dígitos y una cadena aleatoria de seis caracteres
-    archivo = f"{tdt_solicitud.id:06d}-{uuid.uuid4().hex[:16]}.pdf"
+    archivo = f"{tdt_solicitud.id:06d}-comprobante-domicilio-{uuid.uuid4().hex[:16]}.pdf"
 
-    # Crear el directorio con path si este no existe
-    directorio = pathlib.Path(f"{UPLOADS_DIR}/tdt_solicitudes/comprobantes_domicilios")
-    directorio.mkdir(parents=True, exist_ok=True)
+    # Definir la ruta
+    ruta = Path(directorio, archivo)
 
-    # Guardar el archivo
-    if UPLOADS_DIR != "":
-        with open(f"{directorio}/{archivo}", "wb") as f:
-            f.write(comprobante_domicilio)
+    # Si no se ha definido CLOUD_STORAGE_DEPOSITO, se guarda si existe el directorio
+    if CLOUD_STORAGE_DEPOSITO == "":
+        if not directorio.exists():
+            with open(ruta, "wb") as puntero:
+                puntero.write(comprobante_domicilio)
+        url = f"http://noexiste.com/{str(ruta)}"
 
-    # Definir el URL
-    url = f"{CLOUD_STORAGE_URL}/tdt_solicitudes/comprobantes_domicilios/{archivo}"
+    # Subir el archivo a Google Storage
+    if CLOUD_STORAGE_DEPOSITO != "":
+        storage_client = storage.Client()
+        bucket = storage_client.bucket(CLOUD_STORAGE_DEPOSITO)
+        blob = bucket.blob(str(ruta))
+        blob.upload_from_string(comprobante_domicilio, content_type="application/pdf")
+        url = blob.public_url
 
     # Actualizar
     tdt_solicitud.comprobante_domicilio_archivo = archivo
@@ -228,24 +256,36 @@ def upload_autorizacion(
         raise CitasNotValidParamError("El ID de la solicitud no es válida")
     tdt_solicitud = get_tdt_solicitud(db, tdt_solicitud_id)
 
+    # Definir el directorio
+    upload_date = datetime.now()
+    year_str = upload_date.strftime("%Y")
+    month_str = upload_date.strftime("%m")
+    directorio = Path(SUBDIRECTORIO, year_str, month_str)
+
     # Definir el nombre del archivo con el ID de seis dígitos y una cadena aleatoria de seis caracteres
-    archivo = f"{tdt_solicitud.id:06d}-{uuid.uuid4().hex[:16]}.pdf"
+    archivo = f"{tdt_solicitud.id:06d}-autorizacion-{uuid.uuid4().hex[:16]}.pdf"
 
-    # Crear el directorio con path si este no existe
-    directorio = pathlib.Path(f"{UPLOADS_DIR}/tdt_solicitudes/autorizaciones")
-    directorio.mkdir(parents=True, exist_ok=True)
+    # Definir la ruta
+    ruta = Path(directorio, archivo)
 
-    # Guardar el archivo
-    if UPLOADS_DIR != "":
-        with open(f"{directorio}/{archivo}", "wb") as f:
-            f.write(autorizacion)
+    # Si no se ha definido CLOUD_STORAGE_DEPOSITO, se guarda si existe el directorio
+    if CLOUD_STORAGE_DEPOSITO == "":
+        if not directorio.exists():
+            with open(ruta, "wb") as puntero:
+                puntero.write(autorizacion)
+        url = f"http://noexiste.com/{str(ruta)}"
 
-    # Definir el URL
-    autorizacion_url = f"{CLOUD_STORAGE_URL}/tdt_solicitudes/autorizaciones/{archivo}"
+    # Subir el archivo a Google Storage
+    if CLOUD_STORAGE_DEPOSITO != "":
+        storage_client = storage.Client()
+        bucket = storage_client.bucket(CLOUD_STORAGE_DEPOSITO)
+        blob = bucket.blob(str(ruta))
+        blob.upload_from_string(autorizacion, content_type="application/pdf")
+        url = blob.public_url
 
     # Actualizar
     tdt_solicitud.autorizacion_archivo = archivo
-    tdt_solicitud.autorizacion_url = autorizacion_url
+    tdt_solicitud.autorizacion_url = url
     db.add(tdt_solicitud)
     db.commit()
     db.refresh(tdt_solicitud)

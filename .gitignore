@@ -7,8 +7,9 @@
 *.xlsx
 __pycache__/
 .ipynb_checkpoints/
-/app.yaml
 /.venv/
 /seed/
-requirements.txt
 /uploads/
+app.yaml
+poetry.lock
+requirements.txt

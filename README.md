@@ -58,13 +58,13 @@ Cree un archivo para las variables de entorno `.env`
     DB_HOST=127.0.0.1
     DB_PORT=8432
     DB_NAME=pjecz_citas_v2
-    DB_PASS=****************
+    DB_PASS=XXXXXXXX
     DB_USER=adminpjeczcitasv2
 
     # OAuth2
     ACCESS_TOKEN_EXPIRE_MINUTES=30
     ALGORITHM=HS256
-    SECRET_KEY=****************************************************************
+    SECRET_KEY=XXXXXXXX
 
     # Limite de citas pendientes por cliente
     LIMITE_CITAS_PENDIENTES=30
@@ -74,7 +74,7 @@ Cree un archivo para las variables de entorno `.env`
     TASK_QUEUE=pjecz_citas_v2
 
     # Salt sirve para cifrar el ID con HashID, debe ser igual en Admin
-    SALT=********************************
+    SALT=XXXXXXXX
 
     # Santander Web Pay Plus
     WPP_COMMERCE_ID=XXXXXXXX
@@ -90,8 +90,8 @@ Cree un archivo para las variables de entorno `.env`
     POLL_SERVICE_URL=http://127.0.0.1:3000/poll_service
     POLL_SYSTEM_URL=http://127.0.0.1:3000/poll_system
 
-    # Directorio donde se guardan los archivos subidos
-    UPLOADS_DIR=
+    # Google Cloud Storage
+    CLOUD_STORAGE_DEPOSITO=XXXXXXXX
 
     # Arrancar con gunicorn o uvicorn
     ARRANCAR=uvicorn
@@ -113,6 +113,7 @@ Para Bash Shell cree un archivo `.bashrc` con este contenido
     echo "-- Variables de entorno"
     echo "   ACCESS_TOKEN_EXPIRE_MINUTES: ${ACCESS_TOKEN_EXPIRE_MINUTES}"
     echo "   ALGORITHM: ${ALGORITHM}"
+    echo "   CLOUD_STORAGE_DEPOSITO: ${CLOUD_STORAGE_DEPOSITO}"
     echo "   DB_HOST: ${DB_HOST}"
     echo "   DB_PORT: ${DB_PORT}"
     echo "   DB_NAME: ${DB_NAME}"
@@ -125,7 +126,6 @@ Para Bash Shell cree un archivo `.bashrc` con este contenido
     echo "   SALT: ${SALT}"
     echo "   SECRET_KEY: ${SECRET_KEY}"
     echo "   TASK_QUEUE: ${TASK_QUEUE}"
-    echo "   UPLOADS_DIR: ${UPLOADS_DIR}"
     echo "   WPP_COMMERCE_ID: ${WPP_COMMERCE_ID}"
     echo "   WPP_COMPANY_ID: ${WPP_COMPANY_ID}"
     echo "   WPP_BRANCH_ID: ${WPP_BRANCH_ID}"
