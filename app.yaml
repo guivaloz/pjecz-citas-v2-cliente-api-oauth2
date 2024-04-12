@@ -1,0 +1,9 @@
+runtime: python310
+instance_class: F1
+service: citas-api-oauth2
+entrypoint: gunicorn -w 2 -k uvicorn.workers.UvicornWorker citas_cliente.app:create_app
+env_variables:
+  PROJECT_ID: justicia-digital-gob-mx
+  SERVICE_PREFIX: pjecz_citas_cliente_api_oauth2
+vpc_access_connector:
+  name: projects/justicia-digital-gob-mx/locations/us-west2/connectors/cupido
