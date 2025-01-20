@@ -14,6 +14,7 @@ __pycache__/
 
 /.git
 /.github
+/.idea
 /.venv
 /.vscode
 /rest-client

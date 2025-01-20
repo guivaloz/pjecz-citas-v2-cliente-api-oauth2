@@ -3,13 +3,17 @@
 .env
 .DS_Store
 .~lock.*
+
 *.csv
 *.py[cod]
 *.log
 *.sql
 
+poetry.lock
+
 *.egg-info/
 __pycache__/
 
 /venv/
+/.idea/
 /.venv/

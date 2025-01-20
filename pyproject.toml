@@ -1,49 +1,60 @@
 [tool.poetry]
 name = "pjecz-citas-cliente-api-oauth2"
-version = "2.2.0"
-description = "API OAuth2 del Sistema de Citas"
+version = "2.0.0"
+description = "API del Sistema de Citas con autentificación OAuth2"
 authors = ["Guillermo Valdes <guillermo@movimientolibre.com>"]
 license = "AGPL3"
 readme = "README.md"
-packages = [{include = "pjecz_citas_cliente_api_oauth2"}]
 
 [tool.poetry.dependencies]
-python = "^3.10"
-fastapi = "^0.110.1"
-fastapi-pagination = {extras = ["sqlalchemy"], version = "^0.12.22"}
-hashids = "^1.3.1"
-gunicorn = "^21.2.0"
-google-auth = "^2.29.0"
+python = "^3.11"
+fastapi = "^0.115.6"
+fastapi-pagination = {extras = ["sqlalchemy"], version = "^0.12.34"}
+google-auth = "^2.37.0"
 google-cloud = "^0.34.0"
-google-cloud-secret-manager = "^2.19.0"
-google-cloud-storage = "^2.16.0"
+google-cloud-secret-manager = "^2.22.1"
+google-cloud-storage = "^2.19.0"
+gunicorn = "^23.0.0"
+hashids = "^1.3.1"
 nest-asyncio = "^1.6.0"
 passlib = {extras = ["bcrypt"], version = "^1.7.4"}
-psycopg2-binary = "^2.9.9"
+psycopg2-binary = "^2.9.10"
+pydantic = "^2.10.5"
+pydantic-settings = "^2.7.1"
 python-dotenv = "^1.0.1"
 python-jose = {extras = ["cryptography"], version = "^3.3.0"}
-python-multipart = "^0.0.9"
-pytz = "^2024.1"
-requests = "^2.31.0"
-sqlalchemy = "^2.0.29"
+python-multipart = "^0.0.20"
+pytz = "^2024.2"
+redis = "^5.2.1"
+requests = "^2.32.3"
+rq = "^2.1.0"
+sqlalchemy = "^2.0.37"
 sqlalchemy-utils = "^0.41.2"
-redis = "^5.0.3"
-rq = "^1.16.1"
 unidecode = "^1.3.8"
-uvicorn = "^0.29.0"
+uvicorn = "^0.34.0"
 
 
 [tool.poetry.group.dev.dependencies]
-black = "^24.3.0"
+black = "^24.10.0"
 isort = "^5.13.2"
-pytest = "^8.1.1"
-pylint = "^3.1.0"
+pylint = "^3.3.3"
 pylint-sqlalchemy = "^0.3.0"
-pre-commit = "^3.7.0"
+pytest = "^8.3.4"
+pre-commit = "^4.0.1"
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[project]
+dependencies = [
+    "fastapi",
+    "fastapi-pagination",
+    "sqlalchemy",
+    "sqlalchemy-utils",
+    "pydantic",
+    "pydantic-settings"
+]
 
 [tool.black]
 line-length = 128
