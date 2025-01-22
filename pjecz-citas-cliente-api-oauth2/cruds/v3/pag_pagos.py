@@ -216,7 +216,7 @@ def update_payment(
     db: Session,
     datos: PagResultadoIn,
 ) -> PagResultadoOut:
-    """Actualizar un pago, ahora puede guadar el contenido XML del banco"""
+    """Actualizar un pago, ahora puede guardar el contenido XML del banco"""
 
     # Validar el XML que mando el banco
     if datos.xml_encriptado.strip() == "":
